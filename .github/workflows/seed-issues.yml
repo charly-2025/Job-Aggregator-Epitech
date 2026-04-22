@@ -1,0 +1,117 @@
+name: Seed Issues
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = [
+
+              { title: "[Docker] Backend Dockerfile", labels: ["devops"] },
+              { title: "[Docker] Frontend Dockerfile", labels: ["devops"] },
+              { title: "[Docker] Database Docker", labels: ["devops"] },
+              { title: "[Docker] Complete docker-compose setup", labels: ["devops"] },
+              { title: "[Docker] Verify docker-compose up works", labels: ["devops"] },
+
+              { title: "[DB] Think about which technology for the database", labels: ["database"] },
+              { title: "[DB] Define Users schema", labels: ["database"] },
+              { title: "[DB] Define Offers schema", labels: ["database"] },
+              { title: "[DB] Define Roles schema", labels: ["database"] },
+              { title: "[DB] Add relations (FK)", labels: ["database"] },
+              { title: "[DB] Add constraints (not null, unique)", labels: ["database"] },
+              { title: "[DB] Verify persistence after restart", labels: ["database"] },
+
+              { title: "[Auth] Register endpoint", labels: ["backend"] },
+              { title: "[Auth] Login endpoint", labels: ["backend"] },
+              { title: "[Auth] Password hashing (bcrypt)", labels: ["security"] },
+              { title: "[Auth] JWT generation", labels: ["security"] },
+              { title: "[Auth] Auth middleware", labels: ["security"] },
+              { title: "[Auth] Role middleware (USER/ADMIN)", labels: ["security"] },
+              { title: "[Auth] GET /me endpoint", labels: ["backend"] },
+              { title: "[Auth] Update user endpoint", labels: ["backend"] },
+              { title: "[Auth] Protect sensitive routes (user can't get access to admin routes)", labels: ["security"] },
+              { title: "[Auth] Logout / token invalidation", labels: ["security"] },
+
+              { title: "[Offers] GET /offers", labels: ["backend"] },
+              { title: "[Offers] GET /offers/:id", labels: ["backend"] },
+              { title: "[Offers] POST /offers (admin)", labels: ["backend"] },
+              { title: "[Offers] PUT /offers (admin)", labels: ["backend"] },
+              { title: "[Offers] DELETE /offers (admin)", labels: ["backend"] },
+              { title: "[Offers] Pagination implementation", labels: ["backend"] },
+              { title: "[Offers] Sorting offers", labels: ["backend"] },
+              { title: "[Offers] Filtering offers", labels: ["backend"] },
+              { title: "[Offers] Full-text search", labels: ["backend"] },
+
+              { title: "[Data] Integrate WeLoveDevs API", labels: ["data"] },
+              { title: "[Data] Fetch external offers", labels: ["data"] },
+              { title: "[Data] Respect rate limit (1 req/sec)", labels: ["data"] },
+              { title: "[Data] Normalize incoming data", labels: ["data"] },
+              { title: "[Data] Duplicate detection (if we have external sources)", labels: ["data"] },
+              { title: "[Data] Data ingestion must include normalization/pre-processing before storage", labels: ["data"] },
+              { title: "[Data] Store offers in database", labels: ["data"] },
+
+              { title: "[Analytics] Compute average salary by job", labels: ["data"] },
+              { title: "[Analytics] Do graphes for offers", labels: ["data"] },
+              { title: "[Analytics] GET /analytics endpoint", labels: ["backend"] },
+
+              { title: "[Frontend] Login page", labels: ["frontend"] },
+              { title: "[Frontend] Register page", labels: ["frontend"] },
+              { title: "[Frontend] Token management", labels: ["frontend"] },
+              { title: "[Frontend] Auth error handling", labels: ["frontend"] },
+
+              { title: "[Frontend] Offers list page", labels: ["frontend"] },
+              { title: "[Frontend] Offer detail page", labels: ["frontend"] },
+              { title: "[Frontend] Salary/location display", labels: ["frontend"] },
+
+              { title: "[Frontend] Search bar", labels: ["frontend"] },
+              { title: "[Frontend] Filters UI", labels: ["frontend"] },
+              { title: "[Frontend] Pagination UI", labels: ["frontend"] },
+
+              { title: "[Frontend] Dashboard UI", labels: ["frontend"] },
+              { title: "[Frontend] Analytics charts", labels: ["frontend"] },
+              { title: "[Frontend] AI feature display", labels: ["frontend"] },
+
+              { title: "[Frontend] Admin panel offers", labels: ["frontend"] },
+              { title: "[Frontend] Admin ingestion button", labels: ["frontend"] },
+              { title: "[Frontend] Admin user management (optional)", labels: ["frontend"] },
+
+              { title: "[AI] Choose AI feature", labels: ["ai"] },
+              { title: "[AI] AI backend endpoint", labels: ["ai"] },
+              { title: "[AI] AI Frontend integration", labels: ["ai"] },
+              { title: "[AI] Ensure <5s response time and mb size ", labels: ["ai"] },
+
+              { title: "[Security] OWASP pentesting", labels: ["security"] },
+
+              { title: "[Tests] Do tests (such as endpoint, frontend etc.) and report if there are errors as an issue with the tag ("bug")", labels: ["tests"] },
+
+              { title: "[Docs] Project README", labels: ["docs"] },
+              { title: "[Docs] required dependencies documentation", labels: ["docs"] },
+              { title: "[Docs] Architecture overview (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] Dashboard choices (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] Explanation AI choice (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] Explanation about data choices (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] Explanation about business plan and design (product choices) (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] Explanation about security and which main threats considered and implemented controls (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] CI choices: what is automated, why those checks were selected, and how the pipeline protects quality. (Why / How /Trade-off + evidence)", labels: ["docs"] },
+              { title: "[Docs] API documentation (swagger UI)", labels: ["docs"] },
+
+              { title: "[A11y] Keyboard navigation", labels: ["frontend"] },
+              { title: "[A11y] Color contrast compliance (for colorblind people if needed etc)", labels: ["frontend"] },
+              { title: "[A11y] Focus states visibility", labels: ["frontend"] },
+
+              { title: "[Product] Competitor analysis", labels: ["product"] },
+              { title: "[Product] Define user personas", labels: ["product"] },
+              { title: "[Product] Define value proposition", labels: ["product"] },
+              { title: "[Design] Wireframes login/register", labels: ["design"] },
+              { title: "[Design] Wireframes dashboard", labels: ["design"] },
+              { title: "[Design] Wireframes offers list", labels: ["design"] },
+              { title: "[Design] Wireframes admin panel", labels: ["design"] },
+              { title: "[Product] User flows definition", labels: ["product"] },
+              { title: "[Product] Define success metrics", labels: ["product"] }
+
+            ];
