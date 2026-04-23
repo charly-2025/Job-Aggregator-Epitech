@@ -117,3 +117,13 @@ jobs:
               { title: "[Product] Define success metrics", labels: ["product"] }
 
             ];
+
+            for (const issue of issues) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issue.title,
+                labels: issue.labels,
+              });
+            }
+          
