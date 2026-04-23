@@ -5,7 +5,8 @@ on:
 
 jobs:
   create-issues:
-    runs-on: ubuntu-latest
+    runs-on:
+          group: hybrid-runners
     steps:
       - uses: actions/github-script@v7
         with:
