@@ -83,11 +83,11 @@ jobs:
               { title: "Choose AI feature", labels: ["ai"] },
               { title: "AI backend endpoint", labels: ["ai"] },
               { title: "AI Frontend integration", labels: ["ai"] },
-              { title: "Ensure <5s response time and mb size ", labels: ["ai"] },
+              { title: "Ensure less than 5s response time and mb size", labels: ["ai"] },
 
               { title: "OWASP pentesting", labels: ["security"] },
 
-              { title: "Do tests (such as endpoint, frontend etc.) and report if there are errors as an issue with the tag", labels: ["tests"] },
+              { title: "Do tests (such as endpoint, frontend etc.) and report if there are errors as an issue with the tag (bug)", labels: ["tests"] },
 
               { title: "Project README", labels: ["docs"] },
               { title: "required dependencies documentation", labels: ["docs"] },
