@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS job_offers (
     salary FLOAT,
     source_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    UNIQUE KEY unique_offer (title(255), company(255), published_at)
+
 );
 
 -- SKILLS TABLE
