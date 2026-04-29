@@ -1,28 +1,42 @@
-name: CI_quality checks
+name: Angular Frontend Build Tests
+
 on:
-#  push:
-#    branches:
-#      - main
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-  lint:
+  build_/_quality_checks:
+    name: Angular Frontend Build Tests
     runs-on: [self-hosted]
     container:
       image: epitechcontent/epitest-docker:latest
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+      - name: Checkout the source code
+        uses: actions/checkout@v3
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        working-directory: ./project/frontend/jobaggregator
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ./project/frontend/jobaggregator
+        run: npm run test:ci
+
+      - name: Build
+        working-directory: ./project/frontend/jobaggregator
+        run: npm run build
 
       - name: Run ESLint
-        run: npm run lint
+        run: npx eslint . --max-warnings=0
 
-      - name: Run Prettier
-        run: npm run format-check
+      - name: Run Prettier check
+        run: npx prettier --check .
