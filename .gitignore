@@ -1,3 +1,4 @@
 .env
 __pycache__/
+.github/workflows/data_normalize.yml
 node_modules/
