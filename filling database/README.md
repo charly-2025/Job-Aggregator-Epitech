@@ -50,12 +50,12 @@ python3 run_pipeline.py
 
 The pipeline executes the following steps:
 
-| Step | Module | Description |
-|------|--------|-------------|
-| 1 | `data_scrapping` | Fetch job offers from external sources |
-| 2 | `data_cleaning` | Clean and normalize data |
-| 3 | `data_storage` | Insert data into the database |
-| 4 | `data_correction` | Fix and optimize stored data |
+| Step | Module            | Description                            |
+| ---- | ----------------- | -------------------------------------- |
+| 1    | `data_scrapping`  | Fetch job offers from external sources |
+| 2    | `data_cleaning`   | Clean and normalize data               |
+| 3    | `data_storage`    | Insert data into the database          |
+| 4    | `data_correction` | Fix and optimize stored data           |
 
 ### Run modules individually
 
@@ -73,11 +73,13 @@ python3 data_correction/main.py
 ## Database Behavior
 
 **Insertion**
+
 - New job offers are automatically inserted.
 - Existing offers are ignored or updated depending on configuration.
 
 **Duplicate prevention**  
 Duplicates are detected using a `UNIQUE` constraint on the combination of:
+
 - `title`
 - `company`
 - `published_at`
@@ -85,6 +87,6 @@ Duplicates are detected using a `UNIQUE` constraint on the combination of:
 ---
 
 ## Notes
+
 - Make sure your MySQL server is running before launching the pipeline and you create the database.
 - `wld_output.json` and `clean_output.json` acts as a data interface between programs:
-
