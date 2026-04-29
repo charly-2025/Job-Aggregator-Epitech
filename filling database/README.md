@@ -28,12 +28,12 @@ This file is used to connect the pipeline to your MySQL database.
 
 ```
 job-aggregator/
-├── data_scrapping/       # Fetch job offers from external sources
-├── data_cleaning/        # Clean and normalize raw data
-├── data_storage/         # Insert processed data into the database
-├── data_correction/      # Fix and optimize stored data
-├── run_pipeline.py       # Full pipeline runner
-└── .env                  # Environment configuration (not committed)
+|-- data_scrapping/       # Fetch job offers from external sources
+|-- data_cleaning/        # Clean and normalize raw data
+|-- data_storage/         # Insert processed data into the database
+|-- data_correction/      # Fix and optimize stored data
+|-- run_pipeline.py       # Full pipeline runner
+|-- .env                  # Environment configuration (not committed)
 ```
 
 ---
@@ -86,3 +86,5 @@ Duplicates are detected using a `UNIQUE` constraint on the combination of:
 
 ## Notes
 - Make sure your MySQL server is running before launching the pipeline and you create the database.
+- `wld_output.json` and `clean_output.json` acts as a data interface between programs:
+
