@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build_/_quality_checks:
+  build_quality_checks:
     name: Angular Frontend Build Tests
     runs-on: [self-hosted]
     container:
