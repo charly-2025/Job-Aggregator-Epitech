@@ -30,7 +30,7 @@ export default [
     rules: {
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-
+      "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/no-explicit-any": "warn",
       "no-undef": "off",
     },
