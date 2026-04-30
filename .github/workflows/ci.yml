@@ -1,4 +1,4 @@
-name: Angular Frontend Build Tests
+name: CI Tests
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_quality_checks:
-    name: Angular Frontend Build Tests
+    name: CI Tests
     runs-on: [self-hosted]
     container:
       image: epitechcontent/epitest-docker:latest
