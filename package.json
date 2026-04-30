@@ -1,6 +1,14 @@
 {
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,html,css,md,yml}": "prettier --write"
   }
 }
