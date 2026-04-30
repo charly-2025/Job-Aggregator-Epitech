@@ -23,8 +23,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
+      - name: Install app dependencies
         working-directory: ./app/frontend/jobaggregator
+        run: npm ci
+
+      - name: Install root dependencies
         run: npm ci
 
       - name: Run tests
