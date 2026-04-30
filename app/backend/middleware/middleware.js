@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 
 const middleware = (req, res, next) => {
 
+  
   const token = req.cookies.token;
 
   if (!token) {
@@ -13,7 +14,7 @@ const middleware = (req, res, next) => {
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.anonyme_id = decoded;   
+    req.user = decoded;   
 
     next();
   } catch (error) {

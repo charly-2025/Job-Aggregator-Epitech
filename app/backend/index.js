@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 
 
 import userRoutes from "./routes/userRoutes.js"
+import authRoutes from "./routes/authRoutes.js";
 
 config({ path: '.env' ,quiet:true});   
 const port = process.env.PORT
@@ -27,4 +28,4 @@ app.get("/",(req,res) =>{
 })
 
 app.use('/api/users',userRoutes);
-
+app.use('/api/auth',authRoutes)

@@ -1,12 +1,16 @@
 import express from "express";
 import middleware from "../middleware/middleware.js"
 
-import { Register,Login } from "../controllers/userController.js";
+import {getUserInfo,getOffersUserLikes,getOffersUserViews, updateUserInfo, updateUserPassword } from "../controllers/userController.js";
 
 const userRoutes = express.Router()
 
-userRoutes.post("/register",Register)
-userRoutes.post("/login",Login)
+userRoutes.get("/userInfo",middleware,getUserInfo)
+userRoutes.get("/offersUserLike",middleware,getOffersUserLikes)
+userRoutes.get("/offersUserViews",middleware,getOffersUserViews)
+
+userRoutes.put("/userInfo",middleware,updateUserInfo)
+userRoutes.put("/userPassword",middleware,updateUserPassword)
 
 
 export default userRoutes

@@ -1,44 +1,80 @@
-import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt"
 
 import db from "../config/db.js"
 
-
-export const Register = async (req,res) => {
+export const getUserInfo = async (req,res) => {
     try {
-        const { email, password, last_name, first_name } = req.body;
-        if(!email || !password || !last_name || !first_name) return res.status(400).json({msg:"bad parameter"});
+        const user_id = req.user.id
 
-        const [existingUser] = await db.query("SELECT * FROM users WHERE email = ?",[email]);
-        if (existingUser.length>0) return res.status(409).json({msg:"Account already exists"});
+        const [[userInfo]] = await db.query("SELECT email,first_name,last_name,created_at FROM users WHERE user_id = ?",[user_id])
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        
-        const [result] = await db.query("INSERT INTO users (email,password_hash,last_name,first_name) VALUES (?,?,?,?)",[email,hashedPassword,last_name,first_name]);
-        const token = jwt.sign({id:result.insertId},process.env.JWT_SECRET,{expiresIn:"360h"});
-        res.status(200).json({token});
+        res.status(200).json(userInfo)
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-};
+}
 
-
-
-export const Login = async (req,res)=>{
+export const getOffersUserLikes = async (req,res) => {
     try {
-        const { email, password} = req.body;
-        if(!email || !password) return res.status(400).json({msg:"bad parameter"});
+        const user_id = req.user.id
+        const [OffersUserLikes] = await db.query("SELECT * FROM job_offers JOIN job_likes ON job_offers.offer_id = job_likes.offer_id WHERE job_likes.user_id = ?",[user_id])
+        res.status(200).json(OffersUserLikes)
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
 
-        let [user] = await db.query("SELECT * FROM users WHERE email = ?",[email]);
+
+export const getOffersUserViews = async (req,res) => {
+    try {
+        const user_id = req.user.id
+        const [OffersUserViews] = await db.query("SELECT * FROM job_offers JOIN job_views ON job_offers.offer_id = job_views.offer_id WHERE job_views.user_id = ?",[user_id])
+        res.status(200).json(OffersUserViews)
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+
+export const updateUserInfo = async (req,res) => {
+    try {
+        const user_id = req.user.id
+        const {email, password, last_name, first_name } = req.body;
+        if(!email || !password || !last_name || !first_name) return res.status(400).json({message:"bad parameter"});
+
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
         if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
         user = user[0]
-        
-        const same = await bcrypt.compare(password,user.password_hash);
-        if(!same) return res.status(401).json({msg:"Invalid Credentials"});
 
-        const token = jwt.sign({id:user.user_id},process.env.JWT_SECRET,{expiresIn:"360h"});
-        res.json({token});
+        const same = await bcrypt.compare(password,user.password_hash);
+        if(!same) return res.status(401).json({message:"Invalid Password"});
+
+        await db.query("UPDATE users SET email=?,last_name=?,first_name=? WHERE user_id = ?",[email,last_name,first_name,user_id])
+        res.status(200).json({ message: "user info update" })
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+export const updateUserPassword = async (req,res) => {
+    try {
+        const user_id = req.user.id
+        const {password, newPassword} = req.body;
+        if(!password || !newPassword) return res.status(400).json({message:"bad parameter"});
+
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
+        if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
+        user = user[0]
+
+        const same = await bcrypt.compare(password,user.password_hash);
+        if(!same) return res.status(401).json({message:"Invalid Password"});
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await db.query("UPDATE users SET password_hash = ? WHERE user_id = ?",[hashedPassword,user_id])
+        res.status(200).json({ message: "password update" })
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
