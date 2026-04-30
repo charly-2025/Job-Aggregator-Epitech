@@ -24,15 +24,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        working-directory: ./project/frontend/jobaggregator
+        working-directory: ./app/frontend/jobaggregator
         run: npm ci
 
       - name: Run tests
-        working-directory: ./project/frontend/jobaggregator
+        working-directory: ./app/frontend/jobaggregator
         run: npx ng test --watch=false --progress=false
 
       - name: Build
-        working-directory: ./project/frontend/jobaggregator
+        working-directory: ./app/frontend/jobaggregator
         run: npm run build
 
       - name: Run ESLint
