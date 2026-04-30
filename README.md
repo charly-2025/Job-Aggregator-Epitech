@@ -4,7 +4,8 @@
 
 The **Job Aggregator** is a full-stack platform designed to centralize job and internship offers from multiple sources.
 
---- 
+---
+
 ## Installation and Local Run
 
 ```
@@ -16,4 +17,5 @@ cd B-YEP-200-REN-2-1-jobaggregator-1.git
 ### Prerequisites
 
 ### Running the Project
+
 ---

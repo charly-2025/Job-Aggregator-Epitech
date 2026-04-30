@@ -117,4 +117,3 @@ jobs:
             for (const issue of issues) {
               await github.rest.issues.create({owner: context.repo.owner, repo: context.repo.repo, title: issue.title, labels: issue.labels,});
             }
-          
