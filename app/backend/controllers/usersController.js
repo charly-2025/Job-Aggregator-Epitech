@@ -27,8 +27,8 @@ export const getOffersUserLikes = async (req,res) => {
 
 export const getOffersUserViews = async (req,res) => {
     try {
-        const user_id = req.user.id
-        const [OffersUserViews] = await db.query("SELECT * FROM job_offers JOIN job_views ON job_offers.offer_id = job_views.offer_id WHERE job_views.user_id = ?",[user_id])
+        const userId = req.user.id
+        const [OffersUserViews] = await db.query("SELECT * FROM job_offers JOIN job_views ON job_offers.offer_id = job_views.offer_id WHERE job_views.user_id = ?",[userId])
         res.status(200).json(OffersUserViews)
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -38,18 +38,18 @@ export const getOffersUserViews = async (req,res) => {
 
 export const updateUserInfo = async (req,res) => {
     try {
-        const user_id = req.user.id
+        const userId = req.user.id
         const {email, password, last_name, first_name } = req.body;
         if(!email || !password || !last_name || !first_name) return res.status(400).json({message:"bad parameter"});
 
-        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[userId]);
         if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
         user = user[0]
 
         const same = await bcrypt.compare(password,user.password_hash);
         if(!same) return res.status(401).json({message:"Invalid Password"});
 
-        await db.query("UPDATE users SET email=?,last_name=?,first_name=? WHERE user_id = ?",[email,last_name,first_name,user_id])
+        await db.query("UPDATE users SET email=?,last_name=?,first_name=? WHERE user_id = ?",[email,last_name,first_name,userId])
         res.status(200).json({ message: "user info update" })
 
     } catch (err) {
@@ -59,11 +59,11 @@ export const updateUserInfo = async (req,res) => {
 
 export const updateUserPassword = async (req,res) => {
     try {
-        const user_id = req.user.id
+        const userId = req.user.id
         const {password, newPassword} = req.body;
         if(!password || !newPassword) return res.status(400).json({message:"bad parameter"});
 
-        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[userId]);
         if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
         user = user[0]
 
@@ -73,7 +73,7 @@ export const updateUserPassword = async (req,res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        await db.query("UPDATE users SET password_hash = ? WHERE user_id = ?",[hashedPassword,user_id])
+        await db.query("UPDATE users SET password_hash = ? WHERE user_id = ?",[hashedPassword,userId])
         res.status(200).json({ message: "password update" })
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -82,18 +82,18 @@ export const updateUserPassword = async (req,res) => {
 
 export const deleteUser = async (req,res) => {
     try {
-        const user_id = req.user.id
+        const userId = req.user.id
         const {password} = req.body;
         if(!password) return res.status(400).json({message:"bad parameter"});
 
-        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[userId]);
         if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
         user = user[0]
 
         const same = await bcrypt.compare(password,user.password_hash);
         if(!same) return res.status(401).json({message:"Invalid Password"});
 
-        await db.query("DELETE FROM users WHERE user_id = ?",[user_id])
+        await db.query("DELETE FROM users WHERE user_id = ?",[userId])
         res.status(200).json({ message: "user delete" })
     } catch (err) {
         res.status(500).json({ message: err.message });
