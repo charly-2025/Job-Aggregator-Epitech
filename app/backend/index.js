@@ -3,9 +3,12 @@ import cors from "cors";
 import cookieParser from 'cookie-parser' ; 
 import { config } from 'dotenv';
 
+import swaggerSpec from "./config/swagger.js";
+import swaggerUi from "swagger-ui-express";
 
-import userRoutes from "./routes/userRoutes.js"
+import usersRoutes from "./routes/usersRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
+import offersRoutes from "./routes/offersRoutes.js"
 
 config({ path: '.env' ,quiet:true});   
 const port = process.env.PORT
@@ -27,5 +30,8 @@ app.get("/",(req,res) =>{
     res.send("Hello from Node Api server")
 })
 
-app.use('/api/users',userRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use('/api/users',usersRoutes);
 app.use('/api/auth',authRoutes)
+app.use('/api/offers',offersRoutes)

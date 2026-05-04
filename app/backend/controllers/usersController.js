@@ -79,3 +79,23 @@ export const updateUserPassword = async (req,res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+export const deleteUser = async (req,res) => {
+    try {
+        const user_id = req.user.id
+        const {password} = req.body;
+        if(!password) return res.status(400).json({message:"bad parameter"});
+
+        let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[user_id]);
+        if (user.length <= 0) return res.status(401).json({msg:"Invalid Credentials"});
+        user = user[0]
+
+        const same = await bcrypt.compare(password,user.password_hash);
+        if(!same) return res.status(401).json({message:"Invalid Password"});
+
+        await db.query("DELETE FROM users WHERE user_id = ?",[user_id])
+        res.status(200).json({ message: "user delete" })
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
