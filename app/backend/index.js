@@ -3,8 +3,11 @@ import cors from "cors";
 import cookieParser from 'cookie-parser' ; 
 import { config } from 'dotenv';
 
-import swaggerSpec from "./config/swagger.js";
 import swaggerUi from "swagger-ui-express";
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const swaggerFile = require('./config/swagger.json');
 
 import usersRoutes from "./routes/usersRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
@@ -30,7 +33,7 @@ app.get("/",(req,res) =>{
     res.send("Hello from Node Api server")
 })
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use('/api/users',usersRoutes);
 app.use('/api/auth',authRoutes)
