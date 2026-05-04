@@ -1,6 +1,4 @@
 import db from "../config/db.js";
-import { searchOffers } from '../config/searchService.js';
-
 
 export const getAllOffers = async (req,res)=>{ 
     try {
