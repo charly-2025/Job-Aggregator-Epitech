@@ -1,21 +1,17 @@
-import swaggerJSDoc from 'swagger-jsdoc';
+// swagger.js
+import swaggerAutogen from 'swagger-autogen';
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'My Express API',
-      version: '1.0.0',
-      description: 'API documentation generated with Swagger',
-    },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-      },
-    ],
+const doc = {
+  info: {
+    title: 'Mon API',
+    version: '1.0.0',
+    description: 'Documentation générée automatiquement',
   },
-  apis: ['./routes/*.js'], 
+  host: 'localhost:3000',
+  schemes: ['http'],
 };
 
-const specs = swaggerJSDoc(options);
-export default specs;
+const outputFile = './swagger.json';
+const routes = ['../routes/*.js'];
+
+swaggerAutogen()(outputFile, routes, doc);
