@@ -3,7 +3,7 @@
   "info": {
     "title": "Job Aggregator API",
     "version": "1.0.0",
-    "description": "This is Job Aggregator API"
+    "description": "This is Job Aggregator API for users api put '/api/users' before, for auth : '/api/auth' and offers : '/api/offers'"
   },
   "host": "localhost:3000",
   "basePath": "/",
