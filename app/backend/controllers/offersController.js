@@ -90,7 +90,7 @@ export const handleOfferLike = async (req,res) => {
 export async function searchOffers(req, res) {
   try {
         const text = req.params.searchText
-        if (!text?.trim()) return res.status(400).json({ error: 'Paramètre q requis.' });
+        if (!text?.trim()) return res.status(400).json({ message:'bad parameter'});
 
         const searchText = `%${text.trim()}%`;
         const searchParams = [searchText, searchText, searchText, searchText, searchText, searchText, searchText, searchText,searchText];
@@ -108,7 +108,35 @@ export async function searchOffers(req, res) {
 
         const listOffers = offers.slice(0,15).map(offer => ({...offer,skills: offer.skills?.split(', ') ?? [],}));
         res.status(200).json({listOffers});
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 }
+
+export const createOffer = async (req,res) => {
+    try {
+        const userRole = req.user.role
+        if (!userRole || userRole != "admin") return res.status(401).json({message: 'unauthorized'});
+
+        const {title,company,location,job_type,work_type,about,requirements,salary,skills} = req.body
+        if (!title || !company || !location || !job_type || !work_type || !about || !requirements || !salary || !skills) return res.status(400).json({ message:'bad parameter'});
+
+        const [result] = await db.query("INSERT INTO job_offers (title,company,location,job_type,work_type,about,requirements,salary) VALUES (?,?,?,?,?,?,?,?)",[title,company,location,job_type,work_type,about,requirements,salary])
+        const insertId = result.insertId
+
+        skills.forEach( async skill =>{
+            const [searchSkill] = await db.query("SELECT * FROM skills WHERE REPLACE(LOWER(name),' ','') = ?",[skill.toLowerCase().replace(/\s/g, '')])
+            if (searchSkill.length === 0) {
+                const [insertSkill] = await db.query("INSERT INTO skills (name) VALUES (?)",[skill])
+                await db.query("INSERT INTO job_offer_skills (offer_id,skill_id) VALUES (?,?)",[insertId,insertSkill.insertId])
+            } else {
+                await db.query("INSERT INTO job_offer_skills (offer_id,skill_id) VALUES (?,?)",[insertId,searchSkill[0].skill_id])
+            }
+        })
+
+        res.status(200).json({message:"offer created successfully"})
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 }
+
