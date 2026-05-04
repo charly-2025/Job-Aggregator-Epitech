@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  height: 100vh;
+}
+
+.login-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.left-panel {
+  width: 50%;
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.right-panel {
+  width: 50%;
+  background: linear-gradient(135deg, #8a07ff, #f500d7, #ff6a00);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 2rem;
+}
