@@ -61,6 +61,10 @@ export const newOfferView = async (req,res) => {
         const offerId = req.params.offerId
 
         if (!userId || !offerId) return res.status(400).json({message:"bad parameter"});
+        
+        const [offer] = await db.query("SELECT * FROM job_offers WHERE offer_id = ?",[offerId])
+        if (offer.length === 0) return res.status(404).json({message:"offer not found"})
+
         const [userView] = await db.query("SELECT * FROM job_views WHERE user_id = ? AND offer_id=?",[userId,offerId])
 
         if (userView.length === 0) {
@@ -81,6 +85,9 @@ export const handleOfferLike = async (req,res) => {
         const offerId = req.params.offerId
 
         if (!userId || !offerId) return res.status(400).json({message:"bad parameter"});
+
+        const [offer] = await db.query("SELECT title FROM job_offers WHERE offer_id = ?",[offerId])
+        if (offer.length === 0) return res.status(404).json({message:"offer not found"})
         
         const [userLike] = await db.query("SELECT * FROM job_likes WHERE user_id = ? AND offer_id=?",[userId,offerId])
 
@@ -146,7 +153,7 @@ export const createOffer = async (req,res) => {
             }
         })
 
-        res.status(200).json({message:"offer created successfully"})
+        res.status(200).json({message:`offer created successfully with id ${insertId}`})
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

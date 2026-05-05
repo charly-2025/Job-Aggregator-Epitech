@@ -1,19 +1,36 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Job Aggregator API",
+    "title": "My API",
     "version": "1.0.0",
-    "description": "This is Job Aggregator API for users api put '/api/users' before, for auth : '/api/auth' and offers : '/api/offers'"
+    "description": "Job aggregator api'"
   },
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
   ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "/api/auth"
+    },
+    {
+      "name": "Offers",
+      "description": "/api/offers"
+    },
+    {
+      "name": "Users",
+      "description": "/api/users"
+    }
+  ],
   "paths": {
     "/register": {
       "post": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Register User and get a access token",
         "parameters": [
           {
             "name": "body",
@@ -22,16 +39,20 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Martinjose@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Password123"
                 },
                 "last_name": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Martin"
                 },
                 "first_name": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Jose"
                 }
               }
             }
@@ -39,13 +60,22 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "You have successfully registered and received an access token",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...."
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Value is missing or invalid"
           },
           "409": {
-            "description": "Conflict"
+            "description": "User with this email already exists"
           },
           "500": {
             "description": "Internal Server Error"
@@ -55,7 +85,10 @@
     },
     "/login": {
       "post": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "description": "Login User and get a access token",
         "parameters": [
           {
             "name": "body",
@@ -64,10 +97,12 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Martinjose@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Password123"
                 }
               }
             }
@@ -75,10 +110,362 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "You have successfully logged in and received an access token",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...."
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Value is missing or invalid"
+          },
+          "401": {
+            "description": "Unauthorized, incorrect email or password"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/allOffers": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "Get a list of all offers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Software Engineer"
+                  },
+                  "company": {
+                    "type": "string",
+                    "example": "Tech Company"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "New York, NY"
+                  },
+                  "job_type": {
+                    "type": "string",
+                    "example": "CDI"
+                  },
+                  "work_type": {
+                    "type": "string",
+                    "example": "On-site"
+                  },
+                  "about": {
+                    "type": "string",
+                    "example": "We are looking for a skilled software engineer to join our team."
+                  },
+                  "salary": {
+                    "type": "int",
+                    "example": 120000
+                  },
+                  "skills": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["JavaScript", "Node.js", "React"]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/offer/{offerId}": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "int",
+                  "example": 1
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Software Engineer"
+                },
+                "company": {
+                  "type": "string",
+                  "example": "Tech Company"
+                },
+                "location": {
+                  "type": "string",
+                  "example": "New York, NY"
+                },
+                "job_type": {
+                  "type": "string",
+                  "example": "CDI"
+                },
+                "work_type": {
+                  "type": "string",
+                  "example": "On-site"
+                },
+                "about": {
+                  "type": "string",
+                  "example": "We are looking for a skilled software engineer to join our team."
+                },
+                "salary": {
+                  "type": "int",
+                  "example": 120000
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["JavaScript", "Node.js", "React"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "offer with this id not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/offerLike/{offerId}": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "Get userId of users who liked the offer",
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "int",
+                "example": 1
+              }
+            }
+          },
+          "404": {
+            "description": "offer with this id not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/search/{searchText}": {
+      "get": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "Return a list of 0 to 15 offers that match the search text in title, company, location, salary, job_type, work_type, about, requirements or skills,",
+        "parameters": [
+          {
+            "name": "searchText",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Software Engineer"
+                  },
+                  "company": {
+                    "type": "string",
+                    "example": "Tech Company"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "New York, NY"
+                  },
+                  "job_type": {
+                    "type": "string",
+                    "example": "CDI"
+                  },
+                  "work_type": {
+                    "type": "string",
+                    "example": "On-site"
+                  },
+                  "about": {
+                    "type": "string",
+                    "example": "We are looking for a skilled software engineer to join our team."
+                  },
+                  "salary": {
+                    "type": "int",
+                    "example": 120000
+                  },
+                  "skills": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["JavaScript", "Node.js", "React"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/newOfferView/{offerId}": {
+      "post": {
+        "description": "add userId to the list of users who viewed the offer",
+        "tags": [
+          "Offers"
+        ],
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "view added to offer"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "offer with this id not found"
+          },
+          "409": {
+            "description": "User has already viewed this offer"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/createOffer": {
+      "post": {
+        "description": "Create a new offer (admin only)",
+        "tags": [
+          "Offers"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Developer"
+                },
+                "company": {
+                  "type": "string",
+                  "example": "Tech Company"
+                },
+                "location": {
+                  "type": "string",
+                  "example": "New York, NY"
+                },
+                "job_type": {
+                  "type": "string",
+                  "example": "CDI"
+                },
+                "work_type": {
+                  "type": "string",
+                  "example": "On-site"
+                },
+                "about": {
+                  "type": "string",
+                  "example": "We are looking for a skilled developer to join our team."
+                },
+                "salary": {
+                  "type": "integer",
+                  "example": 120000
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["JavaScript", "Node.js", "React"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "offer created successfully with id {offerId}"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
           },
           "401": {
             "description": "Unauthorized"
@@ -89,22 +476,12 @@
         }
       }
     },
-    "/allOffers": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/offer/{offerId}": {
-      "get": {
-        "description": "",
+    "/handleOfferLike/{offerId}": {
+      "put": {
+        "description": "Like or unlike an offer (if the user has already liked the offer, it will be unliked, otherwise it will be liked)",
+        "tags": [
+          "Offers"
+        ],
         "parameters": [
           {
             "name": "offerId",
@@ -115,7 +492,76 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "offer liked or unliked successfully"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "offer with this id not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/updateOffer/{offerId}": {
+      "put": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "update an offer, all fields are required (admin only)",
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "Developer"
+                },
+                "company": {
+                  "example": "Tech Company"
+                },
+                "location": {
+                  "example": "New York, NY"
+                },
+                "job_type": {
+                  "example": "CDI"
+                },
+                "work_type": {
+                  "example": "On-site"
+                },
+                "about": {
+                  "example": "We are looking for a skilled developer to join our team."
+                },
+                "salary": {
+                  "example": 120000
+                },
+                "skills": {
+                  "example": ["JavaScript", "Node.js", "React"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "offer updated successfully"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -126,9 +572,12 @@
         }
       }
     },
-    "/offerLike/{offerId}": {
-      "get": {
-        "description": "",
+    "/deleteOffer/{offerId}": {
+      "delete": {
+        "tags": [
+          "Offers"
+        ],
+        "description": "delete offer (admin only)",
         "parameters": [
           {
             "name": "offerId",
@@ -139,7 +588,13 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "offer deleted successfully"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -151,11 +606,34 @@
       }
     },
     "/userInfo": {
-      "get": {
-        "description": "",
+      "get": {"tags": [
+          "Users"
+        ],
+        "description": "Get user information",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "Martinjose@gmail.com"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Martin"
+                },
+                "first_name": {
+                  "type": "string",
+                  "example": "Jose"
+                },
+                "created_at": {
+                  "type": "string",
+                  "example": "2026-01-01T00:00:00.000Z"
+              }
+            }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -163,7 +641,10 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "update user information (all fields are required, password is required to update user information)",
+         "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "name": "body",
@@ -172,16 +653,20 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Martinjose@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Password123"
                 },
                 "last_name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Martin"
                 },
                 "first_name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Jose"
                 }
               }
             }
@@ -189,10 +674,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "user information updated successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Value is missing or invalid"
           },
           "401": {
             "description": "Unauthorized"
@@ -203,12 +688,53 @@
         }
       }
     },
-    "/offersUserLike": {
+    "/offersUserLikes": {
       "get": {
-        "description": "",
+        "description": "Get offers that user likes",
+         "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema":{
+              "type":"array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "Developer"
+                  },
+                  "company": {
+                    "example": "Tech Company"
+                  },
+                  "location": {
+                    "example": "New York, NY"
+                  },
+                  "job_type": {
+                    "example": "CDI"
+                  },
+                  "work_type": {
+                    "example": "On-site"
+                  },
+                  "about": {
+                    "example": "We are looking for a skilled developer to join our team."
+                  },
+                  "salary": {
+                    "example": 120000
+                  },
+                  "skills": {
+                    "example": ["JavaScript", "Node.js", "React"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "user not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -218,10 +744,51 @@
     },
     "/offersUserViews": {
       "get": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "Get offers that user has viewed",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema":{
+              "type":"array",
+              "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "Developer"
+                },
+                "company": {
+                  "example": "Tech Company"
+                },
+                "location": {
+                  "example": "New York, NY"
+                },
+                "job_type": {
+                  "example": "CDI"
+                },
+                "work_type": {
+                  "example": "On-site"
+                },
+                "about": {
+                  "example": "We are looking for a skilled developer to join our team."
+                },
+                "salary": {
+                  "example": 120000
+                },
+                "skills": {
+                  "example": ["JavaScript", "Node.js", "React"]
+                }
+              }
+              }
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "user not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -231,7 +798,10 @@
     },
     "/userPassword": {
       "put": {
-        "description": "",
+        "description": "update user password (old password is required)",
+         "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "name": "body",
@@ -240,10 +810,12 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Password123"
                 },
                 "newPassword": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "NewPassword123"
                 }
               }
             }
@@ -251,13 +823,16 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "user password updated successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Value is missing or invalid"
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "404": {
+            "description": "user not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -267,7 +842,10 @@
     },
     "/deleteUser": {
       "delete": {
-        "description": "",
+        "description": "delete user account (password is required)",
+         "tags": [
+          "Users"
+         ],
         "parameters": [
           {
             "name": "body",
@@ -276,7 +854,8 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Password123"
                 }
               }
             }
@@ -284,10 +863,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "user account deleted successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Value is missing or invalid"
           },
           "401": {
             "description": "Unauthorized"

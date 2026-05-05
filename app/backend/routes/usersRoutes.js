@@ -14,7 +14,7 @@ const usersRoutes = express.Router();
 
 
 usersRoutes.get("/userInfo", middleware, getUserInfo);
-usersRoutes.get("/offersUserLike", middleware, getOffersUserLikes);
+usersRoutes.get("/offersUserLikes", middleware, getOffersUserLikes);
 usersRoutes.get("/offersUserViews", middleware, getOffersUserViews);
 
 usersRoutes.put("/userInfo", middleware, updateUserInfo);
