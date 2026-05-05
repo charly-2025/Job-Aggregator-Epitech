@@ -1,7 +1,7 @@
 import express from "express";
 import middleware from "../middleware/middleware.js"
 
-import { createOffer, getAllOffers,getOffer,getOfferLike, handleOfferLike, newOfferView, searchOffers } from "../controllers/offersController.js";
+import { createOffer, getAllOffers,getOffer,getOfferLike, handleOfferLike, newOfferView, searchOffers, updateOffer } from "../controllers/offersController.js";
 
 const offersRoutes = express.Router()
 
@@ -14,5 +14,6 @@ offersRoutes.post("/newOfferView/:offerId",middleware,newOfferView)
 offersRoutes.post("/createOffer",middleware,createOffer)
 
 offersRoutes.put("/handleOfferLike/:offerId",middleware,handleOfferLike)
+offersRoutes.put("/updateOffer/:offerId",middleware,updateOffer)
 
 export default offersRoutes;
