@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "My API",
+    "title": "Job Aggregator Project API",
     "version": "1.0.0",
-    "description": "Job aggregator api'"
+    "description": "Here you can find all the details about the routes that make up the API for our job aggregator project"
   },
   "host": "localhost:3000",
   "basePath": "/",
