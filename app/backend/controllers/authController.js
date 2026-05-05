@@ -15,7 +15,7 @@ export const Register = async (req,res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
         
         const [result] = await db.query("INSERT INTO users (email,password_hash,last_name,first_name) VALUES (?,?,?,?)",[email,hashedPassword,last_name,first_name]);
-        const token = jwt.sign({id:result.insertId},process.env.JWT_SECRET,{expiresIn:"360h"});
+        const token = jwt.sign({id:result.insertId,},process.env.JWT_SECRET,{expiresIn:"360h"});
         res.status(200).json({token});
     } catch (err) {
         res.status(500).json({ message: err.message });

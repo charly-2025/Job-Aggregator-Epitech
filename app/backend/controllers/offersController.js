@@ -189,3 +189,26 @@ export const updateOffer = async (req,res) =>{
         res.status(500).json({ message: err.message });
     }
 }
+
+
+export const deleteOffer = async (req,res) => {
+    try {
+         const userRole = req.user.role
+        if (!userRole || userRole != "admin") return res.status(401).json({message: 'unauthorized'});
+
+        const offerId = req.params.offerId
+        if (!offerId) return res.status(400).json({ message:'bad parameter'});
+
+        const [offer] = await db.query("SELECT * FROM job_offers WHERE offer_id = ?",[offerId])
+        if (offer.length === 0) return res.status(404).json({message:"offer not found"})
+
+        await db.query("DELETE FROM job_offers WHERE offer_id = ?",[offerId])
+        await db.query("DELETE jos FROM job_offer_skills jos JOIN job_offers o ON o.offer_id = jos.offer_id WHERE o.offer_id = ?",[offerId])
+        await db.query("DELETE job_likes FROM job_likes JOIN job_offers o ON o.offer_id = job_likes.offer_id WHERE o.offer_id =?",[offerId])
+        await db.query("DELETE job_views FROM job_views JOIN job_offers o ON o.offer_id = job_views.offer_id WHERE o.offer_id =?",[offerId])
+
+        res.status(200).json({message:"offer delete successfully"})
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
