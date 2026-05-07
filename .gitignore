@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 .github/workflows/data_normalize.yml
 node_modules/
+wld_output.json
+clean_output.json
