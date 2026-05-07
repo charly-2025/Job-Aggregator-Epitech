@@ -1,9 +1,17 @@
 import json
 import requests
 import time
+from dotenv import load_dotenv
+from pathlib import Path
+import os
+
+parent_path = Path(__file__).parent.parent
+
+load_dotenv()
+WLD_API_KEY = os.getenv("WLD_API_KEY")
+
 
 WLD_URL= "https://epi-api.welovedevs.com/v1"
-WLD_API_KEY = "***REMOVED***"
 WLD_HEADERS = {
     'X-API-Key': WLD_API_KEY,
     'Content-Type': 'application/json',
@@ -31,7 +39,10 @@ def wld_fetch_all_pages(url,headers,params):
         data = make_get_request(url,headers,params).get("values", [])
         
         if not data:
-            print(f"We get page {params["page"]} content")
+            if  all_data :
+                print(f"We get page {params["page"]} content")
+            else :
+                print("No content found")
             break
             
         all_data.extend(data)
@@ -46,5 +57,4 @@ def wld_fetch_all_pages(url,headers,params):
 if __name__ == "__main__" :
     data = wld_fetch_all_pages(WLD_URL,WLD_HEADERS,WLD_PARAMS)
     save_in_json("wld_output.json",{"content":data})
-
 
