@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS job_offers (
     requirements TEXT,
     salary FLOAT,
     source_url TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_offer (title(255), company(255), published_at)
 
 );
@@ -37,6 +37,15 @@ CREATE TABLE IF NOT EXISTS job_offers (
 CREATE TABLE IF NOT EXISTS skills (
     skill_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- USER SKILLS
+CREATE TABLE IF NOT EXISTS user_skills (
+    user_id INT,
+    skill_id INT,
+    PRIMARY KEY (user_id, skill_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id) ON DELETE CASCADE
 );
 
 -- JOB OFFER SKILLS
