@@ -17,7 +17,6 @@ def load_data_from_json(name:str):
 
 list_offers = load_data_from_json("wld_output.json").get("content",[])
 
-
 def cleaning_offers(offers:list) -> list:
     clean_list_offers = []
     for offer in offers :
