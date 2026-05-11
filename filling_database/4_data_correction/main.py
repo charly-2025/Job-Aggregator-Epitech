@@ -1,5 +1,4 @@
-from importlib.resources.readers import remove_duplicates
-
+import re
 import mysql.connector
 import os
 from dotenv import load_dotenv
@@ -18,6 +17,12 @@ conn = mysql.connector.connect(
     password = mysql_password,
     database = "jobagg"
 )
+
+def remove_html_tags(text):
+    if not text:
+        return ""
+    clean = re.compile(r'<.*?>')
+    return re.sub(clean, '', text)
 
 
 def clean_duplicate_offer(conn):
@@ -45,10 +50,51 @@ def clean_duplicate_offer(conn):
 
     except Exception as e:
         conn.rollback()
-        print("Erreur :", e)
+        print("Error :", e)
 
     finally:
         cursor.close()
 
-    
+def clean_text(text):
+    # main function that will call all the other functions responsible for cleaning up the text
+    if not text:
+        return ""
+     
+    text = remove_html_tags(text)
+    return text
+
+def clean_offer_description(conn):
+    # function that will clean each line
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT offer_id,title,company,location,about,requirements FROM job_offers;")
+        rows = cursor.fetchall()
+
+        if not rows : 
+            print("Table is empty")
+        else : 
+            for row in rows :
+                offer_id = row[0]
+                title = clean_text(row[1])
+                company = clean_text(row[2])
+                location = clean_text(row[3])
+                about = clean_text(row[4])
+                requirements = clean_text(row[5])
+
+                cursor.execute("UPDATE job_offers SET title=%s,company=%s,location=%s,about=%s,requirements=%s WHERE offer_id=%s",(title,company,location,about,requirements,offer_id,))
+
+            conn.commit()
+            print("cleaned offers")
+
+    except Exception as e:
+        conn.rollback()
+        print("Error :", e)
+
+    finally:
+        cursor.close()
+
+
+
 clean_duplicate_offer(conn)
+clean_offer_description(conn)
