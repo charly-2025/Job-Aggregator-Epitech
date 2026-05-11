@@ -27,7 +27,7 @@ app.use(cors({
 app.use(cookieParser()); 
 
 app.listen(port,() => {
-    console.log(`Server is runnong on port ${port}`)
+    console.log(`Server is running on port ${port}`)
 })
 
 app.get("/",(req,res) =>{
