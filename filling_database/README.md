@@ -14,7 +14,7 @@ Automatic pipeline to collect, clean, and store job offers from multiple sources
 
 ## Configuration
 
-Create a `.env` file at the root of the project with the following variables:
+Create a `.env` file in **this folder**  with the following variables:
 
 ```env
 MYSQL_PASSWORD=your_password
@@ -28,12 +28,13 @@ This file is used to connect the pipeline to your MySQL database.
 
 ```
 job-aggregator/
-|-- data_scrapping/       # Fetch job offers from external sources
-|-- data_cleaning/        # Clean and normalize raw data
-|-- data_storage/         # Insert processed data into the database
-|-- data_correction/      # Fix and optimize stored data
-|-- run_pipeline.py       # Full pipeline runner
-|-- .env                  # Environment configuration (not committed)
+|--/filling_database/
+    |-- 1_data_scrapping/       # Fetch job offers from external sources
+    |-- 2_data_cleaning/        # Clean and normalize raw data
+    |-- 3_data_storage/         # Insert processed data into the database
+    |-- 4_data_correction/      # Fix and optimize stored data
+    |-- run_pipeline.py       # Full pipeline runner
+    |-- .env                  # Environment configuration (not committed)
 ```
 
 ---
