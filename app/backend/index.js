@@ -32,6 +32,8 @@ app.listen(port,() => {
 app.get("/",(req,res) =>{
     res.send("Hello from Node Api server")
 })
+const recommendationRoutes = require('./routes/recommendationRoutes');
+app.use('/api', recommendationRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
