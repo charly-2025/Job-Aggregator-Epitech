@@ -9,7 +9,10 @@ export const getUserInfo = async (req,res) => {
         const [userInfo] = await db.query("SELECT email,first_name,last_name,created_at FROM users WHERE user_id = ?",[userId])
         if (userInfo.length === 0) return res.status(404).json({message:"user not found"})
 
-        res.status(200).json(userInfo[0])
+        const [userSkill] = await db.query("SELECT s.name FROM skills s JOIN user_skills us ON us.skill_id = s.skill_id WHERE us.user_id = ?",[userId])
+        const cleanUserSkill = userSkill.map(skill => skill?.name )
+
+        res.status(200).json({...userInfo[0],skills:cleanUserSkill})
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -75,8 +78,8 @@ export const getOffersUserViews = async (req,res) => {
 export const updateUserInfo = async (req,res) => {
     try {
         const userId = req.user.id
-        const {email, password, last_name, first_name } = req.body;
-        if(!userId || !email || !password || !last_name || !first_name) return res.status(400).json({message:"bad parameter"});
+        const {email, password, last_name, first_name, skills } = req.body;
+        if(!userId || !email || !password || !last_name || !first_name || !skills) return res.status(400).json({message:"bad parameter"});
 
         let [user] = await db.query("SELECT * FROM users WHERE user_id = ?",[userId]);
         if (user.length <= 0) return res.status(404).json({message:"user not found"});
@@ -86,8 +89,23 @@ export const updateUserInfo = async (req,res) => {
         if(!same) return res.status(401).json({message:"Invalid Credentials"});
 
         await db.query("UPDATE users SET email=?,last_name=?,first_name=? WHERE user_id = ?",[email,last_name,first_name,userId])
+        
+        await db.query("DELETE us FROM user_skills us JOIN users u ON u.user_id = us.user_id WHERE u.user_id = ?",[userId])
+                
+        skills.forEach( async skill =>{
+            const [searchSkill] = await db.query("SELECT * FROM skills WHERE REPLACE(LOWER(name),' ','') = ?",[skill.toLowerCase().replace(/\s/g, '')]) // we search if skill is already in skills table
+            if (searchSkill.length === 0) {
+                // if not in skills table we insert it
+                const [insertSkill] = await db.query("INSERT INTO skills (name) VALUES (?)",[skill])
+                await db.query("INSERT INTO user_skills (user_id,skill_id) VALUES (?,?)",[userId,insertSkill.insertId])
+            } else {
+                // else we just get id in skills tables and we make link with job_offer_skills tables
+                await db.query("INSERT INTO user_skills (user_id,skill_id) VALUES (?,?)",[userId,searchSkill[0].skill_id])
+            }
+        })
+        
+        
         res.status(200).json({ message: "user info update" })
-
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -130,6 +148,8 @@ export const deleteUser = async (req,res) => {
         if(!same) return res.status(401).json({message:"Invalid Credentials"});
 
         await db.query("DELETE FROM users WHERE user_id = ?",[userId])
+        await db.query("DELETE us FROM user_skills us JOIN users u ON u.user_id = us.user_id WHERE u.user_id = ?",[userId])
+
         res.status(200).json({ message: "user delete" })
     } catch (err) {
         res.status(500).json({ message: err.message });
