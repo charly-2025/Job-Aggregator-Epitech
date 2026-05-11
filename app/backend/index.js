@@ -12,7 +12,7 @@ const swaggerFile = require('./config/swagger.json');
 import usersRoutes from "./routes/usersRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
 import offersRoutes from "./routes/offersRoutes.js"
-import recommendationRoutes from "./routes/recommendationRoutes"
+import recommendationRoutes from "./routes/recommendationRoutes.js"
 
 config({ path: '.env' ,quiet:true});   
 const port = process.env.PORT
