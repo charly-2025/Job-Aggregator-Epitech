@@ -12,6 +12,7 @@ const swaggerFile = require('./config/swagger.json');
 import usersRoutes from "./routes/usersRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
 import offersRoutes from "./routes/offersRoutes.js"
+import recommendationRoutes from "./routes/recommendationRoutes.js"
 
 config({ path: '.env' ,quiet:true});   
 const port = process.env.PORT
@@ -26,17 +27,16 @@ app.use(cors({
 app.use(cookieParser()); 
 
 app.listen(port,() => {
-    console.log(`Server is runnong on port ${port}`)
+    console.log(`Server is running on port ${port}`)
 })
 
 app.get("/",(req,res) =>{
     res.send("Hello from Node Api server")
 })
-const recommendationRoutes = require('./routes/recommendationRoutes');
-app.use('/api', recommendationRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use('/api/users',usersRoutes);
 app.use('/api/auth',authRoutes)
 app.use('/api/offers',offersRoutes)
+app.use('/api', recommendationRoutes);
