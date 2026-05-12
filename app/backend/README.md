@@ -4,7 +4,7 @@ The backend of the job aggregator project contains all the routes necessary for 
 
 ---
 
-##  Requirements
+## Requirements
 
 - NodeJS 22.20.0+
 - Npm 11.13+
@@ -23,7 +23,7 @@ Create a `.env` file in **this folder** of the project with the following variab
 ```env
 
 JWT_SECRET=your_secret_jwt_key
-MYSQL_PASSWORD=your_password
+MYSQL_ROOT_PASSWORD=your_password
 PORT=backend_port
 
 ```
@@ -58,10 +58,10 @@ npm start
 ```
 
 To start the backend in dev mode :
+
 ```bash
 npm run dev
 ```
-
 
 If the launch goes well, you'll see:
 
