@@ -36,7 +36,7 @@ jobs:
           nohup node index.js > backend.log 2>&1 &
 
       - name: start frontend
-        working-directory: ./app/frontend/jobaggregator
+        working-directory: ./app/frontend
         run: |
           nohup npm start > frontend.log 2>&1 &
 
@@ -48,7 +48,7 @@ jobs:
         run: sleep 20
 
       - name: Run ESLint
-        run: npx eslint app/frontend/jobaggregator/src app/backend --max-warnings=0
+        run: npx eslint app/frontend/src app/backend --max-warnings=0
 
       - name: Run Prettier check
         run: npx prettier --check .
