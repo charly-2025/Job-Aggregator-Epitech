@@ -119,7 +119,7 @@ export async function searchOffers(req, res) {
         FROM job_offers offer
         LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
         LEFT JOIN skills ON skills.skill_id = jos.skill_id
-        WHERE offer.title LIKE ? OR offer.company LIKE ? OR offer.location LIKE ?
+        WHERE offer.title LIKE ? OR offer.location LIKE ?
             OR offer.job_type LIKE ? OR offer.work_type LIKE ? OR offer.about LIKE ? OR offer.salary LIKE ?
             OR offer.requirements LIKE ? OR skills.name LIKE ?
         GROUP BY offer.offer_id
@@ -137,10 +137,10 @@ export const createOffer = async (req,res) => {
         const userRole = req.user.role
         if (!userRole || userRole != "admin") return res.status(401).json({message: 'unauthorized'});
 
-        const {title,company,location,job_type,work_type,about,requirements,salary,skills} = req.body
-        if (!title || !company || !location || !job_type || !work_type || !about || !requirements || !salary || !skills) return res.status(400).json({ message:'bad parameter'});
+        const {title,companyId,location,job_type,work_type,about,requirements,salary,skills} = req.body
+        if (!title || !companyId || !location || !job_type || !work_type || !about || !requirements || !salary || !skills) return res.status(400).json({ message:'bad parameter'});
 
-        const [result] = await db.query("INSERT INTO job_offers (title,company,location,job_type,work_type,about,requirements,salary) VALUES (?,?,?,?,?,?,?,?)",[title,company,location,job_type,work_type,about,requirements,salary])
+        const [result] = await db.query("INSERT INTO job_offers (title,company_id,location,job_type,work_type,about,requirements,salary) VALUES (?,?,?,?,?,?,?,?)",[title,companyId,location,job_type,work_type,about,requirements,salary])
         const insertId = result.insertId
 
         skills.forEach( async skill =>{
@@ -171,10 +171,10 @@ export const updateOffer = async (req,res) =>{
         const [offer] = await db.query("SELECT * FROM job_offers WHERE offer_id = ?",[offerId])
         if (offer.length === 0) return res.status(404).json({message:"offer not found"})
 
-        const {title,company,location,job_type,work_type,about,requirements,salary,skills} = req.body
-        if (!title || !company || !location || !job_type || !work_type || !about || !requirements || !salary || !skills) return res.status(400).json({ message:'bad parameter'});
+        const {title,companyId,location,job_type,work_type,about,requirements,salary,skills} = req.body
+        if (!title || !companyId || !location || !job_type || !work_type || !about || !requirements || !salary || !skills) return res.status(400).json({ message:'bad parameter'});
 
-        await db.query("UPDATE job_offers SET title=?,company=?,location=?,job_type=?,work_type=?,about=?,requirements=?,salary=? WHERE offer_id = ?",[title,company,location,job_type,work_type,about,requirements,salary,offerId])
+        await db.query("UPDATE job_offers SET title=?,company_id=?,location=?,job_type=?,work_type=?,about=?,requirements=?,salary=? WHERE offer_id = ?",[title,companyId,location,job_type,work_type,about,requirements,salary,offerId])
 
         await db.query("DELETE jos FROM job_offer_skills jos JOIN job_offers o ON o.offer_id = jos.offer_id WHERE o.offer_id = ?",[offerId])
         
