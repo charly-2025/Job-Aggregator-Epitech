@@ -5,6 +5,8 @@ services:
       - "3000:3000"
     env_file:
       - ./backend/.env
+    depends_on:
+      - mysql
     develop:
       watch:
         - action: sync
@@ -18,19 +20,31 @@ services:
           path: ./backend/package-lock.json
 
   frontend:
-    build: ./frontend/jobaggregator
+    build: ./frontend
     ports:
-      - "3001:3001"
+      - "3001:3000"
     depends_on:
       - backend
     develop:
       watch:
         - action: sync
-          path: ./frontend/jobaggregator
+          path: ./frontend
           target: /app
           ignore:
             - node_modules/
         - action: rebuild
-          path: ./frontend/jobaggregator/package.json
+          path: ./frontend/package.json
         - action: rebuild
-          path: ./frontend/jobaggregator/package-lock.json
+          path: ./frontend/package-lock.json
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jobagg
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
