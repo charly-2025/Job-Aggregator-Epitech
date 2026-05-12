@@ -4,11 +4,16 @@
   box-sizing: border-box;
 }
 
-body, html {
+body,
+html {
   height: 100%;
 }
 
 /* PAGE SPLIT */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
 .page-container {
   display: flex;
   height: 100vh;
@@ -32,7 +37,12 @@ body, html {
   background: linear-gradient(135deg, #f472b6, #a855f7);
 }
 
+<<<<<<< HEAD
 /* LOGIN */
+=======
+/*LOGIN */
+
+>>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
 .login-container {
   display: flex;
   flex-direction: column;
@@ -79,14 +89,27 @@ body, html {
   opacity: 0.9;
 }
 
+<<<<<<< HEAD
 /* TEXT */
 .Text {
+=======
+<<<<<<< HEAD
+/* TEXT */
+=======
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+>>>>>>>59567eeb3837a0a663814ab13030c51c77507a17 .Text {
+>>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
   color: white;
   font-size: 2rem;
   font-weight: bold;
 }
 
 .Subtext {
+<<<<<<< HEAD
   color: #888;
   font-size: 0.95rem;
 }
@@ -105,3 +128,8 @@ body, html {
   width: 250px;
   z-index: 10;
 }
+=======
+  color: grey;
+  size: 70%;
+}
+>>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
