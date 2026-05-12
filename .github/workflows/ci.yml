@@ -60,11 +60,11 @@ jobs:
       - name: Wait
         run: sleep 20
 
-      - name: Run ESLint
-        run: npx eslint app/frontend/src app/backend --max-warnings=0
-
       - name: Run Prettier check
         run: npx prettier --check .
+
+      - name: Run ESLint
+        run: npx eslint app/frontend/src app/backend --max-warnings=0
 
       - name: Stop docker
         if: always()
