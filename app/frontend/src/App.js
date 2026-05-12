@@ -12,18 +12,11 @@ function App() {
 
   return (
     <div className="page-container">
-<<<<<<< HEAD
       <img src="/logo.png" alt="logo" className="logo" />
 
       <div className="left-side">
         <div className="login-container">
           <div className="Text">Welcome back</div>
-=======
-      <div className="left-side">
-        <div className="login-container">
-          <div className="Text">Welcome back</div>
-          <i></i>
->>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
           <div className="Subtext">login into your account to continue</div>
           <form onSubmit={handleSubmit}>
             <input
@@ -39,10 +32,6 @@ function App() {
               placeholder="Password"
             />
             <div className="Subtext">forgot your password ?</div>
-<<<<<<< HEAD
-=======
-            <i></i>
->>>>>>> 6f9ccfcc9598ac80529ef43d0adf9a8f81b98ef0
             <button type="submit">Sign in</button>
           </form>
           <div className="Text2">Dont have an account ? Sign up</div>
