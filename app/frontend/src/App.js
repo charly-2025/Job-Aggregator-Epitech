@@ -31,6 +31,7 @@ function App() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
             />
+            <div className="Subtext">forgot your password ?</div><i></i>
             <button type="submit">Sign in</button>
           </form>
         </div>

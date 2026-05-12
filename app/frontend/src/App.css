@@ -9,6 +9,9 @@ body, html {
 }
 
 /* PAGE SPLIT */
+
+
+
 .page-container {
   display: flex;
   height: 100vh;
@@ -80,6 +83,11 @@ body, html {
   opacity: 0.9;
 }
 
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
  /* TEXT */
 
