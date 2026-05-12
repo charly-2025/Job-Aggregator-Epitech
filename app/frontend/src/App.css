@@ -10,6 +10,7 @@ html {
 }
 
 /* PAGE SPLIT */
+
 .page-container {
   display: flex;
   height: 100vh;
@@ -79,9 +80,15 @@ html {
   opacity: 0.9;
 }
 
+<<<<<<< HEAD
 /* TEXT */
-
-.Text {
+=======
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+>>>>>>>59567eeb3837a0a663814ab13030c51c77507a17 .Text {
   color: white;
   font-size: 300%;
 }
