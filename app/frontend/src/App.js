@@ -12,12 +12,11 @@ function App() {
 
   return (
     <div className="page-container">
-
-
       <div className="left-side">
         <div className="login-container">
-        <div className="Text">Welcome back</div><i></i>
-        <div className="Subtext">login into your account to continue</div>
+          <div className="Text">Welcome back</div>
+          <i></i>
+          <div className="Subtext">login into your account to continue</div>
           <form onSubmit={handleSubmit}>
             <input
               type="email"
@@ -36,9 +35,7 @@ function App() {
         </div>
       </div>
 
-
       <div className="right-side"></div>
-
     </div>
   );
 }
