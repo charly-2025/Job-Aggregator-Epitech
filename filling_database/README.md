@@ -14,7 +14,7 @@ Automatic pipeline to collect, clean, and store job offers from multiple sources
 
 ## Configuration
 
-Create a `.env` file in **this folder**  with the following variables:
+Create a `.env` file in **this folder** with the following variables:
 
 ```env
 MYSQL_PASSWORD=your_password

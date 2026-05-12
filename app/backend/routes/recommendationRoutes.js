@@ -1,7 +1,5 @@
 import express from "express";
 
-const recommendationRoutes = express.Router() 
+const recommendationRoutes = express.Router();
 
-
-
-export default recommendationRoutes
+export default recommendationRoutes;

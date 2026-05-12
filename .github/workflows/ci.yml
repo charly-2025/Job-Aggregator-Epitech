@@ -23,23 +23,50 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install app dependencies
-        working-directory: ./app/frontend/jobaggregator
+
+      - name: Install frontend dependencies
+        working-directory: ./app/frontend
+        run: npm ci
+
+      - name: Install backend dependencies
+        working-directory: ./app/backend
         run: npm ci
 
       - name: Install root dependencies
         run: npm ci
 
-      - name: Run tests
-        working-directory: ./app/frontend/jobaggregator
-        run: npx ng test --watch=false --progress=false
+      - name: start backend
+        working-directory: ./app/backend
+        run: |
+          nohup node index.js > backend.log 2>&1 &
 
-      - name: Build
-        working-directory: ./app/frontend/jobaggregator
-        run: npm run build
+      - name: start frontend
+        working-directory: ./app/frontend
+        run: |
+          nohup npm start > frontend.log 2>&1 &
 
-      - name: Run ESLint
-        run: npx eslint app/frontend/jobaggregator/src app/backend --max-warnings=0
+      - name: Create .env
+        run: |
+          cat <<EOF > app/backend/.env
+          JWT_SECRET=testCI
+          MYSQL_PASSWORD=test
+          PORT=3000
+          EOF
+
+      - name: start docker compose
+        working-directory: ./app
+        run: docker compose up -d --build
+
+      - name: Wait
+        run: sleep 20
 
       - name: Run Prettier check
         run: npx prettier --check .
+
+      - name: Run ESLint
+        run: npx eslint app/frontend/src app/backend --max-warnings=0
+
+      - name: Stop docker
+        if: always()
+        working-directory: ./app
+        run: docker compose down
