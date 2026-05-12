@@ -7,9 +7,7 @@
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "tags": [
     {
       "name": "Auth",
@@ -27,9 +25,7 @@
   "paths": {
     "/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Register User and get a access token",
         "parameters": [
           {
@@ -39,19 +35,19 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Martinjose@gmail.com"
                 },
                 "password": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Password123"
                 },
                 "last_name": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Martin"
                 },
                 "first_name": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Jose"
                 }
               }
@@ -85,9 +81,7 @@
     },
     "/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Login User and get a access token",
         "parameters": [
           {
@@ -97,11 +91,11 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Martinjose@gmail.com"
                 },
                 "password": {
-                  "type":"string",
+                  "type": "string",
                   "example": "Password123"
                 }
               }
@@ -135,9 +129,7 @@
     },
     "/allOffers": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "Get a list of all offers",
         "responses": {
           "200": {
@@ -198,9 +190,7 @@
     },
     "/offer/{offerId}": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "",
         "parameters": [
           {
@@ -269,9 +259,7 @@
     },
     "/offerLike/{offerId}": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "Get userId of users who liked the offer",
         "parameters": [
           {
@@ -303,9 +291,7 @@
     },
     "/search/{searchText}": {
       "get": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "Return a list of 0 to 15 offers that match the search text in title, company, location, salary, job_type, work_type, about, requirements or skills,",
         "parameters": [
           {
@@ -378,9 +364,7 @@
     "/newOfferView/{offerId}": {
       "post": {
         "description": "add userId to the list of users who viewed the offer",
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "parameters": [
           {
             "name": "offerId",
@@ -411,9 +395,7 @@
     "/createOffer": {
       "post": {
         "description": "Create a new offer (admin only)",
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "parameters": [
           {
             "name": "body",
@@ -479,9 +461,7 @@
     "/handleOfferLike/{offerId}": {
       "put": {
         "description": "Like or unlike an offer (if the user has already liked the offer, it will be unliked, otherwise it will be liked)",
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "parameters": [
           {
             "name": "offerId",
@@ -508,9 +488,7 @@
     },
     "/updateOffer/{offerId}": {
       "put": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "update an offer, all fields are required (admin only)",
         "parameters": [
           {
@@ -574,9 +552,7 @@
     },
     "/deleteOffer/{offerId}": {
       "delete": {
-        "tags": [
-          "Offers"
-        ],
+        "tags": ["Offers"],
         "description": "delete offer (admin only)",
         "parameters": [
           {
@@ -607,9 +583,7 @@
     },
     "/userInfo": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "Get user information",
         "responses": {
           "200": {
@@ -632,7 +606,8 @@
                 "created_at": {
                   "type": "string",
                   "example": "2026-01-01T00:00:00.000Z"
-                },"skills":{
+                },
+                "skills": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -652,9 +627,7 @@
       },
       "put": {
         "description": "update user information (all fields are required, password is required to update user information)",
-         "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "name": "body",
@@ -678,9 +651,9 @@
                   "type": "string",
                   "example": "Jose"
                 },
-                "skills":{
-                  "type":"array",
-                  "example":["JavaScript","Node.js","React"]
+                "skills": {
+                  "type": "array",
+                  "example": ["JavaScript", "Node.js", "React"]
                 }
               }
             }
@@ -708,14 +681,12 @@
     "/offersUserLikes": {
       "get": {
         "description": "Get offers that user likes",
-         "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "responses": {
           "200": {
             "description": "OK",
-            "schema":{
-              "type":"array",
+            "schema": {
+              "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
@@ -761,43 +732,41 @@
     },
     "/offersUserViews": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "Get offers that user has viewed",
         "responses": {
           "200": {
             "description": "OK",
-            "schema":{
-              "type":"array",
+            "schema": {
+              "type": "array",
               "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "Developer"
-                },
-                "company": {
-                  "example": "Tech Company"
-                },
-                "location": {
-                  "example": "New York, NY"
-                },
-                "job_type": {
-                  "example": "CDI"
-                },
-                "work_type": {
-                  "example": "On-site"
-                },
-                "about": {
-                  "example": "We are looking for a skilled developer to join our team."
-                },
-                "salary": {
-                  "example": 120000
-                },
-                "skills": {
-                  "example": ["JavaScript", "Node.js", "React"]
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "Developer"
+                  },
+                  "company": {
+                    "example": "Tech Company"
+                  },
+                  "location": {
+                    "example": "New York, NY"
+                  },
+                  "job_type": {
+                    "example": "CDI"
+                  },
+                  "work_type": {
+                    "example": "On-site"
+                  },
+                  "about": {
+                    "example": "We are looking for a skilled developer to join our team."
+                  },
+                  "salary": {
+                    "example": 120000
+                  },
+                  "skills": {
+                    "example": ["JavaScript", "Node.js", "React"]
+                  }
                 }
-              }
               }
             }
           },
@@ -816,9 +785,7 @@
     "/userPassword": {
       "put": {
         "description": "update user password (old password is required)",
-         "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "name": "body",
@@ -860,9 +827,7 @@
     "/deleteUser": {
       "delete": {
         "description": "delete user account (password is required)",
-         "tags": [
-          "Users"
-         ],
+        "tags": ["Users"],
         "parameters": [
           {
             "name": "body",

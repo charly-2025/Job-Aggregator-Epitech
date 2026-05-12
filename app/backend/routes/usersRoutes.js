@@ -7,11 +7,10 @@ import {
   getOffersUserViews,
   updateUserInfo,
   updateUserPassword,
-  deleteUser
+  deleteUser,
 } from "../controllers/usersController.js";
 
 const usersRoutes = express.Router();
-
 
 usersRoutes.get("/userInfo", middleware, getUserInfo);
 usersRoutes.get("/offersUserLikes", middleware, getOffersUserLikes);
