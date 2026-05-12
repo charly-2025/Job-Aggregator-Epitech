@@ -49,8 +49,8 @@ jobs:
         run: |
           cat <<EOF > app/backend/.env
           JWT_SECRET=testCI
-          PORT=3000
           MYSQL_PASSWORD=test
+          PORT=3000
           EOF
 
       - name: start docker compose
