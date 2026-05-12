@@ -37,6 +37,11 @@ export const Login = async (req,res)=>{
         if(!same) return res.status(401).json({msg:"Invalid Credentials"});
 
         const token = jwt.sign({id:user.user_id,role:user.role},process.env.JWT_SECRET,{expiresIn:"360h"});
+        res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 360 * 60 * 60 * 1000
+        });
         res.status(200).json({token});
     } catch (err) {
         res.status(500).json({ message: err.message });

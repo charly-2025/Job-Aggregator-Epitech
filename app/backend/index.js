@@ -39,4 +39,4 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use('/api/users',usersRoutes);
 app.use('/api/auth',authRoutes)
 app.use('/api/offers',offersRoutes)
-app.use('/api', recommendationRoutes);
+app.use('/api/recommendations', recommendationRoutes);
