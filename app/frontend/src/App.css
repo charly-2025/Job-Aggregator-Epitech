@@ -79,3 +79,16 @@ body, html {
 .login-container button:hover {
   opacity: 0.9;
 }
+
+
+ /* TEXT */
+
+ .Text {
+  color: white;
+  font-size: 300%;
+}
+
+.Subtext {
+  color: grey;
+  size: 70%;
+}
