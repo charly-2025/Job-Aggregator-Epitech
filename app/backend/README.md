@@ -11,6 +11,9 @@ The backend of the job aggregator project contains all the routes necessary for 
 - Espress 5.2.1+
 - Install required dependencies ( see `package.json`)
 
+Also :
+Create database with sql files in database folder and retrieve data for the database using the pipeline in the filling_database folder
+
 ---
 
 ## Configuration
@@ -69,3 +72,7 @@ If the launch goes well, you'll see:
 Server is runnong on port 3000
 MySQL pool connected successfully
 ```
+
+## Routes Desription
+
+Find descriptions of all routes at /api-docs/
