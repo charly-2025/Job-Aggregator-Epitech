@@ -43,7 +43,7 @@ for offer in clean_data.get("content", []):
 
 # Get unqiue of offers in db
 
-cursor.execute("SELECT offer_id, title, company, published_at FROM job_offers")
+cursor.execute("SELECT offer_id, title, company_id, published_at FROM job_offers")
 db_offers = cursor.fetchall()
 
 
@@ -61,20 +61,27 @@ for offer in db_offers:
 
 for offer in clean_data.get("content", []):
 
-    cursor.execute("SELECT offer_id FROM job_offers WHERE title = %s AND company = %s AND published_at = %s",(offer.get("title"),offer.get("company"),offer.get("published_at")))
+    cursor.execute("SELECT offer_id FROM job_offers jo JOIN companies c ON jo.company_id = c.company_id WHERE jo.title = %s AND c.name = %s AND jo.published_at = %s",(offer.get("title"),offer.get("company"),offer.get("published_at")))
 
     existing = cursor.fetchone()
 
     if existing:
         continue
 
+    
+    cursor.execute("INSERT IGNORE INTO companies (name) VALUES (%s)",(offer.get("company"),))
+
+    cursor.execute("SELECT company_id FROM companies WHERE name = %s",(offer.get("company"),))
+    
+    company_id = cursor.fetchone()[0]
+
     cursor.execute("""
         INSERT IGNORE INTO job_offers 
-        (title, company, location, job_type, work_type, published_at, about, requirements, salary)
+        (title, company_id, location, job_type, work_type, published_at, about, requirements, salary)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
         offer.get("title"),
-        offer.get("company"),
+        company_id,
         offer.get("location"),
         offer.get("job_type"),
         offer.get("work_type"),

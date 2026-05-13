@@ -43,6 +43,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: jobagg
+      MYSQL_HOST: mysql
     volumes:
       - mysql_data:/var/lib/mysql
 

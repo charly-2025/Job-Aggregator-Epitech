@@ -20,7 +20,13 @@
     {
       "name": "Users",
       "description": "/api/users"
-    }
+    },{
+      "name":"Recommendations",
+      "description": "/api/recommendations"
+    },
+    {"name":"Companies",
+    "description": "/api/companies"
+  }
   ],
   "paths": {
     "/register": {
@@ -147,7 +153,12 @@
                     "type": "string",
                     "example": "Software Engineer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                    
+                  },
+                  "company_name": {
                     "type": "string",
                     "example": "Tech Company"
                   },
@@ -214,7 +225,11 @@
                   "type": "string",
                   "example": "Software Engineer"
                 },
-                "company": {
+                "company_id": {
+                    "type": "int",
+                    "example": 1
+                },
+                "company_name": {
                   "type": "string",
                   "example": "Tech Company"
                 },
@@ -317,7 +332,11 @@
                     "type": "string",
                     "example": "Software Engineer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "type": "string",
                     "example": "Tech Company"
                   },
@@ -407,7 +426,7 @@
                   "type": "string",
                   "example": "Developer"
                 },
-                "company": {
+                "company_name": {
                   "type": "string",
                   "example": "Tech Company"
                 },
@@ -506,7 +525,7 @@
                 "title": {
                   "example": "Developer"
                 },
-                "company": {
+                "company_name": {
                   "example": "Tech Company"
                 },
                 "location": {
@@ -574,6 +593,267 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/similar/{offerId}": {
+      "get": {
+        "tags": ["Recommendations"],
+        "description": "Get offers similar to a given offer",
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "top_k",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Number of similar offers to return (max 20)",
+            "example": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "offer_id": { "type": "integer", "example": 1 },
+                  "title": { "type": "string", "example": "Software Engineer" },
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": { "type": "string", "example": "Tech Company" },
+                  "location": { "type": "string", "example": "New York, NY" },
+                  "job_type": { "type": "string", "example": "CDI" },
+                  "work_type": { "type": "string", "example": "On-site" },
+                  "about": { "type": "string", "example": "We are looking for a skilled software engineer to join our team." },
+                  "salary": { "type": "integer", "example": 120000 },
+                  "skills": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["JavaScript", "Node.js", "React"]
+                  },
+                  "similarity_score": { "type": "number", "example": 0.87 }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "offer with this id not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/personalized": {
+      "post": {
+        "tags": ["Recommendations"],
+        "description": "Return personalized recommendations based on user view history",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "top_k": {
+                  "type": "integer",
+                  "example": 5
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "offer_id": { "type": "integer", "example": 1 },
+                  "title": { "type": "string", "example": "Software Engineer" },
+                  "company_id": { "type": "integer", "example": 1 },
+                  "company_name": { "type": "string", "example": "Tech Company" },
+                  "location": { "type": "string", "example": "New York, NY" },
+                  "job_type": { "type": "string", "example": "CDI" },
+                  "work_type": { "type": "string", "example": "On-site" },
+                  "about": { "type": "string", "example": "We are looking for a skilled software engineer to join our team." },
+                  "salary": { "type": "integer", "example": 120000 },
+                  "skills": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["JavaScript", "Node.js", "React"]
+                  },
+                  "similarity_score": { "type": ["number", "null"], "example": null }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/ingest": {
+      "post": {
+        "tags": ["Recommendations"],
+        "description": "Trigger manual ingestion of WeLoveDevs offers (admin only)",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Maximum number of offers to ingest (max 500)",
+            "example": 100
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Ingestion started"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/companyInfo/{companyId}": {
+      "get": {
+        "tags": ["Companies"],
+        "description": "Get company information",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "company_id": { "type": "integer", "example": 1 },
+                "name": { "type": "string", "example": "Tech Company" },
+                "description": { "type": "string", "example": "A leading tech company." },
+                "website": { "type": "string", "example": "https://techcompany.example.com" }
+              }
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "companies not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/companyReviews/{companyId}": {
+      "get": {
+        "tags": ["Companies"],
+        "description": "Get reviews for a company",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "company_id": { "type": "integer", "example": 1 },
+                "name": { "type": "string", "example": "Tech Company" },
+                "description": { "type": "string", "example": "A leading tech company." },
+                "website": { "type": "string", "example": "https://techcompany.example.com" },
+                "companyReviews": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "review_id": { "type": "integer", "example": 10 },
+                      "user_id": { "type": "integer", "example": 5 },
+                      "comment": { "type": "string", "example": "Great place to work." },
+                      "rating": { "type": "integer", "example": 4 }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "404": {
+            "description": "companies not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Companies"],
+        "description": "Post a review for a company",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comment": { "type": "string", "example": "Great culture and support." },
+                "rating": { "type": "integer", "example": 5 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "reviews posted successfully"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "409": {
+            "description": "user already make a reviews"
           },
           "500": {
             "description": "Internal Server Error"
@@ -693,7 +973,11 @@
                   "title": {
                     "example": "Developer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "example": "Tech Company"
                   },
                   "location": {
@@ -745,7 +1029,11 @@
                   "title": {
                     "example": "Developer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "example": "Tech Company"
                   },
                   "location": {

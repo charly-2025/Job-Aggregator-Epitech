@@ -38,11 +38,12 @@ export const getOffersUserLikes = async (req, res) => {
 
     const [OffersUserLikes] = await db.query(
       `
-            SELECT offer.*, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
+            SELECT offer.*,companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
             FROM job_offers offer
             LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
             LEFT JOIN skills ON skills.skill_id = jos.skill_id
             JOIN job_likes jl ON jl.offer_id = offer.offer_id
+            LEFT JOIN companies ON companies.company_id = offer.company_id
             WHERE jl.user_id = ?
             GROUP BY offer.offer_id
             `,
@@ -74,10 +75,11 @@ export const getOffersUserViews = async (req, res) => {
 
     const [OffersUserViews] = await db.query(
       `
-            SELECT offer.*, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
+            SELECT offer.*,companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
             FROM job_offers offer
             LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
             LEFT JOIN skills ON skills.skill_id = jos.skill_id
+            LEFT JOIN companies ON companies.company_id = offer.company_id
             JOIN job_views jv ON jv.offer_id = offer.offer_id
             WHERE jv.user_id = ?
             GROUP BY offer.offer_id
