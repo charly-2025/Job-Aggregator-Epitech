@@ -6,6 +6,8 @@ function Login({ onLoginSuccess, onGoToRegister }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
  
+  /* THIS FUNCTION CURRENTLY ISNT LINKED TO THE DATABASE OR THE BACKEND, IF YOU ENTER WHATEVER EMAIL AND PASSWORD YOU WILL BE ABLE TO CONNECT */
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
