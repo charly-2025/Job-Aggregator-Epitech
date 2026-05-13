@@ -1,13 +1,36 @@
 import { useState } from "react";
-import "./App.css";
+import "./login.css";
 
-function App() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Email:", email, "Password:", password);
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Success :", data);
+      } else {
+        console.log("Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Server error:", error);
+    }
   };
 
   return (
@@ -43,4 +66,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;
