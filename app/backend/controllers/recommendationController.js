@@ -8,10 +8,11 @@ import { ingestWelovedevsOffers } from '../services/welovedevsIngestion.js';
  */
 async function loadAllOffersWithSkills() {
   const [offers] = await db.query(`
-    SELECT offer.*, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
+    SELECT offer.*, companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
     FROM job_offers offer
     LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
     LEFT JOIN skills ON skills.skill_id = jos.skill_id
+    LEFT JOIN companies ON companies.company_id = offer.company_id
     GROUP BY offer.offer_id
   `);
 
@@ -61,10 +62,11 @@ export const personalizedRecommendations = async (req, res) => {
     if (views.length === 0) {
       //returns the most recent offers
       const [recent] = await db.query(`
-        SELECT offer.*, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
+        SELECT offer.*, companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
         FROM job_offers offer
         LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
         LEFT JOIN skills ON skills.skill_id = jos.skill_id
+        LEFT JOIN companies ON companies.company_id = offer.company_id
         GROUP BY offer.offer_id
         ORDER BY offer.created_at DESC
         LIMIT ?
