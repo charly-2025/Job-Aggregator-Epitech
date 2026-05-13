@@ -86,7 +86,7 @@ export const newOfferView = async (req, res) => {
         userId,
         offerId,
       ]);
-      res.status(200).json({ message: "view added successully" });
+      res.status(200).json({ message: "view added successfully" });
     } else {
       res.status(409).json({ message: "view already added" });
     }

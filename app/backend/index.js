@@ -13,6 +13,7 @@ import usersRoutes from "./routes/usersRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import offersRoutes from "./routes/offersRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
+import companiesRoutes from "./routes/companiesRoutes.js";
 
 config({ path: ".env", quiet: true });
 const port = process.env.PORT;
@@ -42,3 +43,4 @@ app.use('/api/users',usersRoutes);
 app.use('/api/auth',authRoutes)
 app.use('/api/offers',offersRoutes)
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/companies/',companiesRoutes)
