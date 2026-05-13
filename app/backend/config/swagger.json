@@ -153,7 +153,12 @@
                     "type": "string",
                     "example": "Software Engineer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                    
+                  },
+                  "company_name": {
                     "type": "string",
                     "example": "Tech Company"
                   },
@@ -220,7 +225,11 @@
                   "type": "string",
                   "example": "Software Engineer"
                 },
-                "company": {
+                "company_id": {
+                    "type": "int",
+                    "example": 1
+                },
+                "company_name": {
                   "type": "string",
                   "example": "Tech Company"
                 },
@@ -323,7 +332,11 @@
                     "type": "string",
                     "example": "Software Engineer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "type": "string",
                     "example": "Tech Company"
                   },
@@ -413,7 +426,7 @@
                   "type": "string",
                   "example": "Developer"
                 },
-                "company": {
+                "company_name": {
                   "type": "string",
                   "example": "Tech Company"
                 },
@@ -512,7 +525,7 @@
                 "title": {
                   "example": "Developer"
                 },
-                "company": {
+                "company_name": {
                   "example": "Tech Company"
                 },
                 "location": {
@@ -617,7 +630,11 @@
                 "properties": {
                   "offer_id": { "type": "integer", "example": 1 },
                   "title": { "type": "string", "example": "Software Engineer" },
-                  "company": { "type": "string", "example": "Tech Company" },
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": { "type": "string", "example": "Tech Company" },
                   "location": { "type": "string", "example": "New York, NY" },
                   "job_type": { "type": "string", "example": "CDI" },
                   "work_type": { "type": "string", "example": "On-site" },
@@ -671,7 +688,8 @@
                 "properties": {
                   "offer_id": { "type": "integer", "example": 1 },
                   "title": { "type": "string", "example": "Software Engineer" },
-                  "company": { "type": "string", "example": "Tech Company" },
+                  "company_id": { "type": "integer", "example": 1 },
+                  "company_name": { "type": "string", "example": "Tech Company" },
                   "location": { "type": "string", "example": "New York, NY" },
                   "job_type": { "type": "string", "example": "CDI" },
                   "work_type": { "type": "string", "example": "On-site" },
@@ -955,7 +973,11 @@
                   "title": {
                     "example": "Developer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "example": "Tech Company"
                   },
                   "location": {
@@ -1007,7 +1029,11 @@
                   "title": {
                     "example": "Developer"
                   },
-                  "company": {
+                  "company_id": {
+                    "type": "int",
+                    "example": 1
+                  },
+                  "company_name": {
                     "example": "Tech Company"
                   },
                   "location": {
