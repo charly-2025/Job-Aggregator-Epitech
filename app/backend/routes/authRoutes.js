@@ -14,7 +14,8 @@ const loginLimiter = rateLimit({
   },
 
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
 });
 
 const registerLimiter = rateLimit({
