@@ -11,20 +11,39 @@ The backend of the job aggregator project contains all the routes necessary for 
 - Espress 5.2.1+
 - Install required dependencies ( see `package.json`)
 
-Also :
-Create database with sql files in database folder and retrieve data for the database using the pipeline in the filling_database folder
+## Database Setup
 
+### 1.Create the Database Schema
+```bash
+cd ../database
+mysql -u root -p < jobagg.sql
+```
+---
+
+### 2.Populate the Database
+Read the `filling_database` README and create `.env` file with Environment Variables
+
+```bash
+cd ../../filling_databse
+python3 run_pipeline.py
+```
 ---
 
 ## Configuration
 
-Create a `.env` file in **this folder** of the project with the following variables:
+Create a `.env` file in **app** folder with the following variables:
 
 ```env
 
 JWT_SECRET=your_secret_jwt_key
-MYSQL_ROOT_PASSWORD=your_password
-PORT=backend_port
+
+MYSQL_PASSWORD=your_password
+MYSQL_USER=myour_user
+MYSQL_HOST=your_host
+MYSQL_DATABASE=your_datbase
+
+BACKEND_PORT=backend_port
+FRONTEND_PORT=forntend_port
 
 ```
 
@@ -34,17 +53,18 @@ PORT=backend_port
 
 ```
 job-aggregator/
-|--/app/backend/
-	|-- config/ # Swagger and Database connection
-	|-- controllers/ # Request handlers
-	|-- middleware/ # Token verification
-	|-- routes/ # Express routes
-	|-- services/ # AI services
-	|-- .env # Environment configuration (not committed)
-	|-- index.js
-	|-- package.json
-	|-- package-lock.json
-	|-- Dockerfile
+|--/app
+	|--.env # Environment configuration (not committed)
+	|--/backend/
+		|-- config/ # Swagger and Database connection
+		|-- controllers/ # Request handlers
+		|-- middleware/ # Token verification
+		|-- routes/ # Express routes
+		|-- services/ # AI services
+		|-- index.js
+		|-- package.json
+		|-- package-lock.json
+		|-- Dockerfile
 ```
 
 ---
@@ -75,4 +95,4 @@ MySQL pool connected successfully
 
 ## Routes Desription
 
-Find descriptions of all routes at /api-docs/
+Find descriptions of all routes at : http://localhost:3000/api-docs/
