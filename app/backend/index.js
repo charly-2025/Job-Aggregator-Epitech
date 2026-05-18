@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import ratelimit from "express-rate-limit";
 import { config } from "dotenv";
 
 import swaggerUi from "swagger-ui-express";
@@ -19,7 +21,9 @@ config({ path: ".env", quiet: true });
 const port = process.env.PORT;
 
 const app = express();
+
 app.use(express.json());
+app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
