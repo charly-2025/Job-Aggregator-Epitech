@@ -10,6 +10,7 @@ The backend of the job aggregator project contains all the routes necessary for 
 - Npm 11.13+
 - Espress 5.2.1+
 - Install required dependencies ( see `package.json`)
+---
 
 ## Database Setup
 
@@ -18,7 +19,6 @@ The backend of the job aggregator project contains all the routes necessary for 
 cd ../database
 mysql -u root -p < jobagg.sql
 ```
----
 
 ### 2.Populate the Database
 Read the `filling_database` README and create `.env` file with Environment Variables
