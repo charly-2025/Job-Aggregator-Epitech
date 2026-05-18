@@ -59,25 +59,24 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ msg: "bad parameter" });
+    if (!email || !password) return res.status(400).json({ msg: "bad parameter" });
 
     let [user] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    if (user.length <= 0)
-      return res.status(401).json({ msg: "Invalid Credentials" });
+    
+    if (user.length <= 0) return res.status(401).json({ msg: "Invalid Credentials" });
     user = user[0];
 
     const same = await bcrypt.compare(password, user.password_hash);
     if (!same) return res.status(401).json({ msg: "Invalid Credentials" });
 
     const accessToken = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.user_id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id },
+      { id: user.user_id },
       process.env.REFRESH_SECRET,
       { expiresIn: "7d" }
     );
