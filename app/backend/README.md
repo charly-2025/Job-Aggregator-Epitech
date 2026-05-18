@@ -36,6 +36,7 @@ Create a `.env` file in **app** folder with the following variables:
 ```env
 
 JWT_SECRET=your_secret_jwt_key
+REFRESH_SECRET=***REMOVED***
 
 MYSQL_PASSWORD=your_password
 MYSQL_USER=myour_user
