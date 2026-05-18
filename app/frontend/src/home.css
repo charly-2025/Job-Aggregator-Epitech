@@ -20,6 +20,7 @@
   background-color: #111; 
   overflow-x: hidden; 
   padding-top: 120px;
+  border-right: 1px solid #2a2a2a;
 }
 
 
@@ -52,19 +53,21 @@
 
 
 .topnav {
-  background-color: #333;
+  background-color: black;
   height: 100px;
   overflow: hidden;
   position: fixed;        
   top: 0;                
-  left: 0px;            
+  left: 240px;            
   right: 0;              
-  z-index: 2;            
+  z-index: 2;
+  border-bottom: 1px solid #2a2a2a;    
 }
 
 
 .topnav a {
-  float: left;
+  float: right;
+  margin-top: 20px;
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
@@ -82,4 +85,18 @@
 .topnav a.active {
   background-color: #04AA6D;
   color: white;
+}
+
+.logo-holder{
+  background-color: #111; 
+  height: 100px;
+  overflow: hidden;
+  position: fixed;        
+  top: 0;                
+  left: 0px;            
+  right: 240px;              
+  z-index: 3;
+  width: 240px;
+  border-bottom: 1px solid #2a2a2a;
+  border-right: 1px solid #2a2a2a;
 }
