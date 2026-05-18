@@ -1,6 +1,5 @@
 import db from '../config/db.js';
 import { getSimilarOffers, getPersonalizedRecommendations } from '../services/recommender.js';
-import { ingestWelovedevsOffers } from '../services/welovedevsIngestion.js';
 
 /**
  - loads all active offers with their skills
@@ -85,25 +84,6 @@ export const personalizedRecommendations = async (req, res) => {
     const recommendations = getPersonalizedRecommendations(viewedIds, allOffers, topK);
 
     res.status(200).json(recommendations);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-export const triggerIngestion = async (req, res) => {
-  try {
-    const userRole = req.user.role;
-    if (!userRole || userRole !== 'admin') {
-      return res.status(401).json({ message: 'unauthorized' });
-    }
-
-    const maxOffers = Math.min(parseInt(req.query.limit) || 100, 500);
-
-    res.status(202).json({ message: `Ingestion démarrée (max ${maxOffers} offres)` });
-
-    ingestWelovedevsOffers(maxOffers)
-      .then(result => console.log('[Ingestion] Terminée :', result))
-      .catch(err   => console.error('[Ingestion] Erreur :', err.message));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

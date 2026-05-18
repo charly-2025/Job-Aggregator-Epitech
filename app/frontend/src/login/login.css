@@ -25,7 +25,7 @@ html {
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: hidden;   
+  overflow: hidden;
 }
 
 .right-side {
@@ -80,7 +80,6 @@ html {
   opacity: 0.9;
 }
 
-
 /* TEXT */
 
 .login-container form {
@@ -89,7 +88,6 @@ html {
   gap: 16px;
 }
 .Text {
-
   color: white;
   font-size: 2rem;
   font-weight: bold;
