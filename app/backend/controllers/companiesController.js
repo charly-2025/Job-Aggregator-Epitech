@@ -48,3 +48,26 @@ export const postCompanyReviews = async (req,res) => {
         res.status(500).json({message:err})
     }
 }
+
+
+export const deleteCompanyReviews = async (req,res) => {
+    try {
+        const userId = req.user.id
+        const companyId = req.params.companyId
+
+        if (!userId,!companyId) return res.status(400).json({message:"bad parameter"})
+
+        const [userReview] = await db.query("SELECT * FROM company_reviews WHERE user_id = ? AND company_id = ?",[userId,companyId])
+        if (userReview.length === 0) return res.status(404).json({message:"reviews not found"})
+
+        const userReviewId = userReview[0].user_id
+        if (userId !== userReviewId) return res.status(401).json({message:"Unauthorized"})
+        else if (req.user.role && req.user.role === "admin") {}
+
+        await db.query("DELETE FROM company_reviews WHERE user_id = ? AND company_id = ?",[userId,companyId])
+
+        res.status(200).json({message:"reviews deleted successfully"})
+    } catch (err){
+        res.status(500).json({message:err})
+    }
+}
