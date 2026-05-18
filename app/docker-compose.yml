@@ -28,6 +28,8 @@ services:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     depends_on:
       - backend
+    environment:
+      - PORT=${FRONTEND_PORT}
     develop:
       watch:
         - action: sync
@@ -59,19 +61,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
-
-  pipeline:
-    build: ../filling_database
-    depends_on:
-      mysql:
-        condition: service_healthy
-    command: python run_pipeline.py
-    environment:
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_USER=${MYSQL_DOCKER_USER}
-      - MYSQL_HOST=${MYSQL_DOCKER_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - WLD_API_KEY=${WLD_API_KEY}
       
 volumes:
   mysql_data:
