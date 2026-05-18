@@ -12,7 +12,8 @@ Automatic pipeline to collect, clean, and store job offers from multiple sources
 
 ---
 
-### Create the Database Schema
+## Create the Database Schema (Local Mode) :
+
 ```bash
 cd .../app/database
 mysql -u root -p < jobagg.sql
@@ -24,7 +25,16 @@ Create a `.env` file in **this folder** with the following variables:
 
 ```env
 WLD_API_KEY=your_api_key_we_love_devs
-MYSQL_PASSWORD=your_password
+
+# MySQL configuration
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_USER=your_mysql_user
+MYSQL_HOST=your_mysql_host
+MYSQL_DATABASE=your_database_name
+
+# For Run in Docker Mode 
+MYSQL_DOCKER_HOST=your_docker_mysql_host
+MYSQL_PORT=your_docker_mysql_port
 ```
 
 This file is used to connect the pipeline to your MySQL database.
@@ -52,9 +62,25 @@ job-aggregator/
 
 Run all steps automatically in the correct order:
 
+Local Database Mode:
 ```bash
 python3 run_pipeline.py
 ```
+
+Docker Databse Mode:
+
+Start your Docker services from the main app directory:
+
+```bash
+docker compose up
+```
+
+Then run the pipeline in Docker mode:
+
+```bash
+python3 run_pipeline.py --docker
+```
+### Pipeline Steps
 
 The pipeline executes the following steps:
 
@@ -76,6 +102,11 @@ python3 data_storage/main.py
 python3 data_correction/main.py
 ```
 
+To run a module in Docker mode:
+
+```bash
+python3 script_name.py --docker
+```
 ---
 
 ## Database Behavior

@@ -1,5 +1,12 @@
+from ast import arg
+from html import parser
 import subprocess
 import sys
+import argparse
+
+parser = argparse.ArgumentParser(description="Run the data collection pipeline")
+parser.add_argument("--docker", action="store_true", help="Fill the mysql database in docker container")
+args = parser.parse_args()
 
 PIPELINE = [
     "1_data_scrapping/main.py",
@@ -10,9 +17,15 @@ PIPELINE = [
 
 def run_step(script):
     print(f"run script : {script}")
+    
+    cmd = [sys.executable, script]
+
+    if args.docker:
+        print("Run in docker mode")
+        cmd.append("--docker")
 
     result = subprocess.run(
-        [sys.executable, script],
+        cmd,
         capture_output=True,
         text=True
     )
