@@ -64,13 +64,8 @@
           "200": {
             "description": "You have successfully registered and received an access token",
             "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string",
-                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...."
-                }
-              }
+              "type": "cookie",
+              "example": "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....; Max-Age=3600 and RefreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....; Max-Age=604800"
             }
           },
           "400": {
@@ -112,13 +107,8 @@
           "200": {
             "description": "You have successfully logged in and received an access token",
             "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string",
-                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...."
-                }
-              }
+              "type": "cookie",
+              "example": "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....; Max-Age=3600 and RefreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....; Max-Age=604800"
             }
           },
           "400": {
@@ -126,6 +116,42 @@
           },
           "401": {
             "description": "Unauthorized, incorrect email or password"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },"refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Refresh access token using refresh token",
+        "responses": {
+          "200": {
+            "description": "Access token refreshed successfully",
+            "schema": {
+              "type": "cookie",
+              "example": "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....; Max-Age=3600"
+            }
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },
+          "401": {
+            "description": "Unauthorized, invalid refresh token"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },"logout": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Logout user and clear access token",
+        "responses": {
+          "200": {
+            "description": "You have successfully logged out and your access token has been cleared"
           },
           "500": {
             "description": "Internal Server Error"
