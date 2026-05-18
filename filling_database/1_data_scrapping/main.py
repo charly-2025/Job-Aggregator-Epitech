@@ -15,6 +15,7 @@ WLD_URL= "https://epi-api.welovedevs.com/v1"
 WLD_HEADERS = {
     'X-API-Key': WLD_API_KEY,
     'Content-Type': 'application/json',
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Mobile Safari/537.3",
     }
 WLD_PARAMS = {"page":0,"size":100}
 
@@ -23,8 +24,8 @@ def make_get_request(url:str,headers={},params={}):
     response = requests.get(url,headers=headers,params=params)
     status_code = response.status_code
     if status_code == 200 :
-        return response.json()
-    return {"Error code":status_code}
+        return status_code,response.json()
+    return status_code,{"error":f"Request failed with status code {status_code}"}
 
 
 def save_in_json(name:str,data:dict) :
@@ -35,20 +36,25 @@ def save_in_json(name:str,data:dict) :
 def wld_fetch_all_pages(url,headers,params):
     all_data =[]
     while True:
+        time.sleep(1)
+        status_code, data = make_get_request(url,headers,params)
         
-        data = make_get_request(url,headers,params).get("values", [])
+        if status_code != 200 :
+            print(f"Request failed with status code {status_code}")
+            break
+        else :
+            data = data.get("values",[])
         
         if not data:
             if  all_data :
-                print(f"We get page content")
+                print(f"We get {params['page']} page content")
             else :
                 print("No content found")
             break
             
         all_data.extend(data)
-        print(f"We get page  content")
+        print(f"We get {params['page']} page content")
         params["page"] += 1
-        time.sleep(1)
 
     print(f"Retrieved {len(all_data)} items")
     return all_data
@@ -57,4 +63,3 @@ def wld_fetch_all_pages(url,headers,params):
 if __name__ == "__main__" :
     data = wld_fetch_all_pages(WLD_URL,WLD_HEADERS,WLD_PARAMS)
     save_in_json("wld_output.json",{"content":data})
-

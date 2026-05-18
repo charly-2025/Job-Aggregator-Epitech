@@ -23,6 +23,7 @@ mysql -u root -p < jobagg.sql
 Create a `.env` file in **this folder** with the following variables:
 
 ```env
+WLD_API_KEY=your_api_key_we_love_devs
 MYSQL_PASSWORD=your_password
 ```
 

@@ -10,13 +10,15 @@ parent_path = Path(__file__).parent.parent
 
 load_dotenv()
 mysql_password = os.getenv("MYSQL_PASSWORD")
-
+mysql_user = os.getenv("MYSQL_USER")
+mysql_host = os.getenv("MYSQL_HOST")
+mysql_database = os.getenv("MYSQL_DATABASE")
 
 conn = mysql.connector.connect(
-    host = "mysql",
-    user = "root",
+    host = mysql_host,
+    user = mysql_user,
     password = mysql_password,
-    database = "jobagg"
+    database = mysql_database
 )
 
 cursor = conn.cursor()
