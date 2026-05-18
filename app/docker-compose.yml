@@ -6,7 +6,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - MYSQL_HOST=mysql
+      - MYSQL_HOST=${MYSQL_DOCKER_HOST}
     depends_on:
       mysql:
         condition: service_healthy
@@ -45,8 +45,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: jobagg
-      MYSQL_USER: docker
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_DOCKER_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
@@ -66,6 +66,12 @@ services:
       mysql:
         condition: service_healthy
     command: python run_pipeline.py
-
+    environment:
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_USER=${MYSQL_DOCKER_USER}
+      - MYSQL_HOST=${MYSQL_DOCKER_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - WLD_API_KEY=${WLD_API_KEY}
+      
 volumes:
   mysql_data:
