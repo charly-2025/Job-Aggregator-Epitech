@@ -17,8 +17,10 @@ import offersRoutes from "./routes/offersRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import companiesRoutes from "./routes/companiesRoutes.js";
 
-config({ path: ".env", quiet: true });
-const port = process.env.PORT;
+config({ path: "../.env", quiet: true });
+
+const backendPort = process.env.BACKEND_PORT;
+const frontendPort = process.env.FRONTEND_PORT;
 
 const app = express();
 
@@ -27,14 +29,15 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `http://localhost:${frontendPort}`,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
   }),
 );
 app.use(cookieParser());
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(backendPort, () => {
+  console.log(`Server is running on port ${backendPort}`);
 });
 
 app.get("/", (req, res) => {

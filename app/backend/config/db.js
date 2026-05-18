@@ -1,6 +1,6 @@
 import mysql from "mysql2";
 import { config } from "dotenv";
-config({ path: ".env", quiet: true });
+config({ path: "../.env", quiet: true });
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "localhost",
