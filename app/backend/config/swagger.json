@@ -208,7 +208,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -281,7 +281,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -389,7 +389,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -486,7 +486,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -514,7 +514,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           },
           {
             "name": "body",
@@ -578,7 +578,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -609,7 +609,7 @@
             "name": "offerId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           },
           {
             "name": "top_k",
@@ -747,7 +747,7 @@
             "name": "companyId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -784,7 +784,7 @@
             "name": "companyId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "responses": {
@@ -831,7 +831,7 @@
             "name": "companyId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "int"
           },
           {
             "name": "body",
@@ -854,6 +854,33 @@
           },
           "409": {
             "description": "user already make a reviews"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },"delete": {
+        "tags": ["Companies"],
+        "description": "Delete a review for a company",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "type": "int"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "reviews deleted successfully"
+          },
+          "400": {
+            "description": "Value is missing or invalid"
+          },"401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "review not found"
           },
           "500": {
             "description": "Internal Server Error"
