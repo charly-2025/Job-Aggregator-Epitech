@@ -12,6 +12,12 @@ Automatic pipeline to collect, clean, and store job offers from multiple sources
 
 ---
 
+### Create the Database Schema
+```bash
+cd .../app/database
+mysql -u root -p < jobagg.sql
+```
+---
 ## Configuration
 
 Create a `.env` file in **this folder** with the following variables:
