@@ -25,13 +25,13 @@ export const Register = async (req, res) => {
     );
     
     const accessToken = jwt.sign(
-      { id: result.insertId, role: user.role },
+      { id: result.insertId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id },
+      { id: result.insertId },
       process.env.REFRESH_SECRET,
       { expiresIn: "7d" }
     );
