@@ -40,13 +40,13 @@ def wld_fetch_all_pages(url,headers,params):
         
         if not data:
             if  all_data :
-                print(f"We get page {params["page"]} content")
+                print(f"We get page content")
             else :
                 print("No content found")
             break
             
         all_data.extend(data)
-        print(f"We get page {params["page"]} content")
+        print(f"We get page  content")
         params["page"] += 1
         time.sleep(1)
 

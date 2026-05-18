@@ -12,7 +12,7 @@ mysql_password = os.getenv("MYSQL_PASSWORD")
 
 
 conn = mysql.connector.connect(
-    host = "localhost",
+    host = "mysql",
     user = "root",
     password = mysql_password,
     database = "jobagg"
