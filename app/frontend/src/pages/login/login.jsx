@@ -1,17 +1,38 @@
 import { useState } from "react";
 import "./login.css";
  
-function Login({ onLoginSuccess, onGoToRegister }) {
+function Login({ Connected, onLoginSuccess, onGoToRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
  
-  /* THIS FUNCTION CURRENTLY ISNT LINKED TO THE DATABASE OR THE BACKEND, IF YOU ENTER WHATEVER EMAIL AND PASSWORD YOU WILL BE ABLE TO CONNECT */
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
- 
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Success :", data);
+        Connected()
+      } else {
+        console.log("Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Server error:", error);
+  }
+
 
     if (email && password) {
       onLoginSuccess?.({ email, firstname: email.split("@")[0] });
