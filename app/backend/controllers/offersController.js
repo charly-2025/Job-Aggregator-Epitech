@@ -159,6 +159,10 @@ export const handleOfferLike = async (req, res) => {
 
 export async function searchOffers(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const text = req.params.searchText;
     if (!text?.trim())
       return res.status(400).json({ message: "bad parameter" });
@@ -187,14 +191,29 @@ export async function searchOffers(req, res) {
             OR offer.job_type LIKE ? OR offer.work_type LIKE ? OR companies.name LIKE ? OR offer.about LIKE ? OR offer.salary LIKE ?
             OR offer.requirements LIKE ? OR skills.name LIKE ?
         GROUP BY offer.offer_id
+        LIMIT ? OFFSET ?
         `,
-      searchParams,
+      searchParams,limit,offset
     );
+
+    const [totalResult] = await db.query(
+      `
+      SELECT COUNT(DISTINCT offer.offer_id) AS total
+      FROM job_offers offer
+      LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
+      LEFT JOIN skills ON skills.skill_id = jos.skill_id
+      LEFT JOIN companies ON companies.company_id = offer.company_id
+      WHERE offer.title LIKE ? OR offer.location LIKE ?
+          OR offer.job_type LIKE ? OR offer.work_type LIKE ? OR companies.name LIKE ? OR offer.about LIKE ? OR offer.salary LIKE ?
+          OR offer.requirements LIKE ? OR skills.name LIKE ?
+    `,searchParams
+    );
+    const total = totalResult[0].total;
 
     const listOffers = offers
       .slice(0, 15)
       .map((offer) => ({ ...offer, skills: offer.skills?.split(", ") ?? [] }));
-    res.status(200).json({ listOffers });
+    res.status(200).json({ data:listOffers, total, page, limit, totalPages: Math.ceil(total / limit) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
