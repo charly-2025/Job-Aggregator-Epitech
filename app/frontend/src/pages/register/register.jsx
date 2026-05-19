@@ -7,13 +7,33 @@ function Register({ onRegisterSuccess, onGoToLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
- 
-    /* THIS FUNCTION CURRENTLY ISNT LINKED TO THE DATABASE OR THE BACKEND, IF YOU ENTER WHATEVER EMAIL AND PASSWORD YOU WILL BE ABLE TO CONNECT */
     
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
- 
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "email": email,
+          "password": password,
+          "last_name": lastname,
+          "first_name": firstname
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Success :", data);
+
+      } else {
+        console.log("Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Server error:", error);
+  }
 
     if (email && password && firstname && lastname) {
       onRegisterSuccess?.({ email, firstname, lastname });
