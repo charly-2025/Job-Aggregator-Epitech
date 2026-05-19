@@ -2,6 +2,10 @@ import db from "../config/db.js";
 
 export const getAllOffers = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const [offers] = await db.query(`
             SELECT offer.*,companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
             FROM job_offers offer
@@ -9,12 +13,28 @@ export const getAllOffers = async (req, res) => {
             LEFT JOIN skills ON skills.skill_id = jos.skill_id
             LEFT JOIN companies ON companies.company_id = offer.company_id
             GROUP BY offer.offer_id
-        `);
-    const listOffers = offers.map((offer) => ({
+            LIMIT ? OFFSET ?
+            `,[limit,offset]);
+    
+            const listOffers = offers.map((offer) => ({
       ...offer,
       skills: offer.skills?.split(", ") ?? [],
     }));
-    res.status(200).json(listOffers);
+
+    const [totalResult] = await db.query(`
+      SELECT COUNT(*) AS total
+      FROM job_offers
+    `);
+
+    const total = totalResult[0].total;
+    
+    res.status(200).json({
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      data: listOffers
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
