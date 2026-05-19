@@ -26,6 +26,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SettingsIcon from "@mui/icons-material/Settings";
 import WorkIcon from "@mui/icons-material/Work";
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 
 const BASE_URL = "http://localhost:3001";
 
@@ -92,47 +95,59 @@ function Sidebar({ active, setActive, user }) {
     },
   ];
 
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: 260,
-        flexShrink: 0,
+return (
+  <Drawer
+    variant="permanent"
+    sx={{
+      width: 260,
+      flexShrink: 0,
 
-        "& .MuiDrawer-paper": {
-          width: 260,
-          background: "#0f172a",
-          color: "white",
-          borderRight: "1px solid #1e293b",
-        },
+      "& .MuiDrawer-paper": {
+        width: 260,
+        background: "#0f172a",
+        color: "white",
+        borderRight: "1px solid #1e293b",
+        pt: 12,
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+      },
+    }}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
       <Box p={3}>
-        <Typography variant="h5" fontWeight="bold">
-          JobGetter
-        </Typography>
+        <div className="logo-holder">
+          <img src="/logo.png" alt="logo" className="logo" />
+        </div>
       </Box>
 
-      <List>
-        {nav.map((item) => (
-          <ListItemButton
-            key={item.id}
-            selected={active === item.id}
-            onClick={() => setActive(item.id)}
-            sx={{
-              mx: 2,
-              mb: 1,
-              borderRadius: 3,
-            }}
-          >
-            <ListItemIcon sx={{ color: "white" }}>
-              {item.icon}
-            </ListItemIcon>
+  <List sx={{ flexGrow: 1 }}>
+    {nav.map((item) => (
+      <ListItemButton
+        key={item.id}
+        selected={active === item.id}
+        onClick={() => setActive(item.id)}
+        sx={{
+          mx: 2,
+          mb: 1,
+          borderRadius: 3,
+        }}
+      >
+        <ListItemIcon sx={{ color: "white" }}>
+          {item.icon}
+        </ListItemIcon>
 
-            <ListItemText primary={item.label} />
-          </ListItemButton>
-        ))}
-      </List>
+        <ListItemText primary={item.label} />
+      </ListItemButton>
+    ))}
+  </List>
+
 
       <Box mt="auto" p={3}>
         <Stack direction="row" spacing={2} alignItems="center">
@@ -151,8 +166,9 @@ function Sidebar({ active, setActive, user }) {
           </Box>
         </Stack>
       </Box>
-    </Drawer>
-  );
+    </Box>
+  </Drawer>
+);
 }
 
 
@@ -390,9 +406,16 @@ export default function App() {
             borderBottom: "1px solid #1e293b",
           }}
         >
-          <Toolbar>
+          <Toolbar sx={{ justifyContent: "flex-end" }}>
             <Typography variant="h6">
-              {page.toUpperCase()}
+                  <div className="topnav" style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+    <a href="#"style={{ color: "white" }}><NotificationsNoneOutlinedIcon sx={{ fontSize: 28 }}/></a>
+    <a href="#"style={{ color: "white" }}><DarkModeOutlinedIcon sx={{ fontSize: 28 }}/></a>
+    <a href="#"style={{ color: "white" }}><ExitToAppOutlinedIcon sx={{ fontSize: 28 }}/></a>
+    
+      
+
+    </div>
             </Typography>
           </Toolbar>
         </AppBar>

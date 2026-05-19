@@ -22,7 +22,7 @@ const menu = [
   },
   {
     id: "search",
-    label: "Search Jobs",
+    label: "Searchgg Jobs",
     icon: <SearchIcon />,
   },
   {
@@ -49,6 +49,7 @@ export default function Sidebar({ active, setActive, user }) {
           boxSizing: "border-box",
           background: "#111827",
           borderRight: "1px solid #1f2937",
+          
         },
       }}
     >

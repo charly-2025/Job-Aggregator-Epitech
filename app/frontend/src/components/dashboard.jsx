@@ -14,7 +14,9 @@ export default function Dashboard({
   onView,
 }) {
   return (
+    
     <Box p={4}>
+      
       <Typography variant="h4" fontWeight="bold" mb={4}>
         Welcome back {user?.first_name} 👋
       </Typography>
