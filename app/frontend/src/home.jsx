@@ -412,7 +412,7 @@ function Dashboard({ user }) {
   }
 
   return (
-    <Box p={4}>
+    <Box sx={{ pl: 4, flex: 1, pt: 8 }}>
       <Typography
         variant="h4"
         fontWeight="bold"
