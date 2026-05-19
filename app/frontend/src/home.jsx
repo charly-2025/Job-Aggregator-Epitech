@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import Settings from "./pages/settings/settings";
+
 import {
   Box,
   Drawer,
@@ -550,14 +552,9 @@ export default function App() {
         )}
 
         {page === "settings" && (
-          <Box p={4}>
-            <Typography
-              variant="h4"
-              color="white"
-            >
-              Settings
-            </Typography>
-          </Box>
+          <>
+            <Settings user={user} />
+          </>
         )}
       </Box>
     </Box>
