@@ -11,7 +11,7 @@ export default function JobCard({ job, onSave, onView }) {
   return (
     <Card
       sx={{
-        background: "#1e293b",
+        background: "#000000",
         transition: "0.3s",
         "&:hover": {
           transform: "translateY(-4px)",

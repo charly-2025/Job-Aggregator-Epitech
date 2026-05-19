@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   Box,
@@ -20,6 +20,12 @@ import {
   AppBar,
   Toolbar,
   Pagination,
+  Modal,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -103,9 +109,9 @@ function Sidebar({ active, setActive, user }) {
 
         "& .MuiDrawer-paper": {
           width: 260,
-          background: "#0f172a",
+          background: "#141414",
           color: "white",
-          borderRight: "1px solid #1e293b",
+          borderRight: "1px solid #3b3c3d",
           pt: 12,
           display: "flex",
           flexDirection: "column",
@@ -138,11 +144,11 @@ function Sidebar({ active, setActive, user }) {
                 borderRadius: 3,
 
                 "&.Mui-selected": {
-                  background: "#1e293b",
+                  background: "#000000",
                 },
 
                 "&:hover": {
-                  background: "#1e293b",
+                  background: "#fafafa",
                 },
               }}
             >
@@ -157,7 +163,7 @@ function Sidebar({ active, setActive, user }) {
 
         <Box mt="auto" p={3}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ bgcolor: "#7c3aed" }}>
+            <Avatar sx={{ bgcolor: "#000000" }}>
               {user?.first_name?.[0]}
             </Avatar>
 
@@ -177,10 +183,85 @@ function Sidebar({ active, setActive, user }) {
   );
 }
 
-function JobCard({ job, onSave, onView }) {
-  const [saved, setSaved] = useState(false);
+function JobModal({ job, open, onClose, saved, onSaveToggle }) {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby="job-modal-title"
+      aria-describedby="job-modal-description"
+      PaperProps={{
+        sx: {
+          background: "#111010",
+          color: "white",
+          border: "1px solid rgba(132,0,255,0.4)",
+          borderRadius: 3,
+          boxShadow: "0 0 40px rgba(132,0,255,0.2)",
+          minWidth: { xs: "90%", md: 500 },
+        },
+      }}
+    >
+      <DialogTitle id="job-modal-title">
+        <Typography variant="h6" fontWeight="bold">
+          {job.title}
+        </Typography>
+        <Typography variant="body2" color="gray">
+          {job.company_name}
+        </Typography>
+      </DialogTitle>
 
-  const handleSave = async () => {
+      <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+      <DialogContent id="job-modal-description">
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <Chip label={job.location} size="small" color="primary" />
+            <Chip label={job.job_type} size="small" color="secondary" />
+            <Chip label={job.work_type} size="small" />
+          </Stack>
+
+          <Typography fontWeight="bold" color="#38bdf8">
+            ${job.salary?.toLocaleString()}
+          </Typography>
+
+          <Typography variant="body2" color="#aaa">
+            {job.about}
+          </Typography>
+
+          <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+          <Typography variant="body2" color="gray">Skills</Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {job.skills?.map((skill) => (
+              <Chip key={skill} label={skill} size="small" />
+            ))}
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+      <DialogActions sx={{ p: 2 }}>
+        <Button onClick={onClose} variant="outlined" sx={{ color: "white", borderColor: "#2a2a2a" }}>
+          Close
+        </Button>
+        <Button
+          variant={saved ? "contained" : "outlined"}
+          color="secondary"
+          onClick={onSaveToggle}
+        >
+          {saved ? "Saved" : "Save"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function JobCard({ job, onSave }) {
+  const [saved, setSaved] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleSaveToggle = async () => {
     try {
       await onSave(job);
       setSaved((prev) => !prev);
@@ -190,95 +271,76 @@ function JobCard({ job, onSave, onView }) {
   };
 
   return (
-    <Card
-      sx={{
-        background: "#1e293b",
+    <>
+      <Card sx={{
+        background: "#111010",
         color: "white",
-        borderRadius: 4,
-        transition: "0.3s",
-
+        borderRadius: 3,
+        border: "1px solid #2a2a2a",
+        transition: "box-shadow 0.3s ease, border-color 0.3s ease",
         "&:hover": {
-          transform: "translateY(-5px)",
+          boxShadow: "0 0 30px rgba(132,0,255,0.2)",
+          borderColor: "rgba(132,0,255,0.4)",
         },
-      }}
-    >
-      <CardContent>
-        <Stack spacing={2}>
-          <Box>
-            <Typography variant="h6" fontWeight="bold">
-              {job.title}
+      }}>
+        <CardContent>
+          <Stack spacing={1.5}>
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold">
+                {job.title}
+              </Typography>
+              <Typography variant="body2" color="gray">
+                {job.company_name}
+              </Typography>
+            </Box>
+
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip label={job.location} size="small" color="primary" />
+              <Chip label={job.job_type} size="small" color="secondary" />
+              <Chip label={job.work_type} size="small" />
+            </Stack>
+
+            <Typography fontWeight="bold" color="#38bdf8" variant="body2">
+              ${job.salary?.toLocaleString()}
             </Typography>
 
-            <Typography color="gray">
-              {job.company_name}
-            </Typography>
-          </Box>
-
-          <Chip
-            icon={<WorkIcon />}
-            label={job.location}
-            color="primary"
-            sx={{ width: "fit-content" }}
-          />
-
-          <Stack direction="row" spacing={1}>
-            <Chip
-              label={job.job_type}
-              color="secondary"
-              size="small"
-            />
-
-            <Chip
-              label={job.work_type}
-              size="small"
-            />
-          </Stack>
-
-          <Typography variant="body2" color="#cbd5e1">
-            {job.about}
-          </Typography>
-
-          <Typography
-            fontWeight="bold"
-            color="#38bdf8"
-          >
-            ${job.salary?.toLocaleString()}
-          </Typography>
-
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            useFlexGap
-          >
-            {job.skills?.map((skill) => (
-              <Chip
-                key={skill}
-                label={skill}
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="contained"
                 size="small"
-              />
-            ))}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(true);
+                }}
+              >
+                View
+              </Button>
+              <Button
+                variant={saved ? "contained" : "outlined"}
+                color="secondary"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSaveToggle();
+                }}
+              >
+                {saved ? "Saved" : "Save"}
+              </Button>
+            </Stack>
           </Stack>
+        </CardContent>
+      </Card>
 
-          <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              onClick={() => onView(job)}
-            >
-              View
-            </Button>
-
-            <Button
-              variant={saved ? "contained" : "outlined"}
-              color="secondary"
-              onClick={handleSave}
-            >
-              {saved ? "Saved" : "Save"}
-            </Button>
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+      {open && (
+        <JobModal
+          job={job}
+          open={open}
+          onClose={() => setOpen(false)}
+          saved={saved}
+          onSaveToggle={handleSaveToggle}
+        />
+      )}
+    </>
   );
 }
 
@@ -363,23 +425,19 @@ function Dashboard({ user }) {
         Discover the latest opportunities for you
       </Typography>
 
-      <Grid container spacing={3}>
+    <Box maxWidth={600} mx="auto">
+      <Grid container spacing={3} direction="column">
         {jobs.map((job) => (
-          <Grid
-            item
-            xs={12}
-            md={6}
-            lg={4}
-            key={job.offer_id}
-          >
+          <Grid item xs={12} key={job.offer_id}>
             <JobCard
               job={job}
               onSave={handleSave}
               onView={handleView}
             />
-          </Grid>
+        </Grid>
         ))}
       </Grid>
+    </Box>
 
       {totalPages > 1 && (
         <Box
@@ -462,64 +520,64 @@ export default function App() {
       sx={{
         display: "flex",
         minHeight: "100vh",
-        background: "#020617",
+        background: "#000000",
       }}
     >
       <Sidebar
         user={user}
         active={page}
         setActive={setPage}
-      />
+    />
 
-      <Box flex={1}>
-        <AppBar
-          position="static"
-          elevation={0}
-          sx={{
-            background: "#0f172a",
-            borderBottom: "1px solid #1e293b",
-          }}
-        >
-          <Toolbar
-            sx={{
-              justifyContent: "flex-end",
-            }}
+    <Box flex={1}>
+    <AppBar
+        position="static"
+        elevation={0}
+        sx={{
+        background: "#000000",
+        borderBottom: "1px solid #3a3939",
+    }}
+    >
+    <Toolbar
+    sx={{
+    justifyContent: "flex-end",
+    }}
           >
             <div
-              className="topnav"
-              style={{
-                display: "flex",
-                gap: "16px",
-                alignItems: "center",
+            className="topnav"
+            style={{
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
               }}
             >
-              <a
-                href="#"
-                style={{ color: "white" }}
-              >
-                <NotificationsNoneOutlinedIcon
-                  sx={{ fontSize: 28 }}
-                />
-              </a>
+          <a
+          href="#"
+          style={{ color: "white" }}
+          >
+          <NotificationsNoneOutlinedIcon
+          sx={{ fontSize: 28 }}
+          />
+          </a>
 
-              <a
-                href="#"
-                style={{ color: "white" }}
-              >
-                <DarkModeOutlinedIcon
-                  sx={{ fontSize: 28 }}
-                />
-              </a>
+          <a
+          href="#"
+          style={{ color: "white" }}
+          >
+          <DarkModeOutlinedIcon
+          sx={{ fontSize: 28 }}
+          />
+          </a>
 
-              <a
-                href="#"
-                style={{ color: "white" }}
-              >
-                <ExitToAppOutlinedIcon
-                  sx={{ fontSize: 28 }}
-                />
-              </a>
-            </div>
+          <a
+          href="#"
+          style={{ color: "white" }}
+          >
+         <ExitToAppOutlinedIcon
+          sx={{ fontSize: 28 }}
+          />
+          </a>
+          </div>
           </Toolbar>
         </AppBar>
 

@@ -47,8 +47,8 @@ export default function Sidebar({ active, setActive, user }) {
         "& .MuiDrawer-paper": {
           width: 260,
           boxSizing: "border-box",
-          background: "#111827",
-          borderRight: "1px solid #1f2937",
+          background: "#ffffff",
+          borderRight: "1px solid #ffffff",
           
         },
       }}
