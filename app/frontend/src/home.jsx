@@ -536,7 +536,7 @@ export default function App() {
     <Box flex={1} sx={{ minWidth: 0}}>
 
     <AppBar
-      position="absolute"
+      position="fixed"
       elevation={0}
       sx={{
         background: "#000000",
