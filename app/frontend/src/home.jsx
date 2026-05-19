@@ -118,6 +118,7 @@ function Sidebar({ active, setActive, user }) {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
+          
         },
       }}
     >
@@ -126,6 +127,7 @@ function Sidebar({ active, setActive, user }) {
           display: "flex",
           flexDirection: "column",
           height: "100%",
+          
         }}
       >
         <Box p={3}>
@@ -427,7 +429,7 @@ function Dashboard({ user }) {
         Discover the latest opportunities for you
       </Typography>
 
-    <Box maxWidth={600} mx="auto">
+    <Box mx="auto">
       <Grid container spacing={3} direction="column">
         {jobs.map((job) => (
           <Grid item xs={12} key={job.offer_id}>
@@ -531,57 +533,25 @@ export default function App() {
         setActive={setPage}
     />
 
-    <Box flex={1}>
+    <Box flex={1} sx={{ minWidth: 0}}>
+
     <AppBar
-        position="static"
-        elevation={0}
-        sx={{
+      position="absolute"
+      elevation={0}
+      sx={{
         background: "#000000",
         borderBottom: "1px solid #3a3939",
-    }}
+        width: "100%",
+      }}
     >
-    <Toolbar
-    sx={{
-    justifyContent: "flex-end",
-    }}
-          >
-            <div
-            className="topnav"
-            style={{
-              display: "flex",
-              gap: "16px",
-              alignItems: "center",
-              }}
-            >
-          <a
-          href="#"
-          style={{ color: "white" }}
-          >
-          <NotificationsNoneOutlinedIcon
-          sx={{ fontSize: 28 }}
-          />
-          </a>
-
-          <a
-          href="#"
-          style={{ color: "white" }}
-          >
-          <DarkModeOutlinedIcon
-          sx={{ fontSize: 28 }}
-          />
-          </a>
-
-          <a
-          href="#"
-          style={{ color: "white" }}
-          >
-         <ExitToAppOutlinedIcon
-          sx={{ fontSize: 28 }}
-          />
-          </a>
-          </div>
-          </Toolbar>
-        </AppBar>
+      <Toolbar sx={{ justifyContent: "flex-end" }}>
+        <Box display="absolute" gap={2} alignItems="center">
+          <NotificationsNoneOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
+          <DarkModeOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
+          <ExitToAppOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
 
         {page === "dashboard" && (
           <Dashboard user={user} />
