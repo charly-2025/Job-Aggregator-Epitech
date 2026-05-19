@@ -19,6 +19,7 @@ import {
   Alert,
   AppBar,
   Toolbar,
+  Pagination,
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -26,9 +27,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SettingsIcon from "@mui/icons-material/Settings";
 import WorkIcon from "@mui/icons-material/Work";
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 
 
 const BASE_URL = "http://localhost:3001";
@@ -37,7 +38,6 @@ const API = {
   profile: `${BASE_URL}/api/users/userInfo`,
   offers: `${BASE_URL}/api/offers/allOffers`,
 };
-
 
 async function apiFetch(url, options = {}) {
   try {
@@ -62,7 +62,6 @@ async function apiFetch(url, options = {}) {
   }
 }
 
-
 function ErrorMessage({ message }) {
   return (
     <Box p={3}>
@@ -70,7 +69,6 @@ function ErrorMessage({ message }) {
     </Box>
   );
 }
-
 
 function Sidebar({ active, setActive, user }) {
   const nav = [
@@ -96,85 +94,91 @@ function Sidebar({ active, setActive, user }) {
     },
   ];
 
-return (
-  <Drawer
-    variant="permanent"
-    sx={{
-      width: 260,
-      flexShrink: 0,
-
-      "& .MuiDrawer-paper": {
-        width: 260,
-        background: "#0f172a",
-        color: "white",
-        borderRight: "1px solid #1e293b",
-        pt: 12,
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-      },
-    }}
-  >
-    <Box
+  return (
+    <Drawer
+      variant="permanent"
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
+        width: 260,
+        flexShrink: 0,
+
+        "& .MuiDrawer-paper": {
+          width: 260,
+          background: "#0f172a",
+          color: "white",
+          borderRight: "1px solid #1e293b",
+          pt: 12,
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+        },
       }}
     >
-      <Box p={3}>
-        <div className="logo-holder">
-          <img src="/logo.png" alt="logo" className="logo" />
-        </div>
-      </Box>
-
-  <List sx={{ flexGrow: 1 }}>
-    {nav.map((item) => (
-      <ListItemButton
-        key={item.id}
-        selected={active === item.id}
-        onClick={() => setActive(item.id)}
+      <Box
         sx={{
-          mx: 2,
-          mb: 1,
-          borderRadius: 3,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
         }}
       >
-        <ListItemIcon sx={{ color: "white" }}>
-          {item.icon}
-        </ListItemIcon>
+        <Box p={3}>
+          <div className="logo-holder">
+            <img src="/logo.png" alt="logo" className="logo" />
+          </div>
+        </Box>
 
-        <ListItemText primary={item.label} />
-      </ListItemButton>
-    ))}
-  </List>
+        <List sx={{ flexGrow: 1 }}>
+          {nav.map((item) => (
+            <ListItemButton
+              key={item.id}
+              selected={active === item.id}
+              onClick={() => setActive(item.id)}
+              sx={{
+                mx: 2,
+                mb: 1,
+                borderRadius: 3,
 
+                "&.Mui-selected": {
+                  background: "#1e293b",
+                },
 
-      <Box mt="auto" p={3}>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar sx={{ bgcolor: "#7c3aed" }}>
-            {user?.first_name?.[0]}
-          </Avatar>
+                "&:hover": {
+                  background: "#1e293b",
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: "white" }}>
+                {item.icon}
+              </ListItemIcon>
 
-          <Box>
-            <Typography fontWeight="bold">
-              {user?.first_name} {user?.last_name}
-            </Typography>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          ))}
+        </List>
 
-            <Typography variant="body2">
-              {user?.email}
-            </Typography>
-          </Box>
-        </Stack>
+        <Box mt="auto" p={3}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Avatar sx={{ bgcolor: "#7c3aed" }}>
+              {user?.first_name?.[0]}
+            </Avatar>
+
+            <Box>
+              <Typography fontWeight="bold">
+                {user?.first_name} {user?.last_name}
+              </Typography>
+
+              <Typography variant="body2">
+                {user?.email}
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
-  </Drawer>
-);
+    </Drawer>
+  );
 }
 
-
 function JobCard({ job, onSave, onView }) {
-  const [saved, setSaved] = useState(job.saved || false);
+  const [saved, setSaved] = useState(false);
 
   const handleSave = async () => {
     try {
@@ -190,6 +194,7 @@ function JobCard({ job, onSave, onView }) {
       sx={{
         background: "#1e293b",
         color: "white",
+        borderRadius: 4,
         transition: "0.3s",
 
         "&:hover": {
@@ -205,7 +210,7 @@ function JobCard({ job, onSave, onView }) {
             </Typography>
 
             <Typography color="gray">
-              {job.company}
+              {job.company_name}
             </Typography>
           </Box>
 
@@ -216,11 +221,44 @@ function JobCard({ job, onSave, onView }) {
             sx={{ width: "fit-content" }}
           />
 
-          {job.match && (
-            <Typography color="#38bdf8">
-              Match: {job.match}%
-            </Typography>
-          )}
+          <Stack direction="row" spacing={1}>
+            <Chip
+              label={job.job_type}
+              color="secondary"
+              size="small"
+            />
+
+            <Chip
+              label={job.work_type}
+              size="small"
+            />
+          </Stack>
+
+          <Typography variant="body2" color="#cbd5e1">
+            {job.about}
+          </Typography>
+
+          <Typography
+            fontWeight="bold"
+            color="#38bdf8"
+          >
+            ${job.salary?.toLocaleString()}
+          </Typography>
+
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            useFlexGap
+          >
+            {job.skills?.map((skill) => (
+              <Chip
+                key={skill}
+                label={skill}
+                size="small"
+              />
+            ))}
+          </Stack>
 
           <Stack direction="row" spacing={2}>
             <Button
@@ -244,20 +282,35 @@ function JobCard({ job, onSave, onView }) {
   );
 }
 
-
 function Dashboard({ user }) {
   const [jobs, setJobs] = useState([]);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
 
+  const [page, setPage] = useState(1);
+
+  const [totalPages, setTotalPages] = useState(1);
+
+  const limit = 15;
+
   useEffect(() => {
-    const load = async () => {
+    const loadOffers = async () => {
       try {
         setLoading(true);
 
-        const offers = await apiFetch(API.offers);
+        const response = await apiFetch(
+          `${API.offers}?page=${page}&limit=${limit}`
+        );
 
-        setJobs(Array.isArray(offers) ? offers : []);
+        setJobs(
+          Array.isArray(response.data)
+            ? response.data
+            : []
+        );
+
+        setTotalPages(response.totalPages || 1);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -265,11 +318,11 @@ function Dashboard({ user }) {
       }
     };
 
-    load();
-  }, []);
+    loadOffers();
+  }, [page]);
 
   const handleSave = async (job) => {
-    console.log("save job", job.id);
+    console.log("save", job.offer_id);
   };
 
   const handleView = (job) => {
@@ -292,27 +345,22 @@ function Dashboard({ user }) {
     return <ErrorMessage message={error} />;
   }
 
-  const avgMatch = jobs.length
-    ? Math.round(
-        jobs.reduce(
-          (acc, j) => acc + (j.match || 0),
-          0
-        ) / jobs.length
-      )
-    : 0;
-
   return (
     <Box p={4}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        color="white"
+      >
         Welcome back {user?.first_name} 👋
       </Typography>
 
       <Typography
         variant="body1"
         color="gray"
-        mb={4}
+        mb={5}
       >
-        Average match: {avgMatch}%
+        Discover the latest opportunities for you
       </Typography>
 
       <Grid container spacing={3}>
@@ -322,7 +370,7 @@ function Dashboard({ user }) {
             xs={12}
             md={6}
             lg={4}
-            key={job.id}
+            key={job.offer_id}
           >
             <JobCard
               job={job}
@@ -332,15 +380,40 @@ function Dashboard({ user }) {
           </Grid>
         ))}
       </Grid>
+
+      {totalPages > 1 && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          mt={6}
+        >
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(e, value) =>
+              setPage(value)
+            }
+            color="primary"
+            shape="rounded"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "white",
+              },
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 }
 
-
 export default function App() {
   const [user, setUser] = useState(null);
+
   const [page, setPage] = useState("dashboard");
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -407,17 +480,46 @@ export default function App() {
             borderBottom: "1px solid #1e293b",
           }}
         >
-          <Toolbar sx={{ justifyContent: "flex-end" }}>
-            <Typography variant="h6">
-                  <div className="topnav" style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-    <a href="#"style={{ color: "white" }}><NotificationsNoneOutlinedIcon sx={{ fontSize: 28 }}/></a>
-    <a href="#"style={{ color: "white" }}><DarkModeOutlinedIcon sx={{ fontSize: 28 }}/></a>
-    <a href="#"style={{ color: "white" }}><ExitToAppOutlinedIcon sx={{ fontSize: 28 }}/></a>
-    
-      
+          <Toolbar
+            sx={{
+              justifyContent: "flex-end",
+            }}
+          >
+            <div
+              className="topnav"
+              style={{
+                display: "flex",
+                gap: "16px",
+                alignItems: "center",
+              }}
+            >
+              <a
+                href="#"
+                style={{ color: "white" }}
+              >
+                <NotificationsNoneOutlinedIcon
+                  sx={{ fontSize: 28 }}
+                />
+              </a>
 
-    </div>
-            </Typography>
+              <a
+                href="#"
+                style={{ color: "white" }}
+              >
+                <DarkModeOutlinedIcon
+                  sx={{ fontSize: 28 }}
+                />
+              </a>
+
+              <a
+                href="#"
+                style={{ color: "white" }}
+              >
+                <ExitToAppOutlinedIcon
+                  sx={{ fontSize: 28 }}
+                />
+              </a>
+            </div>
           </Toolbar>
         </AppBar>
 
@@ -427,7 +529,10 @@ export default function App() {
 
         {page === "search" && (
           <Box p={4}>
-            <Typography variant="h4">
+            <Typography
+              variant="h4"
+              color="white"
+            >
               Search Jobs
             </Typography>
           </Box>
@@ -435,7 +540,10 @@ export default function App() {
 
         {page === "saved" && (
           <Box p={4}>
-            <Typography variant="h4">
+            <Typography
+              variant="h4"
+              color="white"
+            >
               Saved Jobs
             </Typography>
           </Box>
@@ -443,7 +551,10 @@ export default function App() {
 
         {page === "settings" && (
           <Box p={4}>
-            <Typography variant="h4">
+            <Typography
+              variant="h4"
+              color="white"
+            >
               Settings
             </Typography>
           </Box>
