@@ -26,19 +26,14 @@ Create a `.env` file in **this folder** with the following variables:
 ```env
 WLD_API_KEY=your_api_key_we_love_devs
 
-# MySQL configuration
 MYSQL_PASSWORD=your_mysql_password
 MYSQL_USER=your_mysql_user
 MYSQL_HOST=your_mysql_host
 MYSQL_DATABASE=your_database_name
-
-# For Run in Docker Mode 
-MYSQL_DOCKER_HOST=your_docker_mysql_host
-MYSQL_PORT=your_docker_mysql_port
+MYSQL_PORT=your_database_port
 ```
 
 This file is used to connect the pipeline to your MySQL database.
-
 ---
 
 ## Project Structure
@@ -62,24 +57,10 @@ job-aggregator/
 
 Run all steps automatically in the correct order:
 
-Local Database Mode:
 ```bash
 python3 run_pipeline.py
 ```
 
-Docker Databse Mode:
-
-Start your Docker services from the main app directory:
-
-```bash
-docker compose up
-```
-
-Then run the pipeline in Docker mode:
-
-```bash
-python3 run_pipeline.py --docker
-```
 ### Pipeline Steps
 
 The pipeline executes the following steps:
@@ -102,13 +83,6 @@ python3 data_storage/main.py
 python3 data_correction/main.py
 ```
 
-To run a module in Docker mode:
-
-```bash
-python3 script_name.py --docker
-```
----
-
 ## Database Behavior
 
 **Insertion**
@@ -120,7 +94,7 @@ python3 script_name.py --docker
 Duplicates are detected using a `UNIQUE` constraint on the combination of:
 
 - `title`
-- `company`
+- `company_name`
 - `published_at`
 
 ---

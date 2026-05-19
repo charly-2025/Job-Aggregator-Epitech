@@ -1,4 +1,3 @@
-import argparse
 import re
 import mysql.connector
 import os
@@ -6,39 +5,22 @@ from dotenv import load_dotenv
 import json
 from pathlib import Path
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--docker", action="store_true")
-
-args = parser.parse_args()
-
-
 parent_path = Path(__file__).parent.parent
 
 load_dotenv()
 mysql_password = os.getenv("MYSQL_PASSWORD")
 mysql_user = os.getenv("MYSQL_USER")
 mysql_database = os.getenv("MYSQL_DATABASE")
+mysql_host = os.getenv("MYSQL_HOST")
+mysql_port = os.getenv("MYSQL_PORT")
 
-if args.docker:
-    mysql_host = os.getenv("MYSQL_DOCKER_HOST")
-    mysql_port = os.getenv("MYSQL_PORT")
-
-    conn = mysql.connector.connect(
-        host = mysql_host,
-        port = mysql_port,
-        user = mysql_user,
-        password = mysql_password,
-        database = mysql_database
-    )
-else :
-    mysql_host = os.getenv("MYSQL_HOST")
-
-    conn = mysql.connector.connect(
-        host = mysql_host,
-        user = mysql_user,
-        password = mysql_password,
-        database = mysql_database
-    )
+conn = mysql.connector.connect(
+    host = mysql_host,
+    port = mysql_port,
+    user = mysql_user,
+    password = mysql_password,
+    database = mysql_database
+)
 
 def remove_html_tags(text):
     if not text:
