@@ -157,8 +157,8 @@ function FilterPanel({ filters, onChange, onClear }) {
           className="filter-select"
         >
           <option value="all">All Types</option>
-          <option value="permanent">CDI</option>
-          <option value="temporary">CDD</option>
+          <option value="permanent">Permanent</option>
+          <option value="temporary">Temporary</option>
           <option value="internship">Internship</option>
           <option value="freelance">Freelance</option>
         </select>
@@ -412,7 +412,7 @@ export default function SearchJobs({ onSave }) {
     <div className="sj-page">
       <div className="sj-header">
         <h1>Find Your Dream Job</h1>
-        <p>{total} offres disponibles</p>
+        <p>{total} offers</p>
       </div>
       <div className="sj-search-row">
         <div className="sj-search-field">
