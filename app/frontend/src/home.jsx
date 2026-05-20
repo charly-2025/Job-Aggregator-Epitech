@@ -533,7 +533,7 @@ export default function App() {
         setActive={setPage}
     />
 
-    <Box flex={1} sx={{ minWidth: 0}}>
+    <Box flex={1} sx={{ minWidth: 0, width: "100%" }}>
 
     <AppBar
       position="fixed"
@@ -580,9 +580,7 @@ export default function App() {
         )}
 
         {page === "settings" && (
-          <>
-            <Settings user={user} />
-          </>
+          <Settings user={user} />
         )}
       </Box>
     </Box>

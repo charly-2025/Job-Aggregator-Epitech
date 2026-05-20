@@ -54,31 +54,33 @@ function Settings({ user }) {
 
 
     return (
-        <div className="settings-container">
-            <div className="settings-header">
-                <h1>Settings</h1>
-                <p>Manage your account and preferences</p>
-            </div>
-            <div className="settings-body">
-                <div className="settings-section">
-                    <div className="user-information">
-                        <h2>Account Information</h2>
-                        <p><strong>Email:</strong> {userEmail}</p>
-                        <p><strong>Last Name:</strong> {userLastName}</p>
-                        <p><strong>First Name:</strong> {userFirstName}</p>
-                        <p><strong>Member Since:</strong> {getTimeSinceCreation(userCreatedAt)}</p>
-                    </div>
-                    <div className="user-skills">
-                        <h2>Skills</h2>
-                        {userSkills.length > 0 ? (
-                            <ul>
-                                {userSkills.map((skill, index) => (
-                                    <li key={index}>{skill}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No skills added yet.</p>
-                        )}
+        <div className="settings-page">
+            <div className="settings-container">
+                <div className="settings-header">
+                    <h1>Settings</h1>
+                    <p>Manage your account and preferences</p>
+                </div>
+                <div className="settings-body">
+                    <div className="settings-section">
+                        <div className="user-information">
+                            <h2>Account Information</h2>
+                            <p><strong>Email:</strong> {userEmail}</p>
+                            <p><strong>Last Name:</strong> {userLastName}</p>
+                            <p><strong>First Name:</strong> {userFirstName}</p>
+                            <p><strong>Member Since:</strong> {getTimeSinceCreation(userCreatedAt)}</p>
+                        </div>
+                        <div className="user-skills">
+                            <h2>Skills</h2>
+                            {userSkills.length > 0 ? (
+                                <ul>
+                                    {userSkills.map((skill, index) => (
+                                        <li key={index}>{skill}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No skills added yet.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
