@@ -630,7 +630,7 @@ export default function App() {
 
         {page === "settings" && (
           <>
-            <Settings user={user} />
+            <Settings user={user} refreshAccessToken={refreshAccessToken} />
           </>
         )}
       </Box>
