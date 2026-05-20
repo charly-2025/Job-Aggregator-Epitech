@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SearchJobs from "./pages/SearchJobs/SearchJobs";
 
 import Settings from "./pages/settings/settings";
 import JobsLiked from "./components/SavedJobs";
@@ -453,28 +454,32 @@ function Dashboard({ user }) {
   }
 
   return (
-    <Box sx={{ pl: 4, flex: 1, pt: 8 }}>
-      <Typography variant="h4" fontWeight="bold" color="white">
+  <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+    <Box mb={6}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        color="white"
+      >
         Welcome back {user?.first_name} 👋
       </Typography>
 
-      <Typography variant="body1" color="gray" mb={5}>
+      <Typography
+        variant="body1"
+        color="gray"
+      >
         Discover the latest opportunities for you
       </Typography>
+    </Box>
 
-      <Box mx="auto">
-        <Grid container spacing={3} direction="column">
-          {jobs.map((job) => (
-            <Grid item xs={12} key={job.offer_id}>
-              <JobCard
-                job={job}
-                initialLiked={likedIds.has(job.offer_id)}
-                onSave={handleSave}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+    <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>       {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
+    
+      <Stack spacing={3}>
+        {jobs.map((job) => (
+          <JobCard key={job.offer_id} job={job} onSave={handleSave} />
+        ))}
+      </Stack>
+    </Box>
 
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={6}>
@@ -504,6 +509,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(null);
+
+  const handleSave = async (job) => {
+    console.log("save job", job.id);
+  };
 
   useEffect(() => {
     const loadUser = async () => {
@@ -611,6 +620,7 @@ export default function App() {
           <Box p={4}>
             <Typography variant="h4" color="white">
               Search Jobs
+              {page === "search" && <SearchJobs onSave={handleSave} />}
             </Typography>
           </Box>
         )}
