@@ -76,7 +76,7 @@ function Settings({ user, refreshAccessToken }) {
         } else if (response.status === 401) {
           console.log("Unauthorized, refreshing token...");
           await refreshAccessToken();
-          getAllSkills(); // Retry after refreshing token
+          getAllSkills();
         } else {
           console.log("Error:", data.message);
         }
@@ -124,8 +124,17 @@ function Settings({ user, refreshAccessToken }) {
           password: confirmPassword,
         }),
       });
-      const data = await response.json();
 
+      if (response.status === 401 && !retry) {
+        console.log("Unauthorized, refreshing token...");
+
+        await refreshAccessToken();
+
+        return handleSaveChanges(true);
+      }
+
+      const data = await response.json();
+      
       if (response.ok) {
         setToast({
           open: true,
@@ -138,18 +147,19 @@ function Settings({ user, refreshAccessToken }) {
         return;
       }
 
-      if (response.status === 401 && !retry) {
-        console.log("Unauthorized, refreshing token...");
-
-        await refreshAccessToken();
-
-        return handleSaveChanges(true);
-      }
-
       if (response.status === 401) {
         setToast({
           open: true,
-          message: "Incorrect password or session expired",
+          message: "Incorrect password",
+          severity: "error",
+        });
+        return;
+      }
+
+      if (response.status === 429) {
+        setToast({
+          open: true,
+          message: "Too many attempts. Please try again later.",
           severity: "error",
         });
         return;
@@ -172,9 +182,6 @@ function Settings({ user, refreshAccessToken }) {
     }
   };
 
-  useEffect(() => {
-    console.log("User skills updated:", userSkills);
-  }, [userSkills]);
   return (
     <div className="settings-page">
       <div className="settings-container">
@@ -303,7 +310,7 @@ function Settings({ user, refreshAccessToken }) {
 
           <Button
             variant="contained"
-            onClick={handleSaveChanges}
+            onClick={() => handleSaveChanges()}
             disabled={!confirmPassword || isSaving}
             className="confirm-save-btn"
           >
