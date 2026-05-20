@@ -41,6 +41,8 @@ import {
   DialogActions,
 } from "@mui/material";
 
+import "./home.css";
+
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SearchIcon from "@mui/icons-material/Search";
@@ -58,6 +60,7 @@ const API = {
   likedOffers: `${BASE_URL}/api/users/offersUserLikes`,
   refresh: `${BASE_URL}/api/auth/refresh`,
   logout: `${BASE_URL}/api/auth/logout`,
+  UserViews: `${BASE_URL}/api/users/offersUserViews`,
 };
 
 async function refreshAccessToken() {
@@ -407,23 +410,25 @@ function JobCard({ job, onSave, initialLiked = false }) {
   );
 }
 
-function InfoCard({ title, value }) {
+function InfoCard({ title, value, color }) {
   return (
-    <Card
-      sx={{
-        background: "#111010",
-        color: "white",
-        border: "1px solid #2a2a2a",
-        borderRadius: 3,
-        minWidth: 180,
-      }}
-    >
-      <CardContent>
-        <Typography variant="body2" color="gray">
+      <Card
+        sx={{
+          background: color,
+          backdropFilter: "blur(10px)",
+          color: "white",
+          border: "3px solid rgba(255,255,255,0.08)",
+          borderRadius: "14px",
+          flex: 1,
+          height: "200px",
+        }}
+      >
+      <CardContent sx={{ padding: "25px" }}>
+        <Typography variant="body2" color="gray" sx={{ fontSize: "35px", mb: 1 }}>
           {title}
         </Typography>
 
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h5" fontWeight="bold" sx={{ fontSize: "65px", mb: 1 }}>
           {value}
         </Typography>
       </CardContent>
@@ -434,6 +439,7 @@ function InfoCard({ title, value }) {
 function Dashboard({ user }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
+  const [offersViewed, setOffersViewed] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -452,10 +458,15 @@ function Dashboard({ user }) {
       try {
         setLoading(true);
 
-        const [response, likedRes] = await Promise.all([
-          apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
-          apiFetch(API.likedOffers),
-        ]);
+    const [response, likedRes, viewedRes] = await Promise.all([
+      apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
+      apiFetch(API.likedOffers),
+      apiFetch(API.UserViews).catch(() => []),  
+    ]);
+
+setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
+
+        
 
 
         setJobs(Array.isArray(response.data) ? response.data : []);
@@ -496,12 +507,10 @@ function Dashboard({ user }) {
   }
 
   const cards = [
-          {title: "New Jobs Today",
-          value: jobs.length},
-          {title: "Saved Jobs",
-          value: likedIds.size},
-          {title: "Page",
-          value: page}];
+          {title: "New Jobs Today", value: jobs.length, color: "rgba(139, 92, 246, 0.15)" },
+          {title: "Saved Jobs", value: likedIds.size, color: "rgba(6, 182, 212, 0.15)"  },
+          {title: "Offers Viewed", value: offersViewed.length, color: "rgba(34, 197, 94, 0.15)" }];
+          
 
   return (
     
@@ -525,8 +534,8 @@ function Dashboard({ user }) {
 
       <Stack direction="row" spacing={2} mb={4} sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
       {cards.map((c) => (
-        <InfoCard key={c.title} title={c.title} value={c.value} /> 
-        ))}
+        <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} />
+      ))}
       </Stack>
 
     <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>       {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
