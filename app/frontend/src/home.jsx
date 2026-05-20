@@ -412,7 +412,8 @@ function Dashboard({ user }) {
   }
 
   return (
-    <Box sx={{ pl: 4, flex: 1, pt: 8 }}>
+  <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+    <Box mb={6}>
       <Typography
         variant="h4"
         fontWeight="bold"
@@ -424,23 +425,18 @@ function Dashboard({ user }) {
       <Typography
         variant="body1"
         color="gray"
-        mb={5}
       >
         Discover the latest opportunities for you
       </Typography>
+    </Box>
 
-    <Box mx="auto">
-      <Grid container spacing={3} direction="column">
+    <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>       {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
+    
+      <Stack spacing={3}>
         {jobs.map((job) => (
-          <Grid item xs={12} key={job.offer_id}>
-            <JobCard
-              job={job}
-              onSave={handleSave}
-              onView={handleView}
-            />
-        </Grid>
+          <JobCard key={job.offer_id} job={job} onSave={handleSave} />
         ))}
-      </Grid>
+      </Stack>
     </Box>
 
       {totalPages > 1 && (
