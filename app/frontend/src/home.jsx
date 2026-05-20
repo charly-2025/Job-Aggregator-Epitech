@@ -4,6 +4,16 @@ import SearchJobs from "./pages/SearchJobs/SearchJobs";
 import Settings from "./pages/settings/settings";
 import JobsLiked from "./components/SavedJobs";
 
+import "@fontsource/inter/100.css";
+import "@fontsource/inter/200.css";
+import "@fontsource/inter/300.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/800.css";
+import "@fontsource/inter/900.css";
+
 import {
   Box,
   Drawer,
@@ -210,6 +220,10 @@ function Sidebar({ active, setActive, user }) {
   );
 }
 
+
+
+
+
 function JobModal({ job, open, onClose, saved, onSaveToggle }) {
   return (
     <Dialog
@@ -393,6 +407,30 @@ function JobCard({ job, onSave, initialLiked = false }) {
   );
 }
 
+function InfoCard({ title, value }) {
+  return (
+    <Card
+      sx={{
+        background: "#111010",
+        color: "white",
+        border: "1px solid #2a2a2a",
+        borderRadius: 3,
+        minWidth: 180,
+      }}
+    >
+      <CardContent>
+        <Typography variant="body2" color="gray">
+          {title}
+        </Typography>
+
+        <Typography variant="h5" fontWeight="bold">
+          {value}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+}
+
 function Dashboard({ user }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
@@ -407,6 +445,8 @@ function Dashboard({ user }) {
 
   const limit = 15;
 
+
+
   useEffect(() => {
     const loadOffers = async () => {
       try {
@@ -416,6 +456,7 @@ function Dashboard({ user }) {
           apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
           apiFetch(API.likedOffers),
         ]);
+
 
         setJobs(Array.isArray(response.data) ? response.data : []);
 
@@ -454,7 +495,16 @@ function Dashboard({ user }) {
     return <ErrorMessage message={error} />;
   }
 
+  const cards = [
+          {title: "New Jobs Today",
+          value: jobs.length},
+          {title: "Saved Jobs",
+          value: likedIds.size},
+          {title: "Page",
+          value: page}];
+
   return (
+    
   <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
     <Box mb={6}>
       <Typography
@@ -469,9 +519,15 @@ function Dashboard({ user }) {
         variant="body1"
         color="gray"
       >
-        <h3>Discover the latest job opportunities</h3>
+        <h3><span style={{ paddingLeft : "15px", color: "grey" }}>Discover the latest job opportunities</span></h3>
       </Typography>
     </Box>
+
+      <Stack direction="row" spacing={2} mb={4} sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+      {cards.map((c) => (
+        <InfoCard key={c.title} title={c.title} value={c.value} /> 
+        ))}
+      </Stack>
 
     <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>       {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
     
@@ -511,9 +567,15 @@ export default function App() {
 
   const [error, setError] = useState(null);
 
+
+
   const handleSave = async (job) => {
     console.log("save job", job.id);
   };
+
+
+
+
 
   useEffect(() => {
     const loadUser = async () => {
