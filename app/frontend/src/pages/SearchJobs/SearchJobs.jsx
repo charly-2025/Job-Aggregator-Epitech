@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Slider } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -11,6 +11,7 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import "./SearchJobs.css";
 
 const BASE_URL = "http://localhost:3001";
+const ITEMS_PER_PAGE = 10;
 
 function formatSalary(salary) {
   if (!salary) return "Non précisé";
@@ -32,6 +33,7 @@ function JobCard({ job, onSave, initialLiked = false }) {
   useEffect(() => {
     setSaved(initialLiked);
   }, [initialLiked]);
+
   const handleMouseMove = (e) => {
     const rect = cardRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -236,9 +238,7 @@ function Pagination({ page, totalPages, onPageChange }) {
         }, [])
         .map((p, i) =>
           p === "..." ? (
-            <span key={`dots-${i}`} className="page-dots">
-              …
-            </span>
+            <span key={`dots-${i}`} className="page-dots">…</span>
           ) : (
             <button
               key={p}
@@ -261,15 +261,13 @@ function Pagination({ page, totalPages, onPageChange }) {
 }
 
 export default function SearchJobs({ onSave }) {
-  const [jobs, setJobs] = useState([]);
+  const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
   const [sortBy, setSortBy] = useState("relevant");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [likedIds, setLikedIds] = useState(new Set());
   const [filters, setFilters] = useState({
@@ -277,18 +275,14 @@ export default function SearchJobs({ onSave }) {
     salaryMax: 150000,
     workTypes: [],
   });
-  const isFirstRender = useRef(true);
-  const debounceRef = useRef(null);
+
   const fetchLikedOffers = useCallback(async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/users/offersUserLikes`, {
         credentials: "include",
       });
-
-      if (!res.ok) throw new Error("Failed to fetch liked offers");
-
+      if (!res.ok) return;
       const data = await res.json();
-
       setLikedIds(
         new Set(Array.isArray(data) ? data.map((job) => job.offer_id) : []),
       );
@@ -298,82 +292,31 @@ export default function SearchJobs({ onSave }) {
   }, []);
 
   useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(
+          `${BASE_URL}/api/offers/allOffers?page=1&limit=9999`,
+          { credentials: "include" },
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        setAllJobs(json.data || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
     fetchLikedOffers();
   }, [fetchLikedOffers]);
 
-  const fetchOffers = useCallback(async (currentPage = 1) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch(
-        `${BASE_URL}/api/offers/allOffers?page=${currentPage}&limit=10`,
-        { credentials: "include" },
-      );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setJobs(json.data || []);
-      setTotalPages(json.totalPages || 1);
-      setTotal(json.total || 0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchSearch = useCallback(async (text, currentPage = 1) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch(
-        `${BASE_URL}/api/offers/search/${encodeURIComponent(text)}?page=${currentPage}&limit=10`,
-        { credentials: "include" },
-      );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setJobs(json.data || []);
-      setTotalPages(json.totalPages || 1);
-      setTotal(json.total || 0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    fetchOffers(1);
-  }, [fetchOffers]);
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    clearTimeout(debounceRef.current);
-
-    debounceRef.current = setTimeout(() => {
-      setPage(1);
-
-      if (search.trim().length >= 2) {
-        fetchSearch(search.trim(), 1);
-      } else if (search.trim().length === 0) {
-        fetchOffers(1);
-      }
-    }, 400);
-
-    return () => clearTimeout(debounceRef.current);
-  }, [search, fetchSearch, fetchOffers]);
-
-  const handlePageChange = (p) => {
-    setPage(p);
-    if (search.trim().length >= 2) {
-      fetchSearch(search.trim(), p);
-    } else {
-      fetchOffers(p);
-    }
-  };
+    setPage(1);
+  }, [filters, search, location, sortBy]);
 
   const handleFilterChange = (key, value) =>
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -382,38 +325,54 @@ export default function SearchJobs({ onSave }) {
     setFilters({ jobType: "all", salaryMax: 150000, workTypes: [] });
     setSearch("");
     setLocation("");
-    setPage(1);
-    fetchOffers(1);
   };
 
-  const displayed = jobs
-    .filter((job) => {
+  const filtered = useMemo(() => {
+    let result = allJobs.filter((job) => {
+
+      const s = search.trim().toLowerCase();
+      const matchesSearch =
+        !s ||
+        (job.title || "").toLowerCase().includes(s) ||
+        (job.company_name || "").toLowerCase().includes(s) ||
+        (job.skills || []).some((sk) => sk.toLowerCase().includes(s)) ||
+        (job.about || "").toLowerCase().includes(s);
+
       const matchesLocation =
-        !location ||
-        (job.location || "").toLowerCase().includes(location.toLowerCase());
+        !location.trim() ||
+        (job.location || "").toLowerCase().includes(location.trim().toLowerCase());
+
       const matchesType =
         filters.jobType === "all" || job.job_type === filters.jobType;
+
       const matchesSalary =
         !job.salary || Number(job.salary) <= filters.salaryMax;
+
       const matchesWorkType =
         filters.workTypes.length === 0 ||
         filters.workTypes.includes(job.work_type);
-      return matchesLocation && matchesType && matchesSalary && matchesWorkType;
-    })
-    .sort((a, b) => {
-      if (sortBy === "salary")
-        return (Number(b.salary) || 0) - (Number(a.salary) || 0);
-      if (sortBy === "recent")
-        return new Date(b.published_at || 0) - new Date(a.published_at || 0);
-      return (b.match || 0) - (a.match || 0);
+
+      return matchesSearch && matchesLocation && matchesType && matchesSalary && matchesWorkType;
     });
+
+    if (sortBy === "salary")
+      result = [...result].sort((a, b) => (Number(b.salary) || 0) - (Number(a.salary) || 0));
+    else if (sortBy === "recent")
+      result = [...result].sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
+
+    return result;
+  }, [allJobs, search, location, filters, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const displayed = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="sj-page">
       <div className="sj-header">
         <h1>Find Your Dream Job</h1>
-        <p>{total} offers</p>
+        <p>{filtered.length} offer{filtered.length !== 1 ? "s" : ""}</p>
       </div>
+
       <div className="sj-search-row">
         <div className="sj-search-field">
           <SearchIcon />
@@ -443,10 +402,11 @@ export default function SearchJobs({ onSave }) {
             onClear={handleClearFilters}
           />
         </aside>
+
         <div className="mobile-filter-bar">
           <button
             className="mobile-filter-btn"
-            onClick={() => setShowFilters(true)}
+            onClick={() => setShowFilters(!showFilters)}
           >
             <FilterListIcon style={{ fontSize: 16 }} /> Filters
           </button>
@@ -460,6 +420,17 @@ export default function SearchJobs({ onSave }) {
             <option value="salary">Highest Salary</option>
           </select>
         </div>
+
+        {showFilters && (
+          <div className="mobile-filter-panel">
+            <FilterPanel
+              filters={filters}
+              onChange={handleFilterChange}
+              onClear={handleClearFilters}
+            />
+          </div>
+        )}
+
         <section>
           <div className="sj-jobs-header">
             <select
@@ -505,7 +476,7 @@ export default function SearchJobs({ onSave }) {
               <Pagination
                 page={page}
                 totalPages={totalPages}
-                onPageChange={handlePageChange}
+                onPageChange={setPage}
               />
             </>
           )}
