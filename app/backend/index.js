@@ -32,7 +32,7 @@ app.use(
   cors({
     origin: `http://localhost:${frontendPort}`,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }),
 );
 app.use(cookieParser());
@@ -47,9 +47,9 @@ app.get("/", (req, res) => {
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-app.use('/api/users',usersRoutes);
-app.use('/api/auth',authRoutes)
-app.use('/api/offers',offersRoutes)
-app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/companies/',companiesRoutes)
-app.use('/api/skills', skillsRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/offers", offersRoutes);
+app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/companies/", companiesRoutes);
+app.use("/api/skills", skillsRoutes);

@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import Settings from "./pages/settings/settings";
+import JobsLiked from "./components/SavedJobs";
 
 import {
   Box,
@@ -22,7 +23,6 @@ import {
   AppBar,
   Toolbar,
   Pagination,
-  Modal,
   Divider,
   Dialog,
   DialogTitle,
@@ -30,26 +30,39 @@ import {
   DialogActions,
 } from "@mui/material";
 
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SearchIcon from "@mui/icons-material/Search";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SettingsIcon from "@mui/icons-material/Settings";
-import WorkIcon from "@mui/icons-material/Work";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
-
 
 const BASE_URL = "http://localhost:3001";
 
 const API = {
   profile: `${BASE_URL}/api/users/userInfo`,
   offers: `${BASE_URL}/api/offers/allOffers`,
+  likeOffer: (offerId) => `${BASE_URL}/api/offers/handleOfferLike/${offerId}`,
+  likedOffers: `${BASE_URL}/api/users/offersUserLikes`,
+  refresh: `${BASE_URL}/api/auth/refresh`,
+  logout: `${BASE_URL}/api/auth/logout`,
 };
 
+async function refreshAccessToken() {
+  const res = await fetch(API.refresh, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Session expired");
+  }
+}
+
 async function apiFetch(url, options = {}) {
-  try {
-    const res = await fetch(url, {
+  const makeRequest = async () => {
+    return fetch(url, {
       ...options,
       credentials: "include",
       headers: {
@@ -57,6 +70,16 @@ async function apiFetch(url, options = {}) {
         ...(options.headers || {}),
       },
     });
+  };
+
+  try {
+    let res = await makeRequest();
+    console.log("STATUS:", res.status);
+    if (res.status === 401) {
+      await refreshAccessToken();
+
+      res = await makeRequest();
+    }
 
     const data = await res.json().catch(() => null);
 
@@ -66,6 +89,12 @@ async function apiFetch(url, options = {}) {
 
     return data;
   } catch (err) {
+    console.error(err);
+
+    if (err.message === "Session expired") {
+      window.location.href = "/login";
+    }
+
     throw new Error(err.message || "Network error");
   }
 }
@@ -93,7 +122,7 @@ function Sidebar({ active, setActive, user }) {
     {
       id: "saved",
       label: "Saved Jobs",
-      icon: <BookmarkIcon />,
+      icon: <FavoriteIcon />,
     },
     {
       id: "settings",
@@ -118,7 +147,6 @@ function Sidebar({ active, setActive, user }) {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          
         },
       }}
     >
@@ -127,7 +155,6 @@ function Sidebar({ active, setActive, user }) {
           display: "flex",
           flexDirection: "column",
           height: "100%",
-          
         }}
       >
         <Box p={3}>
@@ -156,9 +183,7 @@ function Sidebar({ active, setActive, user }) {
                 },
               }}
             >
-              <ListItemIcon sx={{ color: "white" }}>
-                {item.icon}
-              </ListItemIcon>
+              <ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
 
               <ListItemText primary={item.label} />
             </ListItemButton>
@@ -167,18 +192,14 @@ function Sidebar({ active, setActive, user }) {
 
         <Box mt="auto" p={3}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ bgcolor: "#000000" }}>
-              {user?.first_name?.[0]}
-            </Avatar>
+            <Avatar sx={{ bgcolor: "#000000" }}>{user?.first_name?.[0]}</Avatar>
 
             <Box>
               <Typography fontWeight="bold">
                 {user?.first_name} {user?.last_name}
               </Typography>
 
-              <Typography variant="body2">
-                {user?.email}
-              </Typography>
+              <Typography variant="body2">{user?.email}</Typography>
             </Box>
           </Stack>
         </Box>
@@ -209,6 +230,7 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
         <Typography variant="h6" fontWeight="bold">
           {job.title}
         </Typography>
+
         <Typography variant="body2" color="gray">
           {job.company_name}
         </Typography>
@@ -234,7 +256,10 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
 
           <Divider sx={{ borderColor: "#2a2a2a" }} />
 
-          <Typography variant="body2" color="gray">Skills</Typography>
+          <Typography variant="body2" color="gray">
+            Skills
+          </Typography>
+
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {job.skills?.map((skill) => (
               <Chip key={skill} label={skill} size="small" />
@@ -246,9 +271,17 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
       <Divider sx={{ borderColor: "#2a2a2a" }} />
 
       <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} variant="outlined" sx={{ color: "white", borderColor: "#2a2a2a" }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{
+            color: "white",
+            borderColor: "#2a2a2a",
+          }}
+        >
           Close
         </Button>
+
         <Button
           variant={saved ? "contained" : "outlined"}
           color="secondary"
@@ -261,13 +294,18 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
   );
 }
 
-function JobCard({ job, onSave }) {
-  const [saved, setSaved] = useState(false);
+function JobCard({ job, onSave, initialLiked = false }) {
+  const [saved, setSaved] = useState(initialLiked);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setSaved(initialLiked);
+  }, [initialLiked]);
 
   const handleSaveToggle = async () => {
     try {
       await onSave(job);
+
       setSaved((prev) => !prev);
     } catch (err) {
       console.error(err.message);
@@ -276,23 +314,27 @@ function JobCard({ job, onSave }) {
 
   return (
     <>
-      <Card sx={{
-        background: "#111010",
-        color: "white",
-        borderRadius: 3,
-        border: "1px solid #2a2a2a",
-        transition: "box-shadow 0.3s ease, border-color 0.3s ease",
-        "&:hover": {
-          boxShadow: "0 0 30px rgba(132,0,255,0.2)",
-          borderColor: "rgba(132,0,255,0.4)",
-        },
-      }}>
+      <Card
+        sx={{
+          background: "#111010",
+          color: "white",
+          borderRadius: 3,
+          border: "1px solid #2a2a2a",
+          transition: "box-shadow 0.3s ease, border-color 0.3s ease",
+
+          "&:hover": {
+            boxShadow: "0 0 30px rgba(132,0,255,0.2)",
+            borderColor: "rgba(132,0,255,0.4)",
+          },
+        }}
+      >
         <CardContent>
           <Stack spacing={1.5}>
             <Box>
               <Typography variant="subtitle1" fontWeight="bold">
                 {job.title}
               </Typography>
+
               <Typography variant="body2" color="gray">
                 {job.company_name}
               </Typography>
@@ -319,6 +361,7 @@ function JobCard({ job, onSave }) {
               >
                 View
               </Button>
+
               <Button
                 variant={saved ? "contained" : "outlined"}
                 color="secondary"
@@ -350,6 +393,7 @@ function JobCard({ job, onSave }) {
 
 function Dashboard({ user }) {
   const [jobs, setJobs] = useState([]);
+  const [likedIds, setLikedIds] = useState(new Set());
 
   const [loading, setLoading] = useState(true);
 
@@ -366,14 +410,17 @@ function Dashboard({ user }) {
       try {
         setLoading(true);
 
-        const response = await apiFetch(
-          `${API.offers}?page=${page}&limit=${limit}`
-        );
+        const [response, likedRes] = await Promise.all([
+          apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
+          apiFetch(API.likedOffers),
+        ]);
 
-        setJobs(
-          Array.isArray(response.data)
-            ? response.data
-            : []
+        setJobs(Array.isArray(response.data) ? response.data : []);
+
+        setLikedIds(
+          new Set(
+            Array.isArray(likedRes) ? likedRes.map((job) => job.offer_id) : [],
+          ),
         );
 
         setTotalPages(response.totalPages || 1);
@@ -388,20 +435,14 @@ function Dashboard({ user }) {
   }, [page]);
 
   const handleSave = async (job) => {
-    console.log("save", job.offer_id);
-  };
-
-  const handleView = (job) => {
-    console.log("view", job);
+    await apiFetch(API.likeOffer(job.offer_id), {
+      method: "PUT",
+    });
   };
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        mt={10}
-      >
+      <Box display="flex" justifyContent="center" mt={10}>
         <CircularProgress />
       </Box>
     );
@@ -413,48 +454,34 @@ function Dashboard({ user }) {
 
   return (
     <Box sx={{ pl: 4, flex: 1, pt: 8 }}>
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        color="white"
-      >
+      <Typography variant="h4" fontWeight="bold" color="white">
         Welcome back {user?.first_name} 👋
       </Typography>
 
-      <Typography
-        variant="body1"
-        color="gray"
-        mb={5}
-      >
+      <Typography variant="body1" color="gray" mb={5}>
         Discover the latest opportunities for you
       </Typography>
 
-    <Box mx="auto">
-      <Grid container spacing={3} direction="column">
-        {jobs.map((job) => (
-          <Grid item xs={12} key={job.offer_id}>
-            <JobCard
-              job={job}
-              onSave={handleSave}
-              onView={handleView}
-            />
+      <Box mx="auto">
+        <Grid container spacing={3} direction="column">
+          {jobs.map((job) => (
+            <Grid item xs={12} key={job.offer_id}>
+              <JobCard
+                job={job}
+                initialLiked={likedIds.has(job.offer_id)}
+                onSave={handleSave}
+              />
+            </Grid>
+          ))}
         </Grid>
-        ))}
-      </Grid>
-    </Box>
+      </Box>
 
       {totalPages > 1 && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          mt={6}
-        >
+        <Box display="flex" justifyContent="center" mt={6}>
           <Pagination
             count={totalPages}
             page={page}
-            onChange={(e, value) =>
-              setPage(value)
-            }
+            onChange={(e, value) => setPage(value)}
             color="primary"
             shape="rounded"
             sx={{
@@ -496,6 +523,19 @@ export default function App() {
     loadUser();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await fetch(API.logout, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      window.location.href = "/login";
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -514,9 +554,7 @@ export default function App() {
   }
 
   if (!user) {
-    return (
-      <ErrorMessage message="Not authenticated" />
-    );
+    return <ErrorMessage message="Not authenticated" />;
   }
 
   return (
@@ -527,60 +565,62 @@ export default function App() {
         background: "#000000",
       }}
     >
-      <Sidebar
-        user={user}
-        active={page}
-        setActive={setPage}
-    />
+      <Sidebar user={user} active={page} setActive={setPage} />
 
-    <Box flex={1} sx={{ minWidth: 0, width: "100%" }}>
+      <Box flex={1} sx={{ minWidth: 0, width: "100%"  }}>
+        <AppBar
+          position="fixed"
+          elevation={0}
+          sx={{
+            background: "#000000",
+            borderBottom: "1px solid #3a3939",
+            width: "100%",
+          }}
+        >
+          <Toolbar sx={{ justifyContent: "flex-end" }}>
+            <Box display="flex" gap={2} alignItems="center">
+              <NotificationsNoneOutlinedIcon
+                sx={{
+                  fontSize: 28,
+                  color: "white",
+                }}
+              />
 
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        background: "#000000",
-        borderBottom: "1px solid #3a3939",
-        width: "100%",
-      }}
-    >
-      <Toolbar sx={{ justifyContent: "flex-end" }}>
-        <Box display="absolute" gap={2} alignItems="center">
-          <NotificationsNoneOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
-          <DarkModeOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
-          <ExitToAppOutlinedIcon sx={{ fontSize: 28, color: "white" }} />
-        </Box>
-      </Toolbar>
-    </AppBar>
+              <DarkModeOutlinedIcon
+                sx={{
+                  fontSize: 28,
+                  color: "white",
+                }}
+              />
 
-        {page === "dashboard" && (
-          <Dashboard user={user} />
-        )}
+              <ExitToAppOutlinedIcon
+                onClick={handleLogout}
+                sx={{
+                  fontSize: 28,
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              />
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        {page === "dashboard" && <Dashboard user={user} />}
 
         {page === "search" && (
           <Box p={4}>
-            <Typography
-              variant="h4"
-              color="white"
-            >
+            <Typography variant="h4" color="white">
               Search Jobs
             </Typography>
           </Box>
         )}
 
-        {page === "saved" && (
-          <Box p={4}>
-            <Typography
-              variant="h4"
-              color="white"
-            >
-              Saved Jobs
-            </Typography>
-          </Box>
-        )}
+        {page === "saved" && <JobsLiked setActive={setPage} />}
 
         {page === "settings" && (
-          <Settings user={user} />
+          <>
+            <Settings user={user} />
+          </>
         )}
       </Box>
     </Box>
