@@ -572,6 +572,7 @@ export default function App() {
           position="fixed"
           elevation={0}
           sx={{
+            height: 60,
             background: "#000000",
             borderBottom: "1px solid #3a3939",
             width: "100%",
