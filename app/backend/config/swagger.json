@@ -10,6 +10,10 @@
   "schemes": ["http"],
   "tags": [
     {
+      "name":"Skills",
+      "description":"/api/skills"
+    },
+    {
       "name": "Auth",
       "description": "/api/auth"
     },
@@ -28,6 +32,136 @@
     { "name": "Companies", "description": "/api/companies" }
   ],
   "paths": {
+    "/allSkills":{
+      "get": {
+        "tags": ["Skills"],
+        "description": "Get a list of all skills",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": 
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "JavaScript"
+                  },"skill_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/top10Skills":{
+      "get": {
+        "tags": ["Skills"],
+        "description": "Get a list of the top 10 most required skills in all offers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": 
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "JavaScript"
+                  },"skill_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "nb_offers": {
+                    "type": "integer",
+                    "example": 15
+                  },
+                  "total_offers": {
+                    "type": "integer",
+                    "example": 100
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/last24hOffers":{
+      "get":{
+        "tags":["Offers"],
+        "description":"Get a list of offers created in the last 24 hours",
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "type":"array",
+              "items":{
+                "type":"object",
+                "properties":{
+                  "offer_id":{
+                    "type":"integer",
+                    "example":1
+                  },
+                  "title":{
+                    "type":"string",
+                    "example":"Software Engineer"
+                  },
+                  "company_id":{
+                    "type":"integer",
+                    "example":1
+                  },
+                  "company_name":{
+                    "type":"string",
+                    "example":"Tech Company"
+                  },
+                  "location":{
+                    "type":"string",
+                    "example":"New York, NY"
+                  },
+                  "job_type":{
+                    "type":"string",
+                    "example":"CDI"
+                  },
+                  "work_type":{
+                    "type":"string",
+                    "example":"On-site"
+                  },
+                  "about":{
+                    "type":"string",
+                    "example":"We are looking for a skilled software engineer to join our team."
+                  },
+                  "salary":{  
+                    "type":"integer",
+                    "example":120000
+                  },
+                  "skills":{
+                    "type":"array",
+                    "items":{
+                      "type":"string"
+                    },
+                    "example":["JavaScript", "Node.js", "React"]
+                  }
+                }
+              }
+            }       
+          }
+        }
+      }
+    },
     "/register": {
       "post": {
         "tags": ["Auth"],
