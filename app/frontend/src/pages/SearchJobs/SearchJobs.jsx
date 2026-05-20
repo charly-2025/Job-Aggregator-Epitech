@@ -25,10 +25,13 @@ function formatDate(dateStr) {
   });
 }
 
-function JobCard({ job, onSave }) {
-  const [saved, setSaved] = useState(false);
+function JobCard({ job, onSave, initialLiked = false }) {
+  const [saved, setSaved] = useState(initialLiked);
   const cardRef = useRef(null);
 
+  useEffect(() => {
+    setSaved(initialLiked);
+  }, [initialLiked]);
   const handleMouseMove = (e) => {
     const rect = cardRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -59,9 +62,6 @@ function JobCard({ job, onSave }) {
         <div className="job-card-info">
           <div className="job-title-row">
             <h3 className="job-title">{job.title}</h3>
-            {job.match && (
-              <span className="match-badge">{job.match}% match</span>
-            )}
           </div>
           <p className="job-company">{job.company_name}</p>
         </div>
@@ -190,23 +190,26 @@ function FilterPanel({ filters, onChange, onClear }) {
         <span className="filter-label">Work Type</span>
         <div className="checkbox-group">
           {["fullTime", "partTime", "remote", "hybrid"].map((type) => (
-              <label key={type} className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={filters.workTypes.includes(type)}
-                  onChange={(e) => {
-                    const updated = e.target.checked
-                      ? [...filters.workTypes, type]
-                      : filters.workTypes.filter((t) => t !== type);
-                    onChange("workTypes", updated);
-                  }}
-                />
-                {type === "fullTime" ? "Full Time"
-                  : type === "partTime" ? "Part Time"
-                  : type === "remote" ? "Remote"
-                  : "Hybrid"}
-              </label>
-            ))}
+            <label key={type} className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={filters.workTypes.includes(type)}
+                onChange={(e) => {
+                  const updated = e.target.checked
+                    ? [...filters.workTypes, type]
+                    : filters.workTypes.filter((t) => t !== type);
+                  onChange("workTypes", updated);
+                }}
+              />
+              {type === "fullTime"
+                ? "Full Time"
+                : type === "partTime"
+                  ? "Part Time"
+                  : type === "remote"
+                    ? "Remote"
+                    : "Hybrid"}
+            </label>
+          ))}
         </div>
       </div>
     </div>
@@ -233,7 +236,9 @@ function Pagination({ page, totalPages, onPageChange }) {
         }, [])
         .map((p, i) =>
           p === "..." ? (
-            <span key={`dots-${i}`} className="page-dots">…</span>
+            <span key={`dots-${i}`} className="page-dots">
+              …
+            </span>
           ) : (
             <button
               key={p}
@@ -242,7 +247,7 @@ function Pagination({ page, totalPages, onPageChange }) {
             >
               {p}
             </button>
-          )
+          ),
         )}
       <button
         className="page-btn"
@@ -266,13 +271,35 @@ export default function SearchJobs({ onSave }) {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [likedIds, setLikedIds] = useState(new Set());
   const [filters, setFilters] = useState({
-  jobType: "all",
-  salaryMax: 150000,
-  workTypes: [],
-});
-
+    jobType: "all",
+    salaryMax: 150000,
+    workTypes: [],
+  });
+  const isFirstRender = useRef(true);
   const debounceRef = useRef(null);
+  const fetchLikedOffers = useCallback(async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/users/offersUserLikes`, {
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch liked offers");
+
+      const data = await res.json();
+
+      setLikedIds(
+        new Set(Array.isArray(data) ? data.map((job) => job.offer_id) : []),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLikedOffers();
+  }, [fetchLikedOffers]);
 
   const fetchOffers = useCallback(async (currentPage = 1) => {
     try {
@@ -280,7 +307,7 @@ export default function SearchJobs({ onSave }) {
       setError(null);
       const res = await fetch(
         `${BASE_URL}/api/offers/allOffers?page=${currentPage}&limit=10`,
-        { credentials: "include" }
+        { credentials: "include" },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
@@ -300,7 +327,7 @@ export default function SearchJobs({ onSave }) {
       setError(null);
       const res = await fetch(
         `${BASE_URL}/api/offers/search/${encodeURIComponent(text)}?page=${currentPage}&limit=10`,
-        { credentials: "include" }
+        { credentials: "include" },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
@@ -319,15 +346,23 @@ export default function SearchJobs({ onSave }) {
   }, [fetchOffers]);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
       setPage(1);
+
       if (search.trim().length >= 2) {
         fetchSearch(search.trim(), 1);
       } else if (search.trim().length === 0) {
         fetchOffers(1);
       }
     }, 400);
+
     return () => clearTimeout(debounceRef.current);
   }, [search, fetchSearch, fetchOffers]);
 
@@ -409,10 +444,17 @@ export default function SearchJobs({ onSave }) {
           />
         </aside>
         <div className="mobile-filter-bar">
-          <button className="mobile-filter-btn" onClick={() => setShowFilters(true)}>
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setShowFilters(true)}
+          >
             <FilterListIcon style={{ fontSize: 16 }} /> Filters
           </button>
-          <select className="sj-sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <select
+            className="sj-sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
             <option value="relevant">Most Relevant</option>
             <option value="recent">Most Recent</option>
             <option value="salary">Highest Salary</option>
@@ -448,15 +490,14 @@ export default function SearchJobs({ onSave }) {
                       key={job.offer_id}
                       job={job}
                       onSave={onSave}
+                      initialLiked={likedIds.has(job.offer_id)}
                     />
                   ))
                 ) : (
                   <div className="sj-empty">
-                    Aucune offre trouvée.
+                    No offers found.
                     <br />
-                    <button onClick={handleClearFilters}>
-                      Réinitialiser les filtres
-                    </button>
+                    <button onClick={handleClearFilters}>Reset filters.</button>
                   </div>
                 )}
               </div>

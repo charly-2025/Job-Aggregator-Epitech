@@ -1,5 +1,5 @@
 .sj-page {
-  background: #020617;
+  background: #000000;
   min-height: 100vh;
   padding: 32px;
   color: white;
@@ -230,7 +230,10 @@
   overflow: hidden;
   cursor: pointer;
   border: 1px solid #1e293b;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .job-card::before {
@@ -263,11 +266,17 @@
 .job-card:hover {
   transform: translateY(-2px);
   border-color: #7c3aed44;
-  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.12), 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 8px 32px rgba(124, 58, 237, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.job-card:hover::before { opacity: 1; }
-.job-card:hover::after  { opacity: 1; }
+.job-card:hover::before {
+  opacity: 1;
+}
+.job-card:hover::after {
+  opacity: 1;
+}
 
 .job-card-header {
   display: flex;
@@ -318,12 +327,19 @@
   border-radius: 8px;
   display: flex;
   align-items: center;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
   flex-shrink: 0;
 }
 
-.save-btn:hover { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
-.save-btn.saved { color: #ef4444; }
+.save-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}
+.save-btn.saved {
+  color: #ef4444;
+}
 
 .job-meta {
   display: flex;
@@ -367,7 +383,9 @@
   color: #94a3b8;
   border: 1px solid #1e293b;
   font-weight: 500;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .job-card:hover .skill-chip {
@@ -398,7 +416,10 @@
   font-size: 0.84rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
 }
 
 .btn-details:hover {
@@ -422,7 +443,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s, box-shadow 0.2s;
+  transition:
+    opacity 0.2s,
+    box-shadow 0.2s;
   box-shadow: 0 2px 12px rgba(124, 58, 237, 0.25);
 }
 
@@ -446,7 +469,11 @@
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .sj-error {
   background: #1a0f0f;
@@ -492,7 +519,10 @@
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -523,7 +553,6 @@
 }
 
 @media (max-width: 768px) {
-
   .sj-page {
     padding: 16px;
     padding-bottom: 80px;

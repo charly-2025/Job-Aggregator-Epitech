@@ -18,7 +18,9 @@ Automatic pipeline to collect, clean, and store job offers from multiple sources
 cd .../app/database
 mysql -u root -p < jobagg.sql
 ```
+
 ---
+
 ## Configuration
 
 Create a `.env` file in **this folder** with the following variables:
@@ -33,8 +35,7 @@ MYSQL_DATABASE=your_database_name
 MYSQL_PORT=your_database_port
 ```
 
-This file is used to connect the pipeline to your MySQL database.
----
+## This file is used to connect the pipeline to your MySQL database.
 
 ## Project Structure
 

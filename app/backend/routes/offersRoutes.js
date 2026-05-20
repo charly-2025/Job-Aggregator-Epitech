@@ -11,7 +11,7 @@ import {
   newOfferView,
   searchOffers,
   updateOffer,
-  getLast24hOffers
+  getLast24hOffers,
 } from "../controllers/offersController.js";
 
 const offersRoutes = express.Router();

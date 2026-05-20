@@ -10,8 +10,8 @@
   "schemes": ["http"],
   "tags": [
     {
-      "name":"Skills",
-      "description":"/api/skills"
+      "name": "Skills",
+      "description": "/api/skills"
     },
     {
       "name": "Auth",
@@ -32,7 +32,7 @@
     { "name": "Companies", "description": "/api/companies" }
   ],
   "paths": {
-    "/allSkills":{
+    "/allSkills": {
       "get": {
         "tags": ["Skills"],
         "description": "Get a list of all skills",
@@ -41,14 +41,14 @@
             "description": "OK",
             "schema": {
               "type": "array",
-              "items": 
-              {
+              "items": {
                 "type": "object",
                 "properties": {
                   "name": {
                     "type": "string",
                     "example": "JavaScript"
-                  },"skill_id": {
+                  },
+                  "skill_id": {
                     "type": "integer",
                     "example": 1
                   }
@@ -62,7 +62,7 @@
         }
       }
     },
-    "/top10Skills":{
+    "/top10Skills": {
       "get": {
         "tags": ["Skills"],
         "description": "Get a list of the top 10 most required skills in all offers",
@@ -71,14 +71,14 @@
             "description": "OK",
             "schema": {
               "type": "array",
-              "items": 
-              {
+              "items": {
                 "type": "object",
                 "properties": {
                   "name": {
                     "type": "string",
                     "example": "JavaScript"
-                  },"skill_id": {
+                  },
+                  "skill_id": {
                     "type": "integer",
                     "example": 1
                   },
@@ -100,64 +100,64 @@
         }
       }
     },
-    "/last24hOffers":{
-      "get":{
-        "tags":["Offers"],
-        "description":"Get a list of offers created in the last 24 hours",
-        "responses":{
-          "200":{
-            "description":"OK",
-            "schema":{
-              "type":"array",
-              "items":{
-                "type":"object",
-                "properties":{
-                  "offer_id":{
-                    "type":"integer",
-                    "example":1
+    "/last24hOffers": {
+      "get": {
+        "tags": ["Offers"],
+        "description": "Get a list of offers created in the last 24 hours",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "offer_id": {
+                    "type": "integer",
+                    "example": 1
                   },
-                  "title":{
-                    "type":"string",
-                    "example":"Software Engineer"
+                  "title": {
+                    "type": "string",
+                    "example": "Software Engineer"
                   },
-                  "company_id":{
-                    "type":"integer",
-                    "example":1
+                  "company_id": {
+                    "type": "integer",
+                    "example": 1
                   },
-                  "company_name":{
-                    "type":"string",
-                    "example":"Tech Company"
+                  "company_name": {
+                    "type": "string",
+                    "example": "Tech Company"
                   },
-                  "location":{
-                    "type":"string",
-                    "example":"New York, NY"
+                  "location": {
+                    "type": "string",
+                    "example": "New York, NY"
                   },
-                  "job_type":{
-                    "type":"string",
-                    "example":"CDI"
+                  "job_type": {
+                    "type": "string",
+                    "example": "CDI"
                   },
-                  "work_type":{
-                    "type":"string",
-                    "example":"On-site"
+                  "work_type": {
+                    "type": "string",
+                    "example": "On-site"
                   },
-                  "about":{
-                    "type":"string",
-                    "example":"We are looking for a skilled software engineer to join our team."
+                  "about": {
+                    "type": "string",
+                    "example": "We are looking for a skilled software engineer to join our team."
                   },
-                  "salary":{  
-                    "type":"integer",
-                    "example":120000
+                  "salary": {
+                    "type": "integer",
+                    "example": 120000
                   },
-                  "skills":{
-                    "type":"array",
-                    "items":{
-                      "type":"string"
+                  "skills": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     },
-                    "example":["JavaScript", "Node.js", "React"]
+                    "example": ["JavaScript", "Node.js", "React"]
                   }
                 }
               }
-            }       
+            }
           }
         }
       }

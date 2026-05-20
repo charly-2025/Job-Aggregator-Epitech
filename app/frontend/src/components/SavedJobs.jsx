@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Typography,
@@ -19,7 +19,7 @@ import {
   DialogActions,
   Divider,
 } from "@mui/material";
-
+import "../pages/SearchJobs/SearchJobs.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
@@ -28,9 +28,25 @@ import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import CloseIcon              from "@mui/icons-material/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
+import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
+import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+
+function formatSalary(salary) {
+  if (!salary) return "Non précisé";
+  return `$${Number(salary).toLocaleString()}`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  return new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+}
 
 const BASE_URL = "http://localhost:3001";
 
@@ -45,120 +61,135 @@ async function apiFetch(url, options = {}) {
   return data;
 }
 
-function CardSkeleton() {
-  const sk = (w, h, radius = "4px") => (
-    <Skeleton variant="rounded" width={w} height={h} sx={{ bgcolor: "#141414", borderRadius: radius }} />
-  );
-  return (
-    <Card sx={{ bgcolor: "#0d0d0d", border: "1px solid #141414", borderRadius: "14px" }}>
-      <CardContent sx={{ p: "22px !important" }}>
-        <Stack spacing={2}>
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-            <Box>
-              {sk("42%", 20)} <Box mt={0.75}>{sk("22%", 14)}</Box>
-            </Box>
-            <Skeleton variant="circular" width={26} height={26} sx={{ bgcolor: "#141414" }} />
-          </Stack>
-          {sk("65%", 14)}
-          <Stack direction="row" spacing={1}>
-            {[58, 70, 62, 75].map((w, i) => sk(w, 22, "5px"))}
-          </Stack>
-          <Stack direction="row" spacing={1}>
-            {sk("100%", 34, "8px")} {sk(90, 34, "8px")}
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
-  );
-}
- 
-function JobModal({ job, open, onClose, onUnsave }) {
+function JobModal({ job, open, onClose, onUnsave }) {}
 
-}
+function JobCard({ job, onSave, initialLiked = false, onRemove }) {
+  const [saved, setSaved] = useState(initialLiked);
+  const cardRef = useRef(null);
 
-function JobCard({ job, onUnsave, onView, index }) {
-  const postedDate = job.created_at
-    ? new Date(job.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : null;
- 
-  const metaItems = [
-    { icon: <LocationOnOutlinedIcon sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: job.location },
-    { icon: <WorkOutlineIcon       sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: job.job_type },
-    { icon: <AttachMoneyIcon       sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: `$${job.salary?.toLocaleString()}` },
-    ...(postedDate ? [{ icon: <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: "#f7f7f7ff" }} />, label: postedDate }] : []),
-  ];
- 
+  useEffect(() => {
+    setSaved(initialLiked);
+  }, [initialLiked]);
+
+  const handleMouseMove = (e) => {
+    const rect = cardRef.current.getBoundingClientRect();
+
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    cardRef.current.style.setProperty("--mx", `${x}%`);
+    cardRef.current.style.setProperty("--my", `${y}%`);
+  };
+
+  const handleSave = async () => {
+    try {
+      await fetch(`${BASE_URL}/api/offers/handleOfferLike/${job.offer_id}`, {
+        method: "PUT",
+        credentials: "include",
+      });
+
+      const newSaved = !saved;
+
+      setSaved(newSaved);
+
+      if (!newSaved && onRemove) {
+        onRemove(job.offer_id);
+      }
+
+      if (onSave) onSave(job);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const displayedSkills = (job.skills || []).slice(0, 5);
+  const extraCount = (job.skills || []).length - 5;
+
   return (
-    <Fade in timeout={200 + index * 50}>
-      <Card sx={{
-        bgcolor: "#0d0d0d", color: "white", border: "1px solid #141414", borderRadius: "14px",
-        transition: "border-color 0.2s, transform 0.2s",
-        "&:hover": { borderColor: "#252525", transform: "translateY(-1px)" },
-      }}>
-        <CardContent sx={{ p: "22px !important" }}>
- 
-          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={0.5}>
-            <Typography sx={{ fontSize: 16, fontWeight: 700, letterSpacing: -0.4, color: "#ececec", lineHeight: 1.3, pr: 2 }}>
-              {job.title}
-            </Typography>
-            <Tooltip title="Unsave">
-              <IconButton size="small" onClick={() => onUnsave(job)} sx={{
-                width: 28, height: 28, flexShrink: 0, color: "#ff0000ff",
-                transition: "color 0.15s",
-                "&:hover": { color: "#f8f8f8ff", bgcolor: "rgba(255,77,109,0.08)" },
-              }}>
-                <FavoriteIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
- 
-          <Typography sx={{ fontSize: 13, color: "#f7f7f7ff", mb: 1.75 }}>{job.company_name}</Typography>
- 
-          <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap alignItems="center" mb={2}>
-            {metaItems.map(({ icon, label }, i) => (
-              <Stack key={i} direction="row" spacing={0.6} alignItems="center">
-                {icon}
-                <Typography sx={{ fontSize: 13, color: "#a88c8cff" }}>{label}</Typography>
-              </Stack>
-            ))}
-          </Stack>
- 
-          <Typography sx={{
-            fontSize: 13, color: "#a88c8cff", lineHeight: 1.65, mb: 2,
-            display: "-webkit-box", WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical", overflow: "hidden",
-          }}>
-            {job.about}
-          </Typography>
- 
-          <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap mb={2.5}>
-            {job.skills?.slice(0, 5).map((s) => (
-              <Chip key={s} label={s} size="small" sx={{
-                bgcolor: "#111", color: "#f7f7f7ff", border: "1px solid #1c1c1c",
-                fontSize: 11, height: 22, borderRadius: "5px",
-              }} />
-            ))}
-            {job.skills?.length > 5 && (
-              <Chip label={`+${job.skills.length - 5} more`} size="small" sx={{
-                bgcolor: "transparent", color: "#f7f7f7ff", border: "1px solid #1a1a1a",
-                fontSize: 11, height: 22, borderRadius: "5px",
-              }} />
-            )}
-          </Stack>
- 
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" size="small" fullWidth onClick={() => onView(job)} sx={{
-              color: "#dcbdbdff", borderColor: "#1c1c1c", borderRadius: "8px", fontSize: 13,
-              textTransform: "none", fontWeight: 500, py: 0.85,
-              "&:hover": { borderColor: "#2a2a2a", color: "#ccc", bgcolor: "#0f0f0f" },
-            }}>
-              View Details
-            </Button>
-          </Stack>
- 
-        </CardContent>
-      </Card>
-    </Fade>
+    <div className="job-card" ref={cardRef} onMouseMove={handleMouseMove}>
+      <div className="job-card-header">
+        <div className="job-card-info">
+          <div className="job-title-row">
+            <h3 className="job-title">{job.title}</h3>
+          </div>
+
+          <p className="job-company">{job.company_name}</p>
+        </div>
+
+        <button
+          className={`save-btn${saved ? " saved" : ""}`}
+          onClick={handleSave}
+          aria-label={saved ? "Retirer" : "Sauvegarder"}
+        >
+          {saved ? (
+            <FavoriteIcon style={{ fontSize: 18, color: "red" }} />
+          ) : (
+            <FavoriteBorderIcon style={{ fontSize: 18 }} />
+          )}
+        </button>
+      </div>
+
+      <div className="job-meta">
+        {job.location && (
+          <span className="meta-item">
+            <LocationOnOutlinedIcon />
+            {job.location}
+          </span>
+        )}
+
+        {job.job_type && (
+          <span className="meta-item">
+            <BusinessCenterOutlinedIcon />
+            {job.job_type}
+          </span>
+        )}
+
+        {job.salary && (
+          <span className="meta-item">
+            <AttachMoneyOutlinedIcon />
+            {formatSalary(job.salary)}
+          </span>
+        )}
+
+        {job.published_at && (
+          <span className="meta-item">
+            <AccessTimeOutlinedIcon />
+            {formatDate(job.published_at)}
+          </span>
+        )}
+      </div>
+
+      {job.about && <p className="job-description">{job.about}</p>}
+
+      {displayedSkills.length > 0 && (
+        <div className="skill-chips">
+          {displayedSkills.map((skill) => (
+            <span key={skill} className="skill-chip">
+              {skill}
+            </span>
+          ))}
+
+          {extraCount > 0 && (
+            <span className="skill-chip skill-chip-extra">
+              +{extraCount} more
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="job-card-actions">
+        <button className="btn-details">View Details</button>
+
+        <a
+          href={job.source_url || "#"}
+          target="_blank"
+          rel="noreferrer"
+          className="btn-apply"
+        >
+          Apply Now
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -229,9 +260,8 @@ function EmptyState({ onBrowse }) {
           maxWidth={340}
           lineHeight={1.6}
           fontSize={14}
-          
         >
-          Start exploring opportunities and save the ones that catch your eyes —
+          Start exploring opportunities and save the ones that catch your eyes,
           they'll all appear here.
         </Typography>
 
@@ -302,6 +332,7 @@ const JobsLiked = ({ setActive }) => {
         bgcolor: "#0a0a0a",
         color: "white",
         p: { xs: 2, sm: 3, md: 4 },
+        marginTop: 6,
       }}
     >
       <Box mb={5}>
@@ -314,8 +345,8 @@ const JobsLiked = ({ setActive }) => {
         >
           <Box>
             <Typography
-              variant="h4"
-              fontWeight={800}
+              variant="h1"
+              fontWeight="Bold"
               letterSpacing={-0.8}
               lineHeight={1.1}
               sx={{ fontSize: { xs: 26, sm: 32 } }}
@@ -330,26 +361,6 @@ const JobsLiked = ({ setActive }) => {
               </Typography>
             )}
           </Box>
-
-          {!loading && jobs.length > 0 && (
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<DashboardIcon sx={{ fontSize: 16 }} />}
-              onClick={() => setActive?.("dashboard")}
-              sx={{
-                color: "white",
-                borderColor: "#2a2a2a",
-                borderRadius: 2,
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: 13,
-                "&:hover": { borderColor: "#555", bgcolor: "#111" },
-              }}
-            >
-              Browse more
-            </Button>
-          )}
         </Stack>
 
         <Box
@@ -361,16 +372,6 @@ const JobsLiked = ({ setActive }) => {
         />
       </Box>
 
-      {loading && (
-        <Grid container spacing={3}>
-          {[...Array(6)].map((_, i) => (
-            <Grid item xs={12} sm={6} lg={4} key={i}>
-              <CardSkeleton />
-            </Grid>
-          ))}
-        </Grid>
-      )}
-
       {!loading && jobs.length === 0 && (
         <EmptyState onBrowse={() => setActive?.("dashboard")} />
       )}
@@ -381,9 +382,10 @@ const JobsLiked = ({ setActive }) => {
             <Grid item xs={12} sm={6} lg={4} key={job.offer_id ?? index}>
               <JobCard
                 job={job}
-                index={index}
-                onUnsave={handleUnsave}
-                onView={handleView}
+                initialLiked={true}
+                onRemove={(offerId) => {
+                  setJobs((prev) => prev.filter((j) => j.offer_id !== offerId));
+                }}
               />
             </Grid>
           ))}

@@ -461,7 +461,6 @@ export const deleteOffer = async (req, res) => {
   }
 };
 
-
 export const getLast24hOffers = async (req, res) => {
   try {
     const [offers] = await db.query(
@@ -486,4 +485,3 @@ export const getLast24hOffers = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
