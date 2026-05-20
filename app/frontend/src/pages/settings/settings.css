@@ -1,11 +1,55 @@
 .settings-page {
-    margin: 60px 0 0 0;
+    margin: 0;
     padding: 0;
+    padding-top: 60px;
     color: #FAFAFA;
     width: 100%;
-    background-color: red;
     height: auto;
 }
 
+.settings-container {
+    margin: 20px 30px;
+    margin: 20px 30px;
+    width: calc(100% - 60px);
+    height: auto;;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
+.settings-header {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.settings-header h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.settings-header p {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: #A1A1A1;
+}
+
+.settings-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-section {
+    width: 80%;
+    border: 1px solid #333333;
+    background-color: #0A0A0A;
+    border-radius: 14px;
+    padding: 15px 25px;
+    box-sizing: border-box;
+}
 

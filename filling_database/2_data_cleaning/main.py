@@ -36,7 +36,9 @@ def cleaning_offers(offers:list) -> list:
         if timestamp:
             published_at = str(datetime.fromtimestamp(timestamp / 1000000))
 
-        about = offer.get("descriptionPreview")
+        about = offer.get("descriptionPreview")+"..."
+
+        source_url = "https://welovedevs.com/fr/app/job/"+offer.get("seoAlias","")
 
         requirements = f"Experience: {offer.get('details', {}).get('requiredExperience', 'N/A')} years"
 
@@ -59,6 +61,7 @@ def cleaning_offers(offers:list) -> list:
             "about": about,
             "requirements": requirements,
             "salary": salary,
+            "source_url": source_url,
             "skills": skills
         })
 

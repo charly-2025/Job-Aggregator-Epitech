@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SearchJobs from "./pages/SearchJobs/SearchJobs";
 
 import Settings from "./pages/settings/settings";
 import JobsLiked from "./components/SavedJobs";
@@ -510,6 +511,10 @@ export default function App() {
 
   const [error, setError] = useState(null);
 
+  const handleSave = async (job) => {
+    console.log("save job", job.id);
+  };
+
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -577,6 +582,7 @@ export default function App() {
           position="fixed"
           elevation={0}
           sx={{
+            height: 60,
             background: "#000000",
             borderBottom: "1px solid #3a3939",
             width: "100%",
@@ -616,6 +622,7 @@ export default function App() {
           <Box p={4}>
             <Typography variant="h4" color="white">
               Search Jobs
+              {page === "search" && <SearchJobs onSave={handleSave} />}
             </Typography>
           </Box>
         )}

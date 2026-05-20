@@ -28,6 +28,9 @@ import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import CloseIcon              from "@mui/icons-material/Close";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+
 
 const BASE_URL = "http://localhost:3001";
 
@@ -43,453 +46,116 @@ async function apiFetch(url, options = {}) {
 }
 
 function CardSkeleton() {
+  const sk = (w, h, radius = "4px") => (
+    <Skeleton variant="rounded" width={w} height={h} sx={{ bgcolor: "#141414", borderRadius: radius }} />
+  );
   return (
-    <Card
-      sx={{
-        bgcolor: "#111111",
-        borderRadius: 4,
-        border: "1px solid #1e1e1e",
-        p: 1,
-      }}
-    >
-      <CardContent>
+    <Card sx={{ bgcolor: "#0d0d0d", border: "1px solid #141414", borderRadius: "14px" }}>
+      <CardContent sx={{ p: "22px !important" }}>
         <Stack spacing={2}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Skeleton
-              variant="circular"
-              width={48}
-              height={48}
-              sx={{ bgcolor: "#1e1e1e" }}
-            />
-            <Box flex={1}>
-              <Skeleton
-                variant="text"
-                width="60%"
-                sx={{ bgcolor: "#1e1e1e" }}
-              />
-              <Skeleton
-                variant="text"
-                width="40%"
-                sx={{ bgcolor: "#1e1e1e" }}
-              />
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Box>
+              {sk("42%", 20)} <Box mt={0.75}>{sk("22%", 14)}</Box>
             </Box>
+            <Skeleton variant="circular" width={26} height={26} sx={{ bgcolor: "#141414" }} />
           </Stack>
-          <Skeleton variant="rounded" height={60} sx={{ bgcolor: "#1e1e1e" }} />
+          {sk("65%", 14)}
           <Stack direction="row" spacing={1}>
-            {[80, 100, 70].map((w, i) => (
-              <Skeleton
-                key={i}
-                variant="rounded"
-                width={w}
-                height={28}
-                sx={{ bgcolor: "#1e1e1e", borderRadius: 999 }}
-              />
-            ))}
+            {[58, 70, 62, 75].map((w, i) => sk(w, 22, "5px"))}
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            {sk("100%", 34, "8px")} {sk(90, 34, "8px")}
           </Stack>
         </Stack>
       </CardContent>
     </Card>
   );
 }
-
+ 
 function JobModal({ job, open, onClose, onUnsave }) {
-  if (!job) return null;
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: {
-          background: "#0f0f0f",
-          color: "white",
-          border: "1px solid #2a2a2a",
-          borderRadius: 4,
-          boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
-          minWidth: { xs: "90vw", sm: 520 },
-          maxWidth: 600,
-        },
-      }}
-    >
-      <DialogTitle sx={{ pb: 1 }}>
-        <Stack direction="row" spacing={2} alignItems="flex-start">
-          <Avatar
-            sx={{
-              width: 52,
-              height: 52,
-              bgcolor: "#1a1a1a",
-              border: "1px solid #2a2a2a",
-              fontSize: 22,
-              fontWeight: 700,
-              color: "#fff",
-            }}
-          >
-            {job.company_name?.[0]}
-          </Avatar>
-          <Box flex={1}>
-            <Typography variant="h6" fontWeight={700} lineHeight={1.2}>
-              {job.title}
-            </Typography>
-            <Typography variant="body2" color="gray" mt={0.3}>
-              {job.company_name}
-            </Typography>
-          </Box>
-        </Stack>
-      </DialogTitle>
 
-      <Divider sx={{ borderColor: "#1e1e1e" }} />
-
-      <DialogContent sx={{ pt: 2 }}>
-        <Stack spacing={3}>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            <Chip
-              icon={<LocationOnOutlinedIcon sx={{ fontSize: 14 }} />}
-              label={job.location}
-              size="small"
-              sx={{
-                bgcolor: "#1a1a1a",
-                color: "#ccc",
-                border: "1px solid #2a2a2a",
-              }}
-            />
-            <Chip
-              icon={<WorkOutlineIcon sx={{ fontSize: 14 }} />}
-              label={job.job_type}
-              size="small"
-              sx={{
-                bgcolor: "#1a1a1a",
-                color: "#ccc",
-                border: "1px solid #2a2a2a",
-              }}
-            />
-            <Chip
-              label={job.work_type}
-              size="small"
-              sx={{
-                bgcolor: "#1a1a1a",
-                color: "#ccc",
-                border: "1px solid #2a2a2a",
-              }}
-            />
-          </Stack>
-
-          <Box
-            sx={{
-              bgcolor: "#111827",
-              border: "1px solid #1e3a5f",
-              borderRadius: 2,
-              px: 2,
-              py: 1.5,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <AttachMoneyIcon sx={{ color: "#38bdf8", fontSize: 20 }} />
-            <Typography fontWeight={700} color="#38bdf8" fontSize={18}>
-              ${job.salary?.toLocaleString()}
-              <Typography
-                component="span"
-                color="gray"
-                fontSize={13}
-                fontWeight={400}
-                ml={0.5}
-              >
-                / year
-              </Typography>
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography
-              variant="overline"
-              color="gray"
-              letterSpacing={1.5}
-              fontSize={10}
-            >
-              About the role
-            </Typography>
-            <Typography
-              variant="body2"
-              color="#c0c0c0"
-              mt={0.5}
-              lineHeight={1.7}
-            >
-              {job.about}
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography
-              variant="overline"
-              color="gray"
-              letterSpacing={1.5}
-              fontSize={10}
-            >
-              Skills required
-            </Typography>
-            <Stack
-              direction="row"
-              spacing={1}
-              flexWrap="wrap"
-              useFlexGap
-              mt={1}
-            >
-              {job.skills?.map((skill) => (
-                <Chip
-                  key={skill}
-                  label={skill}
-                  size="small"
-                  sx={{
-                    bgcolor: "#1a1a1a",
-                    color: "white",
-                    border: "1px solid #333",
-                    fontSize: 12,
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Stack>
-      </DialogContent>
-
-      <Divider sx={{ borderColor: "#1e1e1e" }} />
-
-      <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
-        <Button
-          onClick={onClose}
-          sx={{
-            color: "gray",
-            "&:hover": { color: "white", bgcolor: "transparent" },
-          }}
-        >
-          Close
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          size="small"
-          startIcon={<FavoriteIcon />}
-          onClick={() => {
-            onUnsave(job);
-            onClose();
-          }}
-          sx={{ borderRadius: 2 }}
-        >
-          Unsave
-        </Button>
-        <Button
-          variant="contained"
-          size="small"
-          endIcon={<OpenInNewIcon sx={{ fontSize: 14 }} />}
-          sx={{
-            bgcolor: "white",
-            color: "black",
-            fontWeight: 700,
-            borderRadius: 2,
-            "&:hover": { bgcolor: "#e0e0e0" },
-          }}
-        >
-          Apply Now
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 }
 
 function JobCard({ job, onUnsave, onView, index }) {
+  const postedDate = job.created_at
+    ? new Date(job.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
+ 
+  const metaItems = [
+    { icon: <LocationOnOutlinedIcon sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: job.location },
+    { icon: <WorkOutlineIcon       sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: job.job_type },
+    { icon: <AttachMoneyIcon       sx={{ fontSize: 14, color: "#f7f7f7ff" }} />, label: `$${job.salary?.toLocaleString()}` },
+    ...(postedDate ? [{ icon: <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: "#f7f7f7ff" }} />, label: postedDate }] : []),
+  ];
+ 
   return (
-    <Fade in timeout={300 + index * 60}>
-      <Card
-        sx={{
-          bgcolor: "#0f0f0f",
-          color: "white",
-          border: "1px solid #1e1e1e",
-          borderRadius: 4,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          transition:
-            "border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease",
-          "&:hover": {
-            borderColor: "#333",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
-            transform: "translateY(-2px)",
-          },
-        }}
-      >
-        <CardContent
-          sx={{ flex: 1, display: "flex", flexDirection: "column", p: 3 }}
-        >
-          <Stack direction="row" spacing={2} alignItems="flex-start" mb={2}>
-            <Avatar
-              sx={{
-                width: 44,
-                height: 44,
-                bgcolor: "#1a1a1a",
-                border: "1px solid #2a2a2a",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#fff",
-                flexShrink: 0,
-              }}
-            >
-              {job.company_name?.[0]}
-            </Avatar>
-
-            <Box flex={1} minWidth={0}>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                noWrap
-                title={job.title}
-                sx={{ letterSpacing: -0.3 }}
-              >
-                {job.title}
-              </Typography>
-              <Typography variant="body2" color="gray" noWrap>
-                {job.company_name}
-              </Typography>
-            </Box>
-
+    <Fade in timeout={200 + index * 50}>
+      <Card sx={{
+        bgcolor: "#0d0d0d", color: "white", border: "1px solid #141414", borderRadius: "14px",
+        transition: "border-color 0.2s, transform 0.2s",
+        "&:hover": { borderColor: "#252525", transform: "translateY(-1px)" },
+      }}>
+        <CardContent sx={{ p: "22px !important" }}>
+ 
+          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={0.5}>
+            <Typography sx={{ fontSize: 16, fontWeight: 700, letterSpacing: -0.4, color: "#ececec", lineHeight: 1.3, pr: 2 }}>
+              {job.title}
+            </Typography>
             <Tooltip title="Unsave">
-              <IconButton
-                size="small"
-                onClick={() => onUnsave(job)}
-                sx={{
-                  color: "#ff4081",
-                  bgcolor: "rgba(255,64,129,0.08)",
-                  "&:hover": { bgcolor: "rgba(255,64,129,0.18)" },
-                  flexShrink: 0,
-                }}
-              >
-                <FavoriteIcon sx={{ fontSize: 18 }} />
+              <IconButton size="small" onClick={() => onUnsave(job)} sx={{
+                width: 28, height: 28, flexShrink: 0, color: "#ff0000ff",
+                transition: "color 0.15s",
+                "&:hover": { color: "#f8f8f8ff", bgcolor: "rgba(255,77,109,0.08)" },
+              }}>
+                <FavoriteIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
           </Stack>
-
-          <Stack spacing={0.75} mb={2.5}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <LocationOnOutlinedIcon sx={{ fontSize: 15, color: "#555" }} />
-              <Typography variant="body2" color="#888" fontSize={13}>
-                {job.location}
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <WorkOutlineIcon sx={{ fontSize: 15, color: "#555" }} />
-              <Typography variant="body2" color="#888" fontSize={13}>
-                {job.job_type} · {job.work_type}
-              </Typography>
-            </Stack>
+ 
+          <Typography sx={{ fontSize: 13, color: "#f7f7f7ff", mb: 1.75 }}>{job.company_name}</Typography>
+ 
+          <Stack direction="row" spacing={2.5} flexWrap="wrap" useFlexGap alignItems="center" mb={2}>
+            {metaItems.map(({ icon, label }, i) => (
+              <Stack key={i} direction="row" spacing={0.6} alignItems="center">
+                {icon}
+                <Typography sx={{ fontSize: 13, color: "#a88c8cff" }}>{label}</Typography>
+              </Stack>
+            ))}
           </Stack>
-
-          <Typography
-            variant="body2"
-            color="#777"
-            fontSize={13}
-            lineHeight={1.6}
-            sx={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              mb: 2.5,
-              flex: 1,
-            }}
-          >
+ 
+          <Typography sx={{
+            fontSize: 13, color: "#a88c8cff", lineHeight: 1.65, mb: 2,
+            display: "-webkit-box", WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>
             {job.about}
           </Typography>
-
-          <Typography
-            variant="body1"
-            fontWeight={700}
-            color="#38bdf8"
-            mb={2}
-            fontSize={15}
-          >
-            ${job.salary?.toLocaleString()}
-            <Typography
-              component="span"
-              color="#555"
-              fontSize={12}
-              fontWeight={400}
-              ml={0.5}
-            >
-              / yr
-            </Typography>
-          </Typography>
-
-          <Stack
-            direction="row"
-            spacing={0.75}
-            flexWrap="wrap"
-            useFlexGap
-            mb={3}
-          >
-            {job.skills?.slice(0, 3).map((skill) => (
-              <Chip
-                key={skill}
-                label={skill}
-                size="small"
-                sx={{
-                  bgcolor: "#161616",
-                  color: "#aaa",
-                  border: "1px solid #2a2a2a",
-                  fontSize: 11,
-                  height: 24,
-                }}
-              />
+ 
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap mb={2.5}>
+            {job.skills?.slice(0, 5).map((s) => (
+              <Chip key={s} label={s} size="small" sx={{
+                bgcolor: "#111", color: "#f7f7f7ff", border: "1px solid #1c1c1c",
+                fontSize: 11, height: 22, borderRadius: "5px",
+              }} />
             ))}
-            {job.skills?.length > 3 && (
-              <Chip
-                label={`+${job.skills.length - 3}`}
-                size="small"
-                sx={{
-                  bgcolor: "#161616",
-                  color: "#666",
-                  border: "1px solid #222",
-                  fontSize: 11,
-                  height: 24,
-                }}
-              />
+            {job.skills?.length > 5 && (
+              <Chip label={`+${job.skills.length - 5} more`} size="small" sx={{
+                bgcolor: "transparent", color: "#f7f7f7ff", border: "1px solid #1a1a1a",
+                fontSize: 11, height: 22, borderRadius: "5px",
+              }} />
             )}
           </Stack>
-
-          <Stack direction="row" spacing={1} mt="auto">
-            <Button
-              variant="outlined"
-              size="small"
-              fullWidth
-              onClick={() => onView(job)}
-              sx={{
-                color: "white",
-                borderColor: "#2a2a2a",
-                borderRadius: 2,
-                fontSize: 13,
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { borderColor: "#555", bgcolor: "#161616" },
-              }}
-            >
+ 
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" size="small" fullWidth onClick={() => onView(job)} sx={{
+              color: "#dcbdbdff", borderColor: "#1c1c1c", borderRadius: "8px", fontSize: 13,
+              textTransform: "none", fontWeight: 500, py: 0.85,
+              "&:hover": { borderColor: "#2a2a2a", color: "#ccc", bgcolor: "#0f0f0f" },
+            }}>
               View Details
             </Button>
-            <Button
-              variant="contained"
-              size="small"
-              fullWidth
-              endIcon={<OpenInNewIcon sx={{ fontSize: 13 }} />}
-              sx={{
-                bgcolor: "white",
-                color: "black",
-                borderRadius: 2,
-                fontSize: 13,
-                textTransform: "none",
-                fontWeight: 700,
-                "&:hover": { bgcolor: "#e0e0e0" },
-              }}
-            >
-              Apply
-            </Button>
           </Stack>
+ 
         </CardContent>
       </Card>
     </Fade>

@@ -460,3 +460,30 @@ export const deleteOffer = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+export const getLast24hOffers = async (req, res) => {
+  try {
+    const [offers] = await db.query(
+      `
+        SELECT offer.*,companies.name AS company_name, GROUP_CONCAT(DISTINCT skills.name SEPARATOR ', ') AS skills
+        FROM job_offers offer
+        LEFT JOIN job_offer_skills jos ON jos.offer_id = offer.offer_id
+        LEFT JOIN skills ON skills.skill_id = jos.skill_id
+        LEFT JOIN companies ON companies.company_id = offer.company_id
+        WHERE offer.published_at >= NOW() - INTERVAL 1 DAY
+        GROUP BY offer.offer_id
+      `,
+    );
+
+    const listOffers = offers.map((offer) => ({
+      ...offer,
+      skills: offer.skills?.split(", ") ?? [],
+    }));
+
+    res.status(200).json(listOffers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
