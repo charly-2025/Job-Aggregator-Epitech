@@ -23,31 +23,31 @@ export const Register = async (req, res) => {
       "INSERT INTO users (email,password_hash,last_name,first_name) VALUES (?,?,?,?)",
       [email, hashedPassword, last_name, first_name],
     );
-    
+
     const accessToken = jwt.sign(
       { id: result.insertId },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     const refreshToken = jwt.sign(
       { id: result.insertId },
       process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 60 * 60 * 1000
+      maxAge: 60 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({ message: "User registered successfully" });
@@ -59,11 +59,13 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ msg: "bad parameter" });
+    if (!email || !password)
+      return res.status(400).json({ msg: "bad parameter" });
 
     let [user] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    
-    if (user.length <= 0) return res.status(401).json({ msg: "Invalid Credentials" });
+
+    if (user.length <= 0)
+      return res.status(401).json({ msg: "Invalid Credentials" });
     user = user[0];
 
     const same = await bcrypt.compare(password, user.password_hash);
@@ -72,27 +74,27 @@ export const Login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user.user_id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     const refreshToken = jwt.sign(
       { id: user.user_id },
       process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 60 * 60 * 1000
+      maxAge: 60 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({ message: "Login successful" });
@@ -100,7 +102,6 @@ export const Login = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 export const Logout = async (req, res) => {
   try {
@@ -112,7 +113,6 @@ export const Logout = async (req, res) => {
   }
 };
 
-
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -121,17 +121,15 @@ export const refreshToken = async (req, res) => {
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
-      const accessToken = jwt.sign(
-        { id: decoded.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+      const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 60 * 60 * 1000
+        maxAge: 60 * 60 * 1000,
       });
 
       return res.status(200).json({ message: "Access token refreshed" });
@@ -139,4 +137,4 @@ export const refreshToken = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};

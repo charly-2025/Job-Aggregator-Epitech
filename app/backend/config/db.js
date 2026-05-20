@@ -19,6 +19,6 @@ pool.getConnection((err, connection) => {
   }
   console.log("MySQL pool connected successfully");
   connection.release();
-})
+});
 
 export default pool.promise();
