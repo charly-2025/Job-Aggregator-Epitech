@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import SearchJobs from "./pages/SearchJobs/SearchJobs";
 import {
   Box,
   Drawer,
@@ -342,6 +342,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const handleSave = async (job) => {
+    console.log("save job", job.id);
+  };
+
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -428,6 +432,7 @@ export default function App() {
           <Box p={4}>
             <Typography variant="h4">
               Search Jobs
+              {page === "search" && <SearchJobs onSave={handleSave} />}
             </Typography>
           </Box>
         )}
