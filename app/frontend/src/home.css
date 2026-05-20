@@ -24,14 +24,14 @@
   padding: 6px 8px 2px 20px;
   text-decoration: none;
   font-size: 25px;
-  color: #e6e0e0;
+  color: #a51882;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .sidenav a:hover {
-  color: #f1f1f1;
+  color: #b42aa2;
 }
 
 .main {
@@ -63,7 +63,7 @@
 .topnav a {
   float: right;
   margin-top: 20px;
-  color: #f2f2f2;
+  color: #b91b97;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -71,13 +71,13 @@
 }
 
 .topnav a:hover {
-  background-color: #ddd;
+  background-color: #941e94;
   color: black;
 }
 
 .topnav a.active {
   background-color: #04aa6d;
-  color: white;
+  color: rgb(151, 31, 141);
 }
 
 .logo-holder {

@@ -180,7 +180,8 @@ function Sidebar({ active, setActive, user }) {
                 },
 
                 "&:hover": {
-                  background: "#fafafa",
+                  background:
+                    "linear-gradient(90deg, rgba(173,70,255,0.15) 0%, rgba(246,51,154,0.15) 50%, rgba(255,105,0,0.15) 100%)",
                 },
               }}
             >
@@ -220,9 +221,9 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
         sx: {
           background: "#111010",
           color: "white",
-          border: "1px solid rgba(132,0,255,0.4)",
+          border: "1px solid rgba(187, 37, 167, 0.4)",
           borderRadius: 3,
-          boxShadow: "0 0 40px rgba(132,0,255,0.2)",
+          boxShadow: "0 0 40px rgba(150, 28, 144, 0.2)",
           minWidth: { xs: "90%", md: 500 },
         },
       }}
@@ -324,8 +325,8 @@ function JobCard({ job, onSave, initialLiked = false }) {
           transition: "box-shadow 0.3s ease, border-color 0.3s ease",
 
           "&:hover": {
-            boxShadow: "0 0 30px rgba(132,0,255,0.2)",
-            borderColor: "rgba(132,0,255,0.4)",
+            boxShadow: "0 0 30px rgba(148, 28, 138, 0.2)",
+            borderColor: "rgba(219, 35, 173, 0.4)",
           },
         }}
       >
@@ -461,14 +462,14 @@ function Dashboard({ user }) {
         fontWeight="bold"
         color="white"
       >
-        Welcome back {user?.first_name} 👋
+        Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
       </Typography>
 
       <Typography
         variant="body1"
         color="gray"
       >
-        Discover the latest opportunities for you
+        <h3>Discover the latest job opportunities</h3>
       </Typography>
     </Box>
 
