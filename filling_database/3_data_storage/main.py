@@ -80,8 +80,8 @@ for offer in clean_data.get("content", []):
 
     cursor.execute("""
         INSERT IGNORE INTO job_offers 
-        (title, company_id, location, job_type, work_type, published_at, about, requirements, salary)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+        (title, company_id, location, job_type, work_type, published_at, about, requirements, salary, source_url)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
         offer.get("title"),
         company_id,
@@ -91,7 +91,8 @@ for offer in clean_data.get("content", []):
         offer.get("published_at"),
         offer.get("about"),
         offer.get("requirements"),
-        offer.get("salary")
+        offer.get("salary"),
+        offer.get("source_url")
         ))
 
     offer_id = cursor.lastrowid
