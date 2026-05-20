@@ -33,9 +33,7 @@ function Settings({ user, refreshAccessToken }) {
   const [userFirstName, setUserFirstName] = useState(user?.first_name || "");
   const [userCreatedAt, setUserCreatedAt] = useState(user?.created_at || "");
   const [userSkills, setUserSkills] = useState(
-    (user?.skills || []).map((s) =>
-      typeof s === "string" ? { name: s } : s
-    )
+    (user?.skills || []).map((s) => (typeof s === "string" ? { name: s } : s)),
   );
 
   const getTimeSinceCreation = (creationDate) => {
@@ -74,7 +72,7 @@ function Settings({ user, refreshAccessToken }) {
         const data = await response.json();
         if (response.ok) {
           setAllSkills(data);
-          console.log("Success fetching skills")
+          console.log("Success fetching skills");
         } else if (response.status === 401) {
           console.log("Unauthorized, refreshing token...");
           await refreshAccessToken();
@@ -89,32 +87,30 @@ function Settings({ user, refreshAccessToken }) {
     getAllSkills();
   }, []);
 
-    const availableSkills = allSkills.filter(
-      (skill) =>
-        !userSkills.some(
-          (userSkill) => userSkill.name === skill.name
-        )
-    );
+  const availableSkills = allSkills.filter(
+    (skill) => !userSkills.some((userSkill) => userSkill.name === skill.name),
+  );
 
-    const handleAddSkill = () => {
-      if (selectedSkill && !userSkills.some(s => s.name === selectedSkill.name)) {
-        setUserSkills([...userSkills, selectedSkill]);
-        setSelectedSkill(null);
-        setOpenModal(false);
-      }
-    };
+  const handleAddSkill = () => {
+    if (
+      selectedSkill &&
+      !userSkills.some((s) => s.name === selectedSkill.name)
+    ) {
+      setUserSkills([...userSkills, selectedSkill]);
+      setSelectedSkill(null);
+      setOpenModal(false);
+    }
+  };
 
   const handleRemoveSkill = (skillName) => {
     setUserSkills(userSkills.filter((skill) => skill.name !== skillName));
   };
 
   const handleSaveChanges = async (retry = false) => {
-  try {
-    setIsSaving(true);
+    try {
+      setIsSaving(true);
 
-    const response = await fetch(
-      "http://localhost:3001/api/users/userInfo",
-      {
+      const response = await fetch("http://localhost:3001/api/users/userInfo", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -127,57 +123,58 @@ function Settings({ user, refreshAccessToken }) {
           skills: userSkills.map((skill) => skill.name),
           password: confirmPassword,
         }),
-      }
-    );
-    const data = await response.json();
-
-    if (response.ok) {
-      setToast({
-        open: true,
-        message: "Profile updated successfully",
-        severity: "success",
       });
+      const data = await response.json();
 
-      setOpenSaveModal(false);
-      setConfirmPassword("");
-      return;
-    }
+      if (response.ok) {
+        setToast({
+          open: true,
+          message: "Profile updated successfully",
+          severity: "success",
+        });
 
-    if (response.status === 401 && !retry) {
-      console.log("Unauthorized, refreshing token...");
+        setOpenSaveModal(false);
+        setConfirmPassword("");
+        return;
+      }
 
-      await refreshAccessToken();
+      if (response.status === 401 && !retry) {
+        console.log("Unauthorized, refreshing token...");
 
-      return handleSaveChanges(true);
-    }
+        await refreshAccessToken();
 
-    if (response.status === 401) {
+        return handleSaveChanges(true);
+      }
+
+      if (response.status === 401) {
+        setToast({
+          open: true,
+          message: "Incorrect password or session expired",
+          severity: "error",
+        });
+        return;
+      }
+
       setToast({
         open: true,
-        message: "Incorrect password or session expired",
+        message: data.message || "Something went wrong",
         severity: "error",
       });
-      return;
-    }
-
-    setToast({
-      open: true,
-      message: data.message || "Something went wrong",
-      severity: "error",
-    });
-  } catch (error) {
-    console.error(error);
-    setToast({
-      open: true,
-      message: "Server error",
-      severity: "error",
-    });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        open: true,
+        message: "Server error",
+        severity: "error",
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
-  useEffect(() => {console.log("User skills updated:", userSkills)}, [userSkills])
+  useEffect(() => {
+    console.log("User skills updated:", userSkills);
+  }, [userSkills]);
   return (
     <div className="settings-page">
       <div className="settings-container">
@@ -191,14 +188,29 @@ function Settings({ user, refreshAccessToken }) {
               <h2>Account Information</h2>
               <div className="user-name">
                 <p>
-                  <strong>First Name:</strong> <input type="text" value={userFirstName} onChange={(e) => setUserFirstName(e.target.value)} />
+                  <strong>First Name:</strong>{" "}
+                  <input
+                    type="text"
+                    value={userFirstName}
+                    onChange={(e) => setUserFirstName(e.target.value)}
+                  />
                 </p>
                 <p>
-                  <strong>Last Name:</strong> <input type="text" value={userLastName} onChange={(e) => setUserLastName(e.target.value)} />
+                  <strong>Last Name:</strong>{" "}
+                  <input
+                    type="text"
+                    value={userLastName}
+                    onChange={(e) => setUserLastName(e.target.value)}
+                  />
                 </p>
               </div>
               <p>
-                <strong>Email:</strong> <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} />
+                <strong>Email:</strong>{" "}
+                <input
+                  type="email"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                />
               </p>
               <p>
                 <strong>Member Since:</strong>{" "}
@@ -219,7 +231,10 @@ function Settings({ user, refreshAccessToken }) {
               {userSkills.length > 0 ? (
                 <div className="skills-list">
                   {userSkills.map((skill) => (
-                    <div key={skill.skill_id || skill.name} className="skill-badge">
+                    <div
+                      key={skill.skill_id || skill.name}
+                      className="skill-badge"
+                    >
                       <span>{skill.name}</span>
 
                       <button
@@ -246,74 +261,74 @@ function Settings({ user, refreshAccessToken }) {
       </div>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box className="skill-modal">
-            <Typography variant="h6">Add a Skill</Typography>
+          <Typography variant="h6">Add a Skill</Typography>
 
-            <Autocomplete
-              options={availableSkills}
-              getOptionLabel={(option) => option.name}
-              value={selectedSkill}
-              onChange={(event, newValue) => setSelectedSkill(newValue)}
-              renderInput={(params) => (
-                <TextField {...params} label="Select a skill" />
-              )}
-            />
+          <Autocomplete
+            options={availableSkills}
+            getOptionLabel={(option) => option.name}
+            value={selectedSkill}
+            onChange={(event, newValue) => setSelectedSkill(newValue)}
+            renderInput={(params) => (
+              <TextField {...params} label="Select a skill" />
+            )}
+          />
 
-            <Button
-              variant="contained"
-              onClick={handleAddSkill}
-              disabled={!selectedSkill}
-            >
-              Add
-            </Button>
-          </Box>
-        </Modal>
-        <Modal
-          open={openSaveModal}
-          onClose={() => !isSaving && setOpenSaveModal(false)}
-        >
-          <Box className="save-modal">
-            <h2>Confirm Changes</h2>
-
-            <p className="save-modal-text">
-              Enter your password to save changes.
-            </p>
-
-            <input
-              type="password"
-              placeholder="Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={isSaving}
-            />
-
-            <Button
-              variant="contained"
-              onClick={handleSaveChanges}
-              disabled={!confirmPassword || isSaving}
-              className="confirm-save-btn"
-            >
-              {isSaving ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                "Confirm"
-              )}
-            </Button>
-          </Box>
-        </Modal>
-        <Snackbar
-            open={toast.open}
-            autoHideDuration={4000}
-            onClose={() => setToast({ ...toast, open: false })}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          <Button
+            variant="contained"
+            onClick={handleAddSkill}
+            disabled={!selectedSkill}
           >
-            <Alert
-              severity={toast.severity}
-              variant="filled"
-              onClose={() => setToast({ ...toast, open: false })}
-            >
-              {toast.message}
-            </Alert>
-          </Snackbar> 
+            Add
+          </Button>
+        </Box>
+      </Modal>
+      <Modal
+        open={openSaveModal}
+        onClose={() => !isSaving && setOpenSaveModal(false)}
+      >
+        <Box className="save-modal">
+          <h2>Confirm Changes</h2>
+
+          <p className="save-modal-text">
+            Enter your password to save changes.
+          </p>
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isSaving}
+          />
+
+          <Button
+            variant="contained"
+            onClick={handleSaveChanges}
+            disabled={!confirmPassword || isSaving}
+            className="confirm-save-btn"
+          >
+            {isSaving ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Confirm"
+            )}
+          </Button>
+        </Box>
+      </Modal>
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={4000}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          severity={toast.severity}
+          variant="filled"
+          onClose={() => setToast({ ...toast, open: false })}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

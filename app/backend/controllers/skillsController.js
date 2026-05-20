@@ -9,7 +9,6 @@ export const getAllSkills = async (req, res) => {
   }
 };
 
-
 export const getTop10Skills = async (req, res) => {
   try {
     const [skills] = await db.query(
@@ -26,10 +25,10 @@ export const getTop10Skills = async (req, res) => {
             ON s.skill_id = jos.skill_id
         GROUP BY s.skill_id, s.name
         ORDER BY nb_offers DESC
-        LIMIT 10`
+        LIMIT 10`,
     );
     res.status(200).json(skills);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};

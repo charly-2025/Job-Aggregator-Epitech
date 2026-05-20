@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Typography,
@@ -19,7 +19,7 @@ import {
   DialogActions,
   Divider,
 } from "@mui/material";
-import "../pages/SearchJobs/SearchJobs.css"
+import "../pages/SearchJobs/SearchJobs.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
@@ -28,7 +28,7 @@ import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import CloseIcon              from "@mui/icons-material/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
 import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
@@ -61,10 +61,7 @@ async function apiFetch(url, options = {}) {
   return data;
 }
 
- 
-function JobModal({ job, open, onClose, onUnsave }) {
-
-}
+function JobModal({ job, open, onClose, onUnsave }) {}
 
 function JobCard({ job, onSave, initialLiked = false, onRemove }) {
   const [saved, setSaved] = useState(initialLiked);
@@ -162,9 +159,7 @@ function JobCard({ job, onSave, initialLiked = false, onRemove }) {
         )}
       </div>
 
-      {job.about && (
-        <p className="job-description">{job.about}</p>
-      )}
+      {job.about && <p className="job-description">{job.about}</p>}
 
       {displayedSkills.length > 0 && (
         <div className="skill-chips">
@@ -183,9 +178,7 @@ function JobCard({ job, onSave, initialLiked = false, onRemove }) {
       )}
 
       <div className="job-card-actions">
-        <button className="btn-details">
-          View Details
-        </button>
+        <button className="btn-details">View Details</button>
 
         <a
           href={job.source_url || "#"}
@@ -267,9 +260,9 @@ function EmptyState({ onBrowse }) {
           maxWidth={340}
           lineHeight={1.6}
           fontSize={14}
-          
         >
-          Start exploring opportunities and save the ones that catch your eyes, they'll all appear here.
+          Start exploring opportunities and save the ones that catch your eyes,
+          they'll all appear here.
         </Typography>
 
         <Button
@@ -339,7 +332,7 @@ const JobsLiked = ({ setActive }) => {
         bgcolor: "#0a0a0a",
         color: "white",
         p: { xs: 2, sm: 3, md: 4 },
-        marginTop: 6
+        marginTop: 6,
       }}
     >
       <Box mb={5}>
@@ -391,11 +384,9 @@ const JobsLiked = ({ setActive }) => {
                 job={job}
                 initialLiked={true}
                 onRemove={(offerId) => {
-                    setJobs((prev) =>
-                    prev.filter((j) => j.offer_id !== offerId)
-                    );
+                  setJobs((prev) => prev.filter((j) => j.offer_id !== offerId));
                 }}
-                />
+              />
             </Grid>
           ))}
         </Grid>

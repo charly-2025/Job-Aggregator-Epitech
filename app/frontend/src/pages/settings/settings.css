@@ -43,7 +43,6 @@
   gap: 24px;
 }
 
-
 .settings-section {
   width: 80%;
   background: #050505;
@@ -55,7 +54,6 @@
   flex-direction: column;
   gap: 28px;
 }
-
 
 .settings-section h2 {
   margin: 0;
@@ -172,7 +170,7 @@
 }
 
 .skill-badge:hover {
-   background: #792cb9bd;
+  background: #792cb9bd;
   padding-right: 36px;
   transform: translateY(-1px);
 }
@@ -212,7 +210,6 @@
   background: rgba(0, 0, 0, 0.08);
 }
 
-
 .remove-skill-btn svg {
   font-size: 12px;
   color: white;
@@ -222,7 +219,6 @@
   color: #8a8a8a;
   font-size: 14px;
 }
-
 
 .skill-modal {
   position: absolute;
@@ -310,7 +306,6 @@
   border-color: #444 !important;
 }
 
-
 @media screen and (max-width: 900px) {
   .settings-section {
     width: 100%;
@@ -338,7 +333,6 @@
 .MuiAutocomplete-option[aria-selected="true"] {
   background-color: #2a2a2a !important;
 }
-
 
 .save-modal {
   position: absolute;

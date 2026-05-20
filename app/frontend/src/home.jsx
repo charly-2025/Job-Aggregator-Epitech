@@ -455,32 +455,27 @@ function Dashboard({ user }) {
   }
 
   return (
-  <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
-    <Box mb={6}>
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        color="white"
-      >
-        Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
-      </Typography>
+    <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+      <Box mb={6}>
+        <Typography variant="h4" fontWeight="bold" color="white">
+          Welcome back{" "}
+          <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
+        </Typography>
 
-      <Typography
-        variant="body1"
-        color="gray"
-      >
-        <h3>Discover the latest job opportunities</h3>
-      </Typography>
-    </Box>
+        <Typography variant="body1" color="gray">
+          <h3>Discover the latest job opportunities</h3>
+        </Typography>
+      </Box>
 
-    <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>       {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
-    
-      <Stack spacing={3}>
-        {jobs.map((job) => (
-          <JobCard key={job.offer_id} job={job} onSave={handleSave} />
-        ))}
-      </Stack>
-    </Box>
+      <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>
+        {" "}
+        {/* CONTROL PADDING BETWEEN TEXT AND CARDS HERE */}
+        <Stack spacing={3}>
+          {jobs.map((job) => (
+            <JobCard key={job.offer_id} job={job} onSave={handleSave} />
+          ))}
+        </Stack>
+      </Box>
 
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={6}>
@@ -577,7 +572,7 @@ export default function App() {
     >
       <Sidebar user={user} active={page} setActive={setPage} />
 
-      <Box flex={1} sx={{ minWidth: 0, width: "100%"  }}>
+      <Box flex={1} sx={{ minWidth: 0, width: "100%" }}>
         <AppBar
           position="fixed"
           elevation={0}

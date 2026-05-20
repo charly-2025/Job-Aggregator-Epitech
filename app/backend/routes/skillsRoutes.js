@@ -1,6 +1,9 @@
 import express from "express";
 import middleware from "../middleware/middleware.js";
-import { getAllSkills,getTop10Skills } from "../controllers/skillsController.js";
+import {
+  getAllSkills,
+  getTop10Skills,
+} from "../controllers/skillsController.js";
 
 const skillsRoutes = express.Router();
 
