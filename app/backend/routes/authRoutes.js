@@ -1,7 +1,12 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 
-import { Register, Login, Logout,refreshToken } from "../controllers/authController.js";
+import {
+  Register,
+  Login,
+  Logout,
+  refreshToken,
+} from "../controllers/authController.js";
 
 const authRoutes = express.Router();
 
@@ -10,7 +15,7 @@ const loginLimiter = rateLimit({
   max: 5,
 
   message: {
-    error: "Too many login attempts. Try again later."
+    error: "Too many login attempts. Try again later.",
   },
 
   standardHeaders: true,
@@ -23,8 +28,8 @@ const registerLimiter = rateLimit({
   max: 10,
 
   message: {
-    error: "Too many registration attempts. Try again later."
-  } 
+    error: "Too many registration attempts. Try again later.",
+  },
 });
 
 authRoutes.post("/register", registerLimiter, Register);

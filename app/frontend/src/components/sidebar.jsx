@@ -47,9 +47,8 @@ export default function Sidebar({ active, setActive, user }) {
         "& .MuiDrawer-paper": {
           width: 260,
           boxSizing: "border-box",
-          background: "#111827",
-          borderRight: "1px solid #1f2937",
-          
+          background: "#ffffff",
+          borderRight: "1px solid #ffffff",
         },
       }}
     >
@@ -80,18 +79,12 @@ export default function Sidebar({ active, setActive, user }) {
 
       <Box mt="auto" p={3}>
         <Box display="flex" alignItems="center" gap={2}>
-          <Avatar>
-            {user?.first_name?.[0]}
-          </Avatar>
+          <Avatar>{user?.first_name?.[0]}</Avatar>
 
           <Box>
-            <Typography fontWeight="bold">
-              {user?.first_name}
-            </Typography>
+            <Typography fontWeight="bold">{user?.first_name}</Typography>
 
-            <Typography variant="body2">
-              {user?.email}
-            </Typography>
+            <Typography variant="body2">{user?.email}</Typography>
           </Box>
         </Box>
       </Box>

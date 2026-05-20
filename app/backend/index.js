@@ -16,6 +16,7 @@ import authRoutes from "./routes/authRoutes.js";
 import offersRoutes from "./routes/offersRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import companiesRoutes from "./routes/companiesRoutes.js";
+import skillsRoutes from "./routes/skillsRoutes.js";
 
 config({ path: "../.env", quiet: true });
 
@@ -31,7 +32,7 @@ app.use(
   cors({
     origin: `http://localhost:${frontendPort}`,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }),
 );
 app.use(cookieParser());
@@ -46,8 +47,9 @@ app.get("/", (req, res) => {
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-app.use('/api/users',usersRoutes);
-app.use('/api/auth',authRoutes)
-app.use('/api/offers',offersRoutes)
-app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/companies/',companiesRoutes)
+app.use("/api/users", usersRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/offers", offersRoutes);
+app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/companies/", companiesRoutes);
+app.use("/api/skills", skillsRoutes);

@@ -5,16 +5,16 @@ const theme = createTheme({
     mode: "dark",
 
     primary: {
-      main: "#7C4DFF",
+      main: "#aa5c93",
     },
 
     secondary: {
-      main: "#00E5FF",
+      main: "#e2d2d2",
     },
 
     background: {
-      default: "#0f172a",
-      paper: "#1e293b",
+      default: "#7a2869",
+      paper: "#a01919",
     },
   },
 

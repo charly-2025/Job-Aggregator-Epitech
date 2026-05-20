@@ -11,7 +11,7 @@ export default function JobCard({ job, onSave, onView }) {
   return (
     <Card
       sx={{
-        background: "#1e293b",
+        background: "#000000",
         transition: "0.3s",
         "&:hover": {
           transform: "translateY(-4px)",
@@ -25,9 +25,7 @@ export default function JobCard({ job, onSave, onView }) {
               {job.title}
             </Typography>
 
-            <Typography color="text.secondary">
-              {job.company}
-            </Typography>
+            <Typography color="text.secondary">{job.company}</Typography>
           </div>
 
           <Chip
@@ -37,17 +35,11 @@ export default function JobCard({ job, onSave, onView }) {
           />
 
           <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              onClick={() => onView(job)}
-            >
+            <Button variant="contained" onClick={() => onView(job)}>
               View
             </Button>
 
-            <Button
-              variant="outlined"
-              onClick={() => onSave(job)}
-            >
+            <Button variant="outlined" onClick={() => onSave(job)}>
               Save
             </Button>
           </Stack>
