@@ -256,6 +256,10 @@ function JobCard({ job, onSave, initialLiked = false }) {
           "&:hover": {
             boxShadow: "0 0 30px rgba(148, 28, 138, 0.2)",
             borderColor: "rgba(219, 35, 173, 0.4)",
+            flex: 1,
+            
+            minWidth: { xs: "100%", sm: "45%", md: "30%" },
+            height: "200px",
           },
         }}
       >
@@ -333,9 +337,11 @@ function InfoCard({ title, value, color, icon }) {
         border: "3px solid rgba(255,255,255,0.08)",
         borderRadius: "14px",
         flex: 1,
+        minWidth: { xs: "100%", sm: "45%", md: "30%" },
         height: "200px",
         fontFamily: "'Inter', sans-serif !important",
       }}
+    
     >
       <CardContent sx={{ padding: "25px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -442,10 +448,10 @@ function Dashboard({ user, onSave }) {
 
   const cards = [
     {
-      title: "New Jobs Today",
+      title: "Jobs Today",
       value: jobs.length,
       color: "rgba(139, 92, 246, 0.15)",
-      icon: <WorkHistoryIcon sx={{fontSize:70}}/>,
+      icon: <WorkHistoryIcon sx={{fontSize:60}}/>,
     },
     {
       title: "Saved Jobs",
@@ -462,7 +468,7 @@ function Dashboard({ user, onSave }) {
   ];
 
   return (
-    <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+    <Box sx={{ pl: { xs: 2, md: 4 }, pr: { xs: 2, md: 4 }, pt: 10, flex: 1 }}>
       <Box mb={6}>
         <Typography variant="h4" fontWeight="bold" color="white"   sx={{fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700,}}>
           Welcome back{" "}
@@ -477,19 +483,20 @@ function Dashboard({ user, onSave }) {
           </h3>
         </Typography>
       </Box>
-
       <Stack
         direction="row"
-        spacing={2}
         mb={4}
-        sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}
+        sx={{
+          flexWrap: "wrap",
+          gap: 2,
+        }}
       >
       {cards.map((c) => (
         <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
       ))}
       </Stack>
 
-        <Box sx={{ pl: 4, pr: 4, pt: 6, maxWidth: 1100, mb: 4,}}>
+        <Box sx={{ pl: 5, pr: 4, pt: 6, maxWidth: 1100, mb: 4,}}>
         <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
           Recommended for you
         </Typography>
