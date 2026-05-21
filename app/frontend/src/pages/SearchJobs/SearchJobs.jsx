@@ -16,7 +16,6 @@ import Pagination from "../../components/pagination";
 const BASE_URL = "http://localhost:3001";
 const ITEMS_PER_PAGE = 10;
 
-
 export default function SearchJobs({ onSave }) {
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +69,6 @@ export default function SearchJobs({ onSave }) {
     fetchLikedOffers();
   }, [fetchLikedOffers]);
 
-
   useEffect(() => {
     setPage(1);
   }, [filters, search, location, sortBy]);
@@ -86,7 +84,6 @@ export default function SearchJobs({ onSave }) {
 
   const filtered = useMemo(() => {
     let result = allJobs.filter((job) => {
-
       const s = search.trim().toLowerCase();
       const matchesSearch =
         !s ||
@@ -97,7 +94,9 @@ export default function SearchJobs({ onSave }) {
 
       const matchesLocation =
         !location.trim() ||
-        (job.location || "").toLowerCase().includes(location.trim().toLowerCase());
+        (job.location || "")
+          .toLowerCase()
+          .includes(location.trim().toLowerCase());
 
       const matchesType =
         filters.jobType === "all" || job.job_type === filters.jobType;
@@ -109,25 +108,40 @@ export default function SearchJobs({ onSave }) {
         filters.workTypes.length === 0 ||
         filters.workTypes.includes(job.work_type);
 
-      return matchesSearch && matchesLocation && matchesType && matchesSalary && matchesWorkType;
+      return (
+        matchesSearch &&
+        matchesLocation &&
+        matchesType &&
+        matchesSalary &&
+        matchesWorkType
+      );
     });
 
     if (sortBy === "salary")
-      result = [...result].sort((a, b) => (Number(b.salary) || 0) - (Number(a.salary) || 0));
+      result = [...result].sort(
+        (a, b) => (Number(b.salary) || 0) - (Number(a.salary) || 0),
+      );
     else if (sortBy === "recent")
-      result = [...result].sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
+      result = [...result].sort(
+        (a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0),
+      );
 
     return result;
   }, [allJobs, search, location, filters, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const displayed = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const displayed = filtered.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE,
+  );
 
   return (
     <div className="sj-page">
       <div className="sj-header">
         <h1>Find Your Dream Job</h1>
-        <p>{filtered.length} offer{filtered.length !== 1 ? "s" : ""}</p>
+        <p>
+          {filtered.length} offer{filtered.length !== 1 ? "s" : ""}
+        </p>
       </div>
 
       <div className="sj-search-row">

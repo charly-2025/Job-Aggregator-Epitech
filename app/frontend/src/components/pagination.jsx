@@ -18,7 +18,9 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         }, [])
         .map((p, i) =>
           p === "..." ? (
-            <span key={`dots-${i}`} className="page-dots">…</span>
+            <span key={`dots-${i}`} className="page-dots">
+              …
+            </span>
           ) : (
             <button
               key={p}

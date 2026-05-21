@@ -196,7 +196,7 @@ export async function searchOffers(req, res) {
         GROUP BY offer.offer_id
         LIMIT ? OFFSET ?
         `,
-      [...searchParams,limit,offset,]
+      [...searchParams, limit, offset],
     );
 
     const [totalResult] = await db.query(

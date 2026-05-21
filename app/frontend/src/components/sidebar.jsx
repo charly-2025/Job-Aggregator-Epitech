@@ -22,7 +22,7 @@ import {
   Avatar,
   Stack,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 
 import "../home.css";
@@ -51,7 +51,7 @@ export default function Sidebar({ active, setActive, user }) {
   const drawerContent = (
     <Box
       sx={{
-        padding:0,
+        padding: 0,
         display: "flex",
         flexDirection: "column",
         height: "100%",
@@ -60,7 +60,7 @@ export default function Sidebar({ active, setActive, user }) {
     >
       <Box
         sx={{
-          padding:"0 20px",
+          padding: "0 20px",
           paddingLeft: 3.5,
           margin: 0,
           height: 60,
@@ -75,7 +75,7 @@ export default function Sidebar({ active, setActive, user }) {
         {isMobile && (
           <IconButton
             onClick={() => setMobileOpen(false)}
-            sx={{ color: "white",}}
+            sx={{ color: "white" }}
           >
             <CloseIcon />
           </IconButton>

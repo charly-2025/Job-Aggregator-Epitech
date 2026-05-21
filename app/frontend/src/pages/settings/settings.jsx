@@ -134,7 +134,7 @@ function Settings({ user, refreshAccessToken }) {
       }
 
       const data = await response.json();
-      
+
       if (response.ok) {
         setToast({
           open: true,

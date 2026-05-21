@@ -9,7 +9,6 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import "../pages/SearchJobs/SearchJobs.css";
 const BASE_URL = "http://localhost:3001";
 
-
 function formatSalary(salary) {
   if (!salary) return "Non précisé";
   return `$${Number(salary).toLocaleString()}`;
@@ -123,10 +122,7 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
       )}
 
       <div className="job-card-actions">
-        <button
-          className="btn-details"
-          onClick={() => setOpenModal(true)}
-        >
+        <button className="btn-details" onClick={() => setOpenModal(true)}>
           View Details
         </button>
 

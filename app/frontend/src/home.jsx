@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 
-
 import Settings from "./pages/settings/settings";
 import JobsLiked from "./pages/Jobsliked/SavedJobs";
 import SearchJobs from "./pages/SearchJobs/SearchJobs";
@@ -42,7 +41,7 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 
 import "./home.css";
@@ -131,26 +130,33 @@ function ErrorMessage({ message }) {
   );
 }
 
-
 function InfoCard({ title, value, color }) {
   return (
-      <Card
-        sx={{
-          background: color,
-          backdropFilter: "blur(10px)",
-          color: "white",
-          border: "3px solid rgba(255,255,255,0.08)",
-          borderRadius: "14px",
-          flex: 1,
-          height: "200px",
-        }}
-      >
+    <Card
+      sx={{
+        background: color,
+        backdropFilter: "blur(10px)",
+        color: "white",
+        border: "3px solid rgba(255,255,255,0.08)",
+        borderRadius: "14px",
+        flex: 1,
+        height: "200px",
+      }}
+    >
       <CardContent sx={{ padding: "25px" }}>
-        <Typography variant="body2" color="gray" sx={{ fontSize: "35px", mb: 1 }}>
+        <Typography
+          variant="body2"
+          color="gray"
+          sx={{ fontSize: "35px", mb: 1 }}
+        >
           {title}
         </Typography>
 
-        <Typography variant="h5" fontWeight="bold" sx={{ fontSize: "65px", mb: 1 }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          sx={{ fontSize: "65px", mb: 1 }}
+        >
           {value}
         </Typography>
       </CardContent>
@@ -158,7 +164,7 @@ function InfoCard({ title, value, color }) {
   );
 }
 
-function Dashboard({ user, onSave}) {
+function Dashboard({ user, onSave }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
   const [offersViewed, setOffersViewed] = useState([]);
@@ -173,23 +179,18 @@ function Dashboard({ user, onSave}) {
 
   const limit = 15;
 
-
-
   useEffect(() => {
     const loadOffers = async () => {
       try {
         setLoading(true);
 
-    const [response, likedRes, viewedRes] = await Promise.all([
-      apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
-      apiFetch(API.likedOffers),
-      apiFetch(API.UserViews).catch(() => []),  
-    ]);
+        const [response, likedRes, viewedRes] = await Promise.all([
+          apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
+          apiFetch(API.likedOffers),
+          apiFetch(API.UserViews).catch(() => []),
+        ]);
 
-setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
-
-        
-
+        setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
 
         setJobs(Array.isArray(response.data) ? response.data : []);
 
@@ -223,45 +224,68 @@ setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
   }
 
   const cards = [
-          {title: "New Jobs Today", value: jobs.length, color: "rgba(139, 92, 246, 0.15)" },
-          {title: "Saved Jobs", value: likedIds.size, color: "rgba(6, 182, 212, 0.15)"  },
-          {title: "Offers Viewed", value: offersViewed.length, color: "rgba(34, 197, 94, 0.15)" }];
-          
+    {
+      title: "New Jobs Today",
+      value: jobs.length,
+      color: "rgba(139, 92, 246, 0.15)",
+    },
+    {
+      title: "Saved Jobs",
+      value: likedIds.size,
+      color: "rgba(6, 182, 212, 0.15)",
+    },
+    {
+      title: "Offers Viewed",
+      value: offersViewed.length,
+      color: "rgba(34, 197, 94, 0.15)",
+    },
+  ];
 
   return (
-    
-  <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
-    <Box mb={6}>
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        color="white"
+    <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
+      <Box mb={6}>
+        <Typography variant="h4" fontWeight="bold" color="white">
+          Welcome back{" "}
+          <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
+        </Typography>
+
+        <Typography variant="body1" color="gray">
+          <h3>
+            <span style={{ paddingLeft: "15px", color: "grey" }}>
+              Discover the latest job opportunities
+            </span>
+          </h3>
+        </Typography>
+      </Box>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        mb={4}
+        sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}
       >
-        Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
-      </Typography>
-
-      <Typography
-        variant="body1"
-        color="gray"
-      >
-        <h3><span style={{ paddingLeft : "15px", color: "grey" }}>Discover the latest job opportunities</span></h3>
-      </Typography>
-    </Box>
-
-      <Stack direction="row" spacing={2} mb={4} sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
-      {cards.map((c) => (
-        <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} />
-      ))}
-      </Stack>
-
-    <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>   
-    
-      <Stack spacing={3}>
-        {jobs.map((job) => (
-          <NewJobCard key={job.offer_id} job={job} onSave={onSave} initialLiked={likedIds.has(job.offer_id)} />
+        {cards.map((c) => (
+          <InfoCard
+            key={c.title}
+            title={c.title}
+            value={c.value}
+            color={c.color}
+          />
         ))}
       </Stack>
-    </Box>
+
+      <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>
+        <Stack spacing={3}>
+          {jobs.map((job) => (
+            <NewJobCard
+              key={job.offer_id}
+              job={job}
+              onSave={onSave}
+              initialLiked={likedIds.has(job.offer_id)}
+            />
+          ))}
+        </Stack>
+      </Box>
 
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={6}>
@@ -292,15 +316,9 @@ export default function App() {
 
   const [error, setError] = useState(null);
 
-
-
   const handleSave = async (job) => {
     console.log("save job", job.id);
   };
-
-
-
-
 
   useEffect(() => {
     const loadUser = async () => {
@@ -372,12 +390,20 @@ export default function App() {
             height: 60,
             background: "#000000",
             borderBottom: "1px solid #3a3939",
-            width: {xs: "100%", md: "calc(100% - 270px)"},
-            ml: { md: "270px"},
+            width: { xs: "100%", md: "calc(100% - 270px)" },
+            ml: { md: "270px" },
           }}
         >
           <Toolbar disableGutters sx={{ px: 2 }}>
-          <Box sx={{ display: "flex", gap: "18px", alignItems: "center", width: "100%",justifyContent:"flex-end"}}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "18px",
+                alignItems: "center",
+                width: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
               <DarkModeOutlinedIcon
                 sx={{
                   fontSize: 28,
