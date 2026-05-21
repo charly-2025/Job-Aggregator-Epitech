@@ -21,7 +21,8 @@ jobs:
 
       - name: Install Python + pip
         run: |
-          python3 -m ensurepip --upgrade
+          apt-get update
+          apt-get install -y python3-pip python3-venv
           python3 -m pip install --upgrade pip
 
       - name: Setup Node.js
