@@ -568,6 +568,8 @@ export default function App() {
 
   const [error, setError] = useState(null);
 
+  const [darkMode, setDarkMode] = useState(true);
+
 
   const [offersViewed, setOffersViewed] = useState([]);
   const [nbOffersViewed, setNbOffersViewed] = useState(0);
@@ -762,12 +764,13 @@ export default function App() {
               }}
             >
               <DarkModeOutlinedIcon
+              onClick={() => setDarkMode(prev => !prev)}
                 sx={{
                   fontSize: 28,
                   color: "white",
                 }}
               />
-
+              
               <ExitToAppOutlinedIcon
                 onClick={handleLogout}
                 sx={{
@@ -781,7 +784,7 @@ export default function App() {
         </AppBar>
 
         {page === "dashboard" && <Dashboard user={user} onSave={handleSave} nbOffersViewed={nbOffersViewed} offersViewedId={offersViewedId} newViewedOffers={newViewedOffers} nbOffersLiked={nbOffersLiked} offersLiked={offersLiked} setOffersLiked={setOffersLiked}/>}
-
+        
           {page === "search" && (
             <Box p={4}>
               <Typography variant="h4" color="white">
