@@ -56,8 +56,11 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+
 import NewJobCard from "./components/NewJobcard";
+import QuickInsights from "./components/QuickInsights";
 import Sidebar from "./components/sidebar";
+
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import GradeIcon from '@mui/icons-material/Grade';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -372,17 +375,15 @@ function InfoCard({ title, value, color, icon }) {
   );
 }
 
-function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffers, nbOffersLiked, offersLiked, setOffersLiked}) {
+
+function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffers, nbOffersLiked, offersLiked, setOffersLiked }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
   const [recommendations, setRecommendations] = useState([]);
   const [loadingReco, setLoadingReco] = useState(true);
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState(null);
-
   const [page, setPage] = useState(1);
-
   const [totalPages, setTotalPages] = useState(1);
 
   const limit = 15;
@@ -405,10 +406,7 @@ function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffer
     const loadOffers = async () => {
       try {
         setLoading(true);
-
-        const [response, likedRes] = await Promise.all([
-          apiFetch(`${API.offers}?page=${page}&limit=${limit}`)]);
-
+        const response = await apiFetch(`${API.offers}?page=${page}&limit=${limit}`);
         setJobs(Array.isArray(response.data) ? response.data : []);
         setTotalPages(response.totalPages || 1);
       } catch (err) {
@@ -417,12 +415,11 @@ function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffer
         setLoading(false);
       }
     };
-
     loadOffers();
   }, [page]);
 
-   useEffect(() => {
-    setLikedIds(new Set(offersLiked.map(job => job.offer_id)));
+  useEffect(() => {
+    setLikedIds(new Set(offersLiked.map((job) => job.offer_id)));
   }, [offersLiked]);
 
   if (loading) {
@@ -433,131 +430,114 @@ function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffer
     );
   }
 
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (error) return <ErrorMessage message={error} />;
 
   const cards = [
-    {
-      title: "Jobs Today",
-      value: jobs.length,
-      color: "rgba(139, 92, 246, 0.15)",
-      icon: <WorkHistoryIcon sx={{fontSize:60}}/>,
-    },
-    {
-      title: "Saved Jobs",
-      value: nbOffersLiked,
-      color: "rgba(6, 182, 212, 0.15)",
-      icon: <GradeIcon sx={{ fontSize: 60 }} />,
-    },
-    {
-      title: "Offers Viewed",
-      value: nbOffersViewed,
-      color: "rgba(34, 197, 94, 0.15)",
-      icon: <VisibilityIcon sx={{ fontSize: 60 }} />,
-    },
+    { title: "Jobs Today", value: jobs.length, color: "rgba(139, 92, 246, 0.15)", icon: <WorkHistoryIcon sx={{ fontSize: 60 }} /> },
+    { title: "Saved Jobs", value: nbOffersLiked, color: "rgba(6, 182, 212, 0.15)", icon: <GradeIcon sx={{ fontSize: 60 }} /> },
+    { title: "Offers Viewed", value: nbOffersViewed, color: "rgba(34, 197, 94, 0.15)", icon: <VisibilityIcon sx={{ fontSize: 60 }} /> },
   ];
 
   return (
-    <Box sx={{ pl: { xs: 2, md: 4 }, pr: { xs: 2, md: 4 }, pt: 10, flex: 1 }}>
-      <Box mb={6}>
-        <Typography variant="h4" fontWeight="bold" color="white"   sx={{fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700,}}>
-          Welcome back{" "}
-          <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
+    <Box sx={{ pl: { xs: 2, md: 4 }, pr: { xs: 2, md: 4 }, pt: 10, flex: 1, display: "flex", flexDirection: "column", gap: "40px" }}>
+      <Box>
+        <Typography variant="h4" fontWeight="bold" color="white" sx={{ fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700 }}>
+          Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
         </Typography>
-
-        <Typography variant="body1" color="gray">
-          <h3>
-            <span style={{ paddingLeft: "15px", color: "grey" }}>
-              Discover the latest job opportunities
-            </span>
-          </h3>
+        <Typography variant="body1" color="gray" sx={{ paddingLeft: "15px", mt: 1 }}>
+          Discover the latest job opportunities
         </Typography>
       </Box>
-      <Stack
-        direction="row"
-        mb={4}
-        sx={{
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
-      {cards.map((c) => (
-        <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
-      ))}
+
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 2 }}>
+        {cards.map((c) => (
+          <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
+        ))}
       </Stack>
 
-        <Box sx={{ pl: 5, pr: 4, pt: 6, maxWidth: 1100, mb: 4,}}>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
-          Recommended for you
-        </Typography>
-        <Typography variant="body2" color="gray" mb={3} sx={{ mb: 3 }}>
-          {user?.skills?.length > 0
-            ? `Based on your skills: ${user.skills.join(", ")}`
-            : "Add skills in Settings to get personalized recommendations"}
-        </Typography>
+      <Stack direction={{ xs: "column", md: "row" }} spacing="30px" alignItems="flex-start">
 
-        {loadingReco ? (
-          <Box display="flex" justifyContent="center" py={4}>
-            <CircularProgress />
+        <Box sx={{ flex: 1, minWidth: 0, maxWidth: 1100, display: "flex", flexDirection: "column", gap: "40px" }}>
+
+          <Box sx={{ display: { xs: "block", md: "none" } }}>
+            <QuickInsights user={user} refreshAccessToken={refreshAccessToken} />
           </Box>
-        ) : recommendations.length > 0 ? (
-          <Stack spacing={3}>
-            {recommendations.map((job) => (
-              <NewJobCard
-                key={job.offer_id}
-                job={job}
-                onSave={onSave}
-                initialLiked={likedIds.has(job.offer_id)}
-                similarityScore={job.similarity_score}
-              />
-            ))}
-          </Stack>
-        ) : (
-          <Typography color="gray" mb={4}>No recommendations yet.</Typography>
-        )}
-      </Box>
 
-      <Box sx={{ pl: 4, pr: 4, pt: 4, maxWidth: 1100 }}>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3} sx={{ mb: 3 }}>
-          All offers
-        </Typography>
-        <Stack spacing={3}>
-          {jobs.map((job) => (
-            <NewJobCard
-              key={job.offer_id}
-              job={job}
-              onSave={onSave}
-              isView={offersViewedId.includes(job.offer_id)}
-              initialLiked={likedIds.has(job.offer_id)}
-              newViewedOffers = {newViewedOffers}
-              refreshAccessToken = {refreshAccessToken}
-              offersLiked={offersLiked}
-              setOffersLiked={setOffersLiked}
-            />
-          ))}
-        </Stack>
-      </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
+              Recommended for you
+            </Typography>
+            <Typography variant="body2" color="gray" mb={3}>
+              {user?.skills?.length > 0
+                ? `Based on your skills: ${user.skills.join(", ")}`
+                : "Add skills in Settings to get personalized recommendations"}
+            </Typography>
+            {loadingReco ? (
+              <Box display="flex" justifyContent="center" py={4}>
+                <CircularProgress />
+              </Box>
+            ) : recommendations.length > 0 ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                {recommendations.map((job) => (
+                  <NewJobCard
+                    key={job.offer_id}
+                    job={job}
+                    onSave={onSave}
+                    initialLiked={likedIds.has(job.offer_id)}
+                    similarityScore={job.similarity_score}
+                    newViewedOffers={newViewedOffers}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <Typography color="gray">No recommendations yet.</Typography>
+            )}
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+              All offers
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {jobs.map((job) => (
+                <NewJobCard
+                  key={job.offer_id}
+                  job={job}
+                  onSave={onSave}
+                  isView={offersViewedId.includes(job.offer_id)}
+                  initialLiked={likedIds.has(job.offer_id)}
+                  newViewedOffers={newViewedOffers}
+                  refreshAccessToken={refreshAccessToken}
+                  offersLiked={offersLiked}
+                  setOffersLiked={setOffersLiked}
+                />
+              ))}
+            </Box>
+            {totalPages > 1 && (
+              <Box display="flex" justifyContent="center" mt={6} mb={4}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={(e, value) => setPage(value)}
+                  color="primary"
+                  shape="rounded"
+                  sx={{ "& .MuiPaginationItem-root": { color: "white" } }}
+                />
+              </Box>
+            )}
+          </Box>
 
-      {totalPages > 1 && (
-        <Box display="flex" justifyContent="center" mt={6}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(e, value) => setPage(value)}
-            color="primary"
-            shape="rounded"
-            sx={{
-              "& .MuiPaginationItem-root": {
-                color: "white",
-              },
-            }}
-          />
         </Box>
-      )}
+
+        <Box sx={{ width: 300, flexShrink: 0, display: { xs: "none", md: "block" }, position: "sticky", top: 80 }}>
+          <QuickInsights user={user} refreshAccessToken={refreshAccessToken} />
+        </Box>
+
+      </Stack>
+
     </Box>
   );
 }
+
 
 export default function App() {
   const [user, setUser] = useState(null);

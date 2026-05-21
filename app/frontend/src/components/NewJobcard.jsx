@@ -68,7 +68,7 @@ export default function NewJobCard({ job, onSave, initialLiked = false,similarit
   return (
     <div className="job-card" ref={cardRef} onMouseMove={handleMouseMove}>
       <div className="job-card-header">
-        {scorePercent !== null && (
+        <div className="job-card-header-in">{scorePercent !== null && (
           <span style={{
             display: "inline-block",
             marginBottom: "8px",
@@ -88,6 +88,7 @@ export default function NewJobCard({ job, onSave, initialLiked = false,similarit
             <h3 className="job-title">{job.title}</h3>
           </div>
           <p className="job-company">{job.company_name}</p>
+        </div>
         </div>
         <button
           className={`save-btn${saved ? " saved" : ""}`}
