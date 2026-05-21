@@ -115,3 +115,35 @@ export function getPersonalizedRecommendations(viewedIds, allOffers, topK = 5) {
     .sort((a, b) => b.similarity_score - a.similarity_score)
     .slice(0, topK);
 }
+export function getRecommendationsBySkills(userSkills, allOffers, topK = 5) {
+  if (!userSkills || userSkills.length === 0) return [];
+
+  const tfidf = new TfIdf();
+
+  tfidf.addDocument(userSkills.join(" ").repeat(3).toLowerCase());
+  allOffers.forEach((o) => tfidf.addDocument(buildOfferText(o)));
+
+  const profileVec = {};
+  tfidf.listTerms(0).forEach(({ term, tfidf: score }) => {
+    profileVec[term] = score;
+  });
+
+  const offerVectors = {};
+  allOffers.forEach((offer, idx) => {
+    const vec = {};
+    tfidf.listTerms(idx + 1).forEach(({ term, tfidf: score }) => {
+      vec[term] = score;
+    });
+    offerVectors[offer.offer_id] = vec;
+  });
+
+  return allOffers
+    .map((offer) => ({
+      ...offer,
+      similarity_score: parseFloat(
+        cosineSimilarity(profileVec, offerVectors[offer.offer_id]).toFixed(4),
+      ),
+    }))
+    .sort((a, b) => b.similarity_score - a.similarity_score)
+    .slice(0, topK);
+}

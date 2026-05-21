@@ -3,6 +3,7 @@ import middleware from "../middleware/middleware.js";
 import {
   similarOffers,
   personalizedRecommendations,
+  recommendationsBySkills,
 } from "../controllers/recommendationController.js";
 
 const recommendationRoutes = express.Router();
@@ -14,5 +15,6 @@ recommendationRoutes.post(
   middleware,
   personalizedRecommendations,
 );
+recommendationRoutes.get("/by-skills", middleware, recommendationsBySkills);
 
 export default recommendationRoutes;

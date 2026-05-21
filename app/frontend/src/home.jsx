@@ -68,6 +68,7 @@ const API = {
   refresh: `${BASE_URL}/api/auth/refresh`,
   logout: `${BASE_URL}/api/auth/logout`,
   UserViews: `${BASE_URL}/api/users/offersUserViews`,
+  recommendations: `${BASE_URL}/api/recommendations/by-skills`,
 };
 
 async function refreshAccessToken() {
@@ -168,7 +169,8 @@ function Dashboard({ user, onSave }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
   const [offersViewed, setOffersViewed] = useState([]);
-
+  const [recommendations, setRecommendations] = useState([]);
+  const [loadingReco, setLoadingReco] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(null);
@@ -178,6 +180,20 @@ function Dashboard({ user, onSave }) {
   const [totalPages, setTotalPages] = useState(1);
 
   const limit = 15;
+
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        const data = await apiFetch(`${API.recommendations}?top_k=6`);
+        setRecommendations(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Reco error:", err.message);
+      } finally {
+        setLoadingReco(false);
+      }
+    };
+    loadRecommendations();
+  }, []);
 
   useEffect(() => {
     const loadOffers = async () => {
