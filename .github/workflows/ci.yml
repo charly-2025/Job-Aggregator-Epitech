@@ -46,6 +46,25 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
+      - name: Create .env at the app root
+        run: |
+          cat <<EOF > app/.env
+          JWT_SECRET=test
+          REFRESH_SECRET=test
+
+          MYSQL_ROOT_PASSWORD=test
+          MYSQL_PASSWORD=test
+          MYSQL_USER=root
+          MYSQL_HOST=mysql
+          MYSQL_DATABASE=jobagg
+
+          MYSQL_DOCKER_HOST=mysql
+          MYSQL_DOCKER_USER=docker
+
+          BACKEND_PORT=3001
+          FRONTEND_PORT=3000
+          EOF
+
       - name: Create .env in filling_database folder
         run: |
           cat <<EOF > filling_database/.env
@@ -60,14 +79,6 @@ jobs:
 
       - name: docker compose up
         working-directory: ./app
-        env:
-          MYSQL_ROOT_PASSWORD: test
-          MYSQL_PASSWORD: test
-          MYSQL_USER: root
-          MYSQL_HOST: mysql
-          MYSQL_DATABASE: jobagg
-          BACKEND_PORT: 3001
-          FRONTEND_PORT: 3000
         run: docker compose up -d --build
 
       - name: start python script filling database
