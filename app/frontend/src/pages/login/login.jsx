@@ -12,30 +12,26 @@ function Login({ Connected, onLoginSuccess, onGoToRegister }) {
     try {
       const response = await fetch("http://localhost:3001/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
       if (response.ok) {
-        console.log("Success :", data);
+        console.log("Success:", data);
         Connected();
-      } else {
-        console.log("Error:", data.message);
+        onLoginSuccess?.({ email, firstname: email.split("@")[0] });
+      }else if(response.status===429){
+        setError(data.message || "Too many requests");
+
+
+      
+      }else {
+        setError(data.message || "Invalid email or password.");
       }
     } catch (error) {
       console.error("Server error:", error);
-    }
-
-    if (email && password) {
-      onLoginSuccess?.({ email, firstname: email.split("@")[0] });
-    } else {
-      setError("Please enter your email and password.");
+      setError("Server error, please try again.");
     }
   };
 

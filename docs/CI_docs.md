@@ -7,7 +7,7 @@ Others CI tests such as linter is also useful but not much important as CI tests
 
 ## 2. Decision
 
-We decided to choose Github actions for the CI.
+We decided to choose Github actions for the CI. And Husky for prettier each commited files after each commit.
 
 ## 3. Why
 
@@ -51,3 +51,8 @@ Single monolithic pipeline → simple to read / hard to maintain updated
 ---
 
 ## 6. Evidence
+
+![Evidence](images/evidence_CI.png)
+![Evidence](images/evidence_CI2.png)
+
+After each push , tests run and the developper should check if everything isn't broken. If yes he has to fix issues until everything is working.

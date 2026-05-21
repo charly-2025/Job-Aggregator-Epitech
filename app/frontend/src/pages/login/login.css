@@ -112,3 +112,15 @@ html {
   width: 250px;
   z-index: 10;
 }
+
+
+/* IN CASE OF LITTLE SCREEN*/
+@media (max-width: 768px) {
+  .right-side {
+    display: none;
+  }
+
+  .left-side {
+    width: 100% !important;
+  }
+}

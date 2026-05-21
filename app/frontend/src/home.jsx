@@ -259,6 +259,10 @@ function JobCard({ job, onSave, initialLiked = false }) {
           "&:hover": {
             boxShadow: "0 0 30px rgba(148, 28, 138, 0.2)",
             borderColor: "rgba(219, 35, 173, 0.4)",
+            flex: 1,
+            
+            minWidth: { xs: "100%", sm: "45%", md: "30%" },
+            height: "200px",
           },
         }}
       >
@@ -336,9 +340,11 @@ function InfoCard({ title, value, color, icon }) {
         border: "3px solid rgba(255,255,255,0.08)",
         borderRadius: "14px",
         flex: 1,
+        minWidth: { xs: "100%", sm: "45%", md: "30%" },
         height: "200px",
         fontFamily: "'Inter', sans-serif !important",
       }}
+    
     >
       <CardContent sx={{ padding: "25px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -368,6 +374,7 @@ function InfoCard({ title, value, color, icon }) {
     </Card>
   );
 }
+
 
 function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffers, nbOffersLiked, offersLiked, setOffersLiked }) {
   const [jobs, setJobs] = useState([]);
@@ -426,20 +433,15 @@ function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffe
   if (error) return <ErrorMessage message={error} />;
 
   const cards = [
-    { title: "New Jobs Today", value: jobs.length, color: "rgba(139, 92, 246, 0.15)", icon: <WorkHistoryIcon sx={{ fontSize: 70 }} /> },
+    { title: "Jobs Today", value: jobs.length, color: "rgba(139, 92, 246, 0.15)", icon: <WorkHistoryIcon sx={{ fontSize: 60 }} /> },
     { title: "Saved Jobs", value: nbOffersLiked, color: "rgba(6, 182, 212, 0.15)", icon: <GradeIcon sx={{ fontSize: 60 }} /> },
     { title: "Offers Viewed", value: nbOffersViewed, color: "rgba(34, 197, 94, 0.15)", icon: <VisibilityIcon sx={{ fontSize: 60 }} /> },
   ];
 
   return (
-    <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1, display: "flex", flexDirection: "column", gap: "40px" }}>
+    <Box sx={{ pl: { xs: 2, md: 4 }, pr: { xs: 2, md: 4 }, pt: 10, flex: 1, display: "flex", flexDirection: "column", gap: "40px" }}>
       <Box>
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          color="white"
-          sx={{ fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700 }}
-        >
+        <Typography variant="h4" fontWeight="bold" color="white" sx={{ fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700 }}>
           Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
         </Typography>
         <Typography variant="body1" color="gray" sx={{ paddingLeft: "15px", mt: 1 }}>
@@ -447,7 +449,7 @@ function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffe
         </Typography>
       </Box>
 
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 2 }}>
         {cards.map((c) => (
           <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
         ))}
@@ -455,7 +457,7 @@ function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffe
 
       <Stack direction={{ xs: "column", md: "row" }} spacing="30px" alignItems="flex-start">
 
-        <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "40px" }}>
+        <Box sx={{ flex: 1, minWidth: 0, maxWidth: 1100, display: "flex", flexDirection: "column", gap: "40px" }}>
 
           <Box sx={{ display: { xs: "block", md: "none" } }}>
             <QuickInsights user={user} refreshAccessToken={refreshAccessToken} />
@@ -491,7 +493,6 @@ function Dashboard({ user, onSave, nbOffersViewed, offersViewedId, newViewedOffe
               <Typography color="gray">No recommendations yet.</Typography>
             )}
           </Box>
-
           <Box>
             <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
               All offers
