@@ -19,6 +19,11 @@ jobs:
       - name: Checkout the source code
         uses: actions/checkout@v3
 
+      - name: Install Python + pip
+        run: |
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade pip
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -66,7 +71,7 @@ jobs:
 
       - name: install dependencies
         working-directory: ./filling_database
-        run: pip install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt
 
       - name: docker compose up
         working-directory: ./app
