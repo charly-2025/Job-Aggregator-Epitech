@@ -52,6 +52,7 @@ jobs:
           JWT_SECRET=test
           REFRESH_SECRET=test
 
+          MYSQL_ROOT_PASSWORD=test
           MYSQL_PASSWORD=test
           MYSQL_USER=root
           MYSQL_HOST=mysql
@@ -67,10 +68,11 @@ jobs:
       - name: Create .env in filling_database folder
         run: |
           cat <<EOF > filling_database/.env
+          MYSQL_ROOT_PASSWORD=test
           MYSQL_PASSWORD=test
           WLD_API_KEY=${{ secrets.WLD_API_KEY }}
           MYSQL_USER=root
-          MYSQL_HOST=localhost
+          MYSQL_HOST=mysql
           MYSQL_DATABASE=jobagg
           MYSQL_PORT=3307
           EOF
