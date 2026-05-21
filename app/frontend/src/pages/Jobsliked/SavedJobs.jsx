@@ -142,29 +142,9 @@ function EmptyState({ onBrowse }) {
   );
 }
 
-const JobsLiked = ({ setActive }) => {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+const JobsLiked = ({ setActive, offersLiked = [], setOffersLiked, newViewedOffers}) => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    apiFetch(`${BASE_URL}/api/users/offersUserLikes`)
-      .then((data) => setJobs(Array.isArray(data) ? data : data.jobs || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleUnsave = async (job) => {
-    try {
-      await apiFetch(`${BASE_URL}/api/offers/handleOfferLike/${job.offer_id}`, {
-        method: "PUT",
-      });
-      setJobs((prev) => prev.filter((j) => j.offer_id !== job.offer_id));
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
 
   const handleView = (job) => {
     setSelectedJob(job);
@@ -172,79 +152,39 @@ const JobsLiked = ({ setActive }) => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        minWidth: "85.9vw",
-        bgcolor: "#0a0a0a",
-        color: "white",
-        p: { xs: 2, sm: 3, md: 4 },
-        marginTop: 6,
-      }}
-    >
+    <Box sx={{ minHeight: "100vh", minWidth: "85.9vw", bgcolor: "#0a0a0a", color: "white", p: { xs: 2, sm: 3, md: 4 }, marginTop: 6 }}>
       <Box mb={5}>
-        <Stack
-          direction="row"
-          alignItems="flex-end"
-          justifyContent="space-between"
-          flexWrap="wrap"
-          gap={2}
-        >
+        <Stack direction="row" alignItems="flex-end" justifyContent="space-between" flexWrap="wrap" gap={2}>
           <Box>
-            <Typography
-              variant="h1"
-              fontWeight="Bold"
-              letterSpacing={-0.8}
-              lineHeight={1.1}
-              sx={{ fontSize: { xs: 26, sm: 32 } }}
-            >
+            <Typography variant="h1" fontWeight="Bold" letterSpacing={-0.8} lineHeight={1.1} sx={{ fontSize: { xs: 26, sm: 32 } }}>
               Saved Jobs
             </Typography>
-            {!loading && (
-              <Typography variant="body2" color="#555" mt={0.75}>
-                {jobs.length === 0
-                  ? ""
-                  : `${jobs.length} job${jobs.length > 1 ? "s" : ""} saved`}
-              </Typography>
-            )}
+            <Typography variant="body2" color="#555" mt={0.75}>
+              {offersLiked.length === 0 ? "" : `${offersLiked.length} job${offersLiked.length > 1 ? "s" : ""} saved`}
+            </Typography>
           </Box>
         </Stack>
-
-        <Box
-          sx={{
-            mt: 3,
-            height: 1,
-            background: "linear-gradient(90deg, #1e1e1e 0%, transparent 100%)",
-          }}
-        />
+        <Box sx={{ mt: 3, height: 1, background: "linear-gradient(90deg, #1e1e1e 0%, transparent 100%)" }} />
       </Box>
 
-      {!loading && jobs.length === 0 && (
-        <EmptyState onBrowse={() => setActive?.("dashboard")} />
-      )}
+      {offersLiked.length === 0 && <EmptyState onBrowse={() => setActive?.("dashboard")} />}
 
-      {!loading && jobs.length > 0 && (
+      {offersLiked.length > 0 && (
         <Grid container spacing={3}>
-          {jobs.map((job, index) => (
+          {offersLiked.map((job, index) => (
             <Grid item xs={12} sm={6} lg={4} key={job.offer_id ?? index}>
               <NewJobCard
                 job={job}
                 initialLiked={true}
-                onRemove={(offerId) => {
-                  setJobs((prev) => prev.filter((j) => j.offer_id !== offerId));
-                }}
+                newViewedOffers={newViewedOffers}
+                onSave={(job) => setOffersLiked(prev => prev.filter(j => j.offer_id !== job.offer_id))}
               />
             </Grid>
           ))}
         </Grid>
       )}
 
-      <JobModal
-        job={selectedJob}
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onUnsave={handleUnsave}
-      />
+      <JobModal job={selectedJob} open={modalOpen} onClose={() => setModalOpen(false)} />
     </Box>
   );
 };
