@@ -5,6 +5,7 @@ import Settings from "./pages/settings/settings";
 import JobsLiked from "./pages/Jobsliked/SavedJobs";
 import SearchJobs from "./pages/SearchJobs/SearchJobs";
 
+
 import "@fontsource/inter/100.css";
 import "@fontsource/inter/200.css";
 import "@fontsource/inter/300.css";
@@ -57,6 +58,9 @@ import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import NewJobCard from "./components/NewJobcard";
 import Sidebar from "./components/sidebar";
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import GradeIcon from '@mui/icons-material/Grade';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const BASE_URL = "http://localhost:3001";
 
@@ -131,7 +135,195 @@ function ErrorMessage({ message }) {
   );
 }
 
-function InfoCard({ title, value, color }) {
+
+
+
+
+function JobModal({ job, open, onClose, saved, onSaveToggle }) {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby="job-modal-title"
+      aria-describedby="job-modal-description"
+      PaperProps={{
+        sx: {
+          background: "#111010",
+          color: "white",
+          border: "1px solid rgba(187, 37, 167, 0.4)",
+          borderRadius: 3,
+          boxShadow: "0 0 40px rgba(150, 28, 144, 0.2)",
+          minWidth: { xs: "90%", md: 500 },
+        },
+      }}
+    >
+      <DialogTitle id="job-modal-title">
+        <Typography variant="h6" fontWeight="bold">
+          {job.title}
+        </Typography>
+
+        <Typography variant="body2" color="gray">
+          {job.company_name}
+        </Typography>
+      </DialogTitle>
+
+      <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+      <DialogContent id="job-modal-description">
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <Chip label={job.location} size="small" color="primary" />
+            <Chip label={job.job_type} size="small" color="secondary" />
+            <Chip label={job.work_type} size="small" />
+          </Stack>
+
+          <Typography fontWeight="bold" color="#38bdf8">
+            ${job.salary?.toLocaleString()}
+          </Typography>
+
+          <Typography variant="body2" color="#aaa">
+            {job.about}
+          </Typography>
+
+          <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+          <Typography variant="body2" color="gray">
+            Skills
+          </Typography>
+
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {job.skills?.map((skill) => (
+              <Chip key={skill} label={skill} size="small" />
+            ))}
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <Divider sx={{ borderColor: "#2a2a2a" }} />
+
+      <DialogActions sx={{ p: 2 }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{
+            color: "white",
+            borderColor: "#2a2a2a",
+          }}
+        >
+          Close
+        </Button>
+
+        <Button
+          variant={saved ? "contained" : "outlined"}
+          color="secondary"
+          onClick={onSaveToggle}
+        >
+          {saved ? "Saved" : "Save"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function JobCard({ job, onSave, initialLiked = false }) {
+  const [saved, setSaved] = useState(initialLiked);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setSaved(initialLiked);
+  }, [initialLiked]);
+
+  const handleSaveToggle = async () => {
+    try {
+      await onSave(job);
+
+      setSaved((prev) => !prev);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  return (
+    <>
+      <Card
+        sx={{
+          background: "#111010",
+          color: "white",
+          borderRadius: 3,
+          border: "1px solid #2a2a2a",
+          transition: "box-shadow 0.3s ease, border-color 0.3s ease",
+
+          "&:hover": {
+            boxShadow: "0 0 30px rgba(148, 28, 138, 0.2)",
+            borderColor: "rgba(219, 35, 173, 0.4)",
+          },
+        }}
+      >
+        <CardContent>
+          <Stack spacing={1.5}>
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold">
+                {job.title}
+              </Typography>
+
+              <Typography variant="body2" color="gray">
+                {job.company_name}
+              </Typography>
+            </Box>
+
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip label={job.location} size="small" color="primary" />
+              <Chip label={job.job_type} size="small" color="secondary" />
+              <Chip label={job.work_type} size="small" />
+            </Stack>
+
+            <Typography fontWeight="bold" color="#38bdf8" variant="body2">
+              ${job.salary?.toLocaleString()}
+            </Typography>
+
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(true);
+                  
+                }}
+              >
+                View
+              </Button>
+
+              <Button
+                variant={saved ? "contained" : "outlined"}
+                color="secondary"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSaveToggle();
+                }}
+              >
+                {saved ? "Saved" : "Save"}
+              </Button>
+            </Stack>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {open && (
+        <JobModal
+          job={job}
+          open={open}
+          onClose={() => setOpen(false)}
+          saved={saved}
+          onSaveToggle={handleSaveToggle}
+        />
+      )}
+    </>
+  );
+}
+
+function InfoCard({ title, value, color, icon }) {
   return (
     <Card
       sx={{
@@ -142,16 +334,25 @@ function InfoCard({ title, value, color }) {
         borderRadius: "14px",
         flex: 1,
         height: "200px",
+        fontFamily: "'Inter', sans-serif !important",
       }}
     >
       <CardContent sx={{ padding: "25px" }}>
-        <Typography
-          variant="body2"
-          color="gray"
-          sx={{ fontSize: "35px", mb: 1 }}
-        >
-          {title}
-        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <Typography
+            variant="body2"
+            color="gray"
+            sx={{ fontSize: "35px", mb: 1 }}
+          >
+            {title}
+          </Typography>
+
+          {icon && (
+            <Box sx={{ color: "rgba(255,255,255,0.3)" }}>
+              {icon}
+            </Box>
+          )}
+        </Box>
 
         <Typography
           variant="h5"
@@ -235,23 +436,26 @@ function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffer
       title: "New Jobs Today",
       value: jobs.length,
       color: "rgba(139, 92, 246, 0.15)",
+      icon: <WorkHistoryIcon sx={{fontSize:70}}/>,
     },
     {
       title: "Saved Jobs",
       value: nbOffersLiked,
       color: "rgba(6, 182, 212, 0.15)",
+      icon: <GradeIcon sx={{ fontSize: 60 }} />,
     },
     {
       title: "Offers Viewed",
       value: nbOffersViewed,
       color: "rgba(34, 197, 94, 0.15)",
+      icon: <VisibilityIcon sx={{ fontSize: 60 }} />,
     },
   ];
 
   return (
     <Box sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}>
       <Box mb={6}>
-        <Typography variant="h4" fontWeight="bold" color="white">
+        <Typography variant="h4" fontWeight="bold" color="white"   sx={{fontSize: "45px", fontFamily: "'Inter', sans-serif !important", fontWeight: 700,}}>
           Welcome back{" "}
           <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
         </Typography>
@@ -271,17 +475,46 @@ function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffer
         mb={4}
         sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}
       >
-        {cards.map((c) => (
-          <InfoCard
-            key={c.title}
-            title={c.title}
-            value={c.value}
-            color={c.color}
-          />
-        ))}
+      {cards.map((c) => (
+        <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
+      ))}
       </Stack>
 
-      <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>
+        <Box sx={{ pl: 4, pr: 4, pt: 6, maxWidth: 1100, mb: 4,}}>
+        <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
+          Recommended for you
+        </Typography>
+        <Typography variant="body2" color="gray" mb={3} sx={{ mb: 3 }}>
+          {user?.skills?.length > 0
+            ? `Based on your skills: ${user.skills.join(", ")}`
+            : "Add skills in Settings to get personalized recommendations"}
+        </Typography>
+
+        {loadingReco ? (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress />
+          </Box>
+        ) : recommendations.length > 0 ? (
+          <Stack spacing={3}>
+            {recommendations.map((job) => (
+              <NewJobCard
+                key={job.offer_id}
+                job={job}
+                onSave={onSave}
+                initialLiked={likedIds.has(job.offer_id)}
+                similarityScore={job.similarity_score}
+              />
+            ))}
+          </Stack>
+        ) : (
+          <Typography color="gray" mb={4}>No recommendations yet.</Typography>
+        )}
+      </Box>
+
+      <Box sx={{ pl: 4, pr: 4, pt: 4, maxWidth: 1100 }}>
+        <Typography variant="h5" fontWeight="bold" color="white" mb={3} sx={{ mb: 3 }}>
+          All offers
+        </Typography>
         <Stack spacing={3}>
           {jobs.map((job) => (
             <NewJobCard

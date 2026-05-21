@@ -30,39 +30,24 @@ Frontend: ./app/frontend → `npm ci`
 Backend: ./app/backend → `npm ci`
 Root project: `npm ci`
 
-3 - The pipeline starts the full application stack:
+3 - Setup all environment variable
 
-Backend: `node index.js`
-Frontend: `npm start`
+4 - The pipeline starts the full application stack thanks to the docker `docker compose up -d --build`
 
-4 -
+5 - Also installing pip and setup the python virtual environment to test the filling offers script.
+
+6 - Linter tests and prettier checks
 
 ---
 
 ## 5. Trade-offs
 
-Lister les compromis acceptés :
-
-- Avantages vs inconvénients
-- Limites de la solution
-- Dette technique potentielle
-- Vendor lock-in éventuel
-- Complexité vs flexibilité
-
-> Exemple :
-> L’utilisation de <outil CI> introduit un certain verrouillage fournisseur mais simplifie fortement la maintenance et la mise en place.
+Docker environment -> realistic tests / slower  
+Several npm ci installs -> clean separation / redundant and slow
+Manual .env files -> simple / easy to break
+Self-hosted runner + container -> full control / environment-dependent (for example Epitech docker)
+Single monolithic pipeline → simple to read / hard to maintain updated
 
 ---
 
 ## 6. Evidence
-
-Justifier la décision avec des éléments concrets :
-
-- POC réalisés
-- Benchmarks (temps de build, coût)
-- Comparaison avec autres outils
-- Retours d’équipe
-- Documentation officielle
-
-> Exemple :
-> Un POC comparatif entre deux solutions CI a montré une réduction de 25% du temps de configuration avec <outil CI>.

@@ -56,11 +56,15 @@ services:
       - mysql_data:/var/lib/mysql
       - ./database/jobagg.sql:/docker-entrypoint-initdb.d/jobagg.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 60s
 
 volumes:
   mysql_data:
