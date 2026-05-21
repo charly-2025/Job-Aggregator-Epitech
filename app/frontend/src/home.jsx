@@ -289,8 +289,41 @@ function Dashboard({ user, onSave }) {
           />
         ))}
       </Stack>
+        <Box sx={{ pl: 4, pr: 4, pt: 6, maxWidth: 1100 }}>
+        <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
+          Recommended for you
+        </Typography>
+        <Typography variant="body2" color="gray" mb={3}>
+          {user?.skills?.length > 0
+            ? `Based on your skills: ${user.skills.join(", ")}`
+            : "Add skills in Settings to get personalized recommendations"}
+        </Typography>
 
-      <Box sx={{ pl: 4, pr: 4, pt: 10, maxWidth: 1100 }}>
+        {loadingReco ? (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress />
+          </Box>
+        ) : recommendations.length > 0 ? (
+          <Stack spacing={3}>
+            {recommendations.map((job) => (
+              <NewJobCard
+                key={job.offer_id}
+                job={job}
+                onSave={onSave}
+                initialLiked={likedIds.has(job.offer_id)}
+                similarityScore={job.similarity_score}
+              />
+            ))}
+          </Stack>
+        ) : (
+          <Typography color="gray" mb={4}>No recommendations yet.</Typography>
+        )}
+      </Box>
+
+      <Box sx={{ pl: 4, pr: 4, pt: 4, maxWidth: 1100 }}>
+        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+          All offers
+        </Typography>
         <Stack spacing={3}>
           {jobs.map((job) => (
             <NewJobCard

@@ -22,10 +22,11 @@ function formatDate(dateStr) {
   });
 }
 
-export default function NewJobCard({ job, onSave, initialLiked = false }) {
+export default function NewJobCard({ job, onSave, initialLiked = false, similarityScore }) {
   const [saved, setSaved] = useState(initialLiked);
   const cardRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
+  const scorePercent = similarityScore ? Math.round(similarityScore * 100) : null;
 
   useEffect(() => {
     setSaved(initialLiked);
@@ -58,6 +59,21 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
   return (
     <div className="job-card" ref={cardRef} onMouseMove={handleMouseMove}>
       <div className="job-card-header">
+        {scorePercent !== null && (
+          <span style={{
+            display: "inline-block",
+            marginBottom: "8px",
+            padding: "2px 10px",
+            borderRadius: "20px",
+            fontSize: "11px",
+            fontWeight: 600,
+            background: scorePercent >= 85 ? "rgba(34,197,94,0.15)" : "rgba(245,158,11,0.15)",
+            color: scorePercent >= 85 ? "#22c55e" : "#f59e0b",
+            border: `1px solid ${scorePercent >= 85 ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.3)"}`,
+          }}>
+            {scorePercent}% match
+          </span>
+        )}
         <div className="job-card-info">
           <div className="job-title-row">
             <h3 className="job-title">{job.title}</h3>
@@ -76,7 +92,7 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
           )}
         </button>
       </div>
-
+          
       <div className="job-meta">
         {job.location && (
           <span className="meta-item">
@@ -120,7 +136,6 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
           )}
         </div>
       )}
-
       <div className="job-card-actions">
         <button className="btn-details" onClick={() => setOpenModal(true)}>
           View Details
