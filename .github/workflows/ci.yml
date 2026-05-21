@@ -79,7 +79,7 @@ jobs:
 
       - name: docker compose up
         working-directory: ./app
-        run: docker compose up -d --build
+        run: docker compose up -d --build -V
 
       - name: Connect CI container to compose network
         run: docker network connect app_default $(hostname)
