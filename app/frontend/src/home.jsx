@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useTheme } from "@mui/material/styles";
 
 import Settings from "./pages/settings/settings";
@@ -165,10 +165,9 @@ function InfoCard({ title, value, color }) {
   );
 }
 
-function Dashboard({ user, onSave }) {
+function Dashboard({ user, onSave, nbOffersViewed ,offersViewedId,newViewedOffers, nbOffersLiked, offersLiked, setOffersLiked}) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
-  const [offersViewed, setOffersViewed] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loadingReco, setLoadingReco] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -200,22 +199,10 @@ function Dashboard({ user, onSave }) {
       try {
         setLoading(true);
 
-        const [response, likedRes, viewedRes] = await Promise.all([
-          apiFetch(`${API.offers}?page=${page}&limit=${limit}`),
-          apiFetch(API.likedOffers),
-          apiFetch(API.UserViews).catch(() => []),
-        ]);
-
-        setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
+        const [response, likedRes] = await Promise.all([
+          apiFetch(`${API.offers}?page=${page}&limit=${limit}`)]);
 
         setJobs(Array.isArray(response.data) ? response.data : []);
-
-        setLikedIds(
-          new Set(
-            Array.isArray(likedRes) ? likedRes.map((job) => job.offer_id) : [],
-          ),
-        );
-
         setTotalPages(response.totalPages || 1);
       } catch (err) {
         setError(err.message);
@@ -226,6 +213,10 @@ function Dashboard({ user, onSave }) {
 
     loadOffers();
   }, [page]);
+
+   useEffect(() => {
+    setLikedIds(new Set(offersLiked.map(job => job.offer_id)));
+  }, [offersLiked]);
 
   if (loading) {
     return (
@@ -247,12 +238,12 @@ function Dashboard({ user, onSave }) {
     },
     {
       title: "Saved Jobs",
-      value: likedIds.size,
+      value: nbOffersLiked,
       color: "rgba(6, 182, 212, 0.15)",
     },
     {
       title: "Offers Viewed",
-      value: offersViewed.length,
+      value: nbOffersViewed,
       color: "rgba(34, 197, 94, 0.15)",
     },
   ];
@@ -297,7 +288,12 @@ function Dashboard({ user, onSave }) {
               key={job.offer_id}
               job={job}
               onSave={onSave}
+              isView={offersViewedId.includes(job.offer_id)}
               initialLiked={likedIds.has(job.offer_id)}
+              newViewedOffers = {newViewedOffers}
+              refreshAccessToken = {refreshAccessToken}
+              offersLiked={offersLiked}
+              setOffersLiked={setOffersLiked}
             />
           ))}
         </Stack>
@@ -332,8 +328,113 @@ export default function App() {
 
   const [error, setError] = useState(null);
 
+
+  const [offersViewed, setOffersViewed] = useState([]);
+  const [nbOffersViewed, setNbOffersViewed] = useState(0);
+  const [offersViewedId, setOffersViewedId] = useState([])
+
+  const [offersLiked,setOffersLiked] = useState([])
+  const [nbOffersLiked,setNbOffersLiked] = useState(0)
+
+  useEffect(() => {
+    setNbOffersViewed(offersViewed.length);
+    setOffersViewedId(offersViewed.map(offer=>offer.offer_id))
+  }, [offersViewed]);
+
+  useEffect(()=>{
+    setNbOffersLiked(offersLiked.length);
+
+  },[offersLiked])
+
+  useEffect(() => {
+    const loadViewedOffers = async (retry = false) => {
+      try {
+        const response = await fetch(API.UserViews, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.status === 401 && !retry) {
+          await refreshAccessToken();
+          return loadViewedOffers(true);
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to load viewed offers");
+        }
+
+        const data = await response.json();
+        setOffersViewed(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error loading viewed offers:", err.message);
+      }
+    }
+    const loadLikedOffers = async (retry = false) => {
+      try {
+        const response = await fetch("http://localhost:3001/api/users/offersUserLikes", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.status === 401 && !retry) {
+          await refreshAccessToken();
+          return loadLikedOffers(true);
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to load viewed offers");
+        }
+
+        const data = await response.json();
+        setOffersLiked(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error loading viewed offers:", err.message);
+      }
+    }
+
+    loadLikedOffers();
+    loadViewedOffers();
+  },[]);
+
+  const newViewedOffers = (offer) => {
+
+    const fetchViewedOffers = async (offer,retry = false) => {
+      try {
+        const response = await fetch("http://localhost:3001/api/offers/newOfferView/" + offer.offer_id, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        if(response.status === 200){
+          setOffersViewed(prev => [...prev, offer]);
+        }
+
+        if (response.status === 401 && !retry) {
+          await refreshAccessToken();
+          return fetchViewedOffers(offer,true);
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to load viewed offers");
+        }
+        return
+      } catch (err) {
+        console.error("Error loading viewed offers:", err.message);
+      }
+    }
+      fetchViewedOffers(offer)    
+  };
+
   const handleSave = async (job) => {
     console.log("save job", job.id);
+    setOffersLiked(prev => {
+    const alreadyLiked = prev.some(j => j.offer_id === job.offer_id);
+    if (alreadyLiked) {
+      return prev.filter(j => j.offer_id !== job.offer_id);
+    } else {
+      return [...prev, job];
+    }
+  });
   };
 
   useEffect(() => {
@@ -439,18 +540,25 @@ export default function App() {
           </Toolbar>
         </AppBar>
 
-        {page === "dashboard" && <Dashboard user={user} />}
+        {page === "dashboard" && <Dashboard user={user} onSave={handleSave} nbOffersViewed={nbOffersViewed} offersViewedId={offersViewedId} newViewedOffers={newViewedOffers} nbOffersLiked={nbOffersLiked} offersLiked={offersLiked} setOffersLiked={setOffersLiked}/>}
 
-        {page === "search" && (
-          <Box p={4}>
-            <Typography variant="h4" color="white">
-              Search Jobs
-              {page === "search" && <SearchJobs onSave={handleSave} />}
-            </Typography>
-          </Box>
-        )}
+          {page === "search" && (
+            <Box p={4}>
+              <Typography variant="h4" color="white">
+                Search Jobs
+                {page === "search" && (
+                  <SearchJobs 
+                    onSave={handleSave} 
+                    offersLiked={offersLiked}
+                    newViewedOffers={newViewedOffers}
+                    refreshAccessToken={refreshAccessToken}
+                  />
+                )}
+              </Typography>
+            </Box>
+          )}
 
-        {page === "saved" && <JobsLiked setActive={setPage} />}
+        {page === "saved" && <JobsLiked setActive={setPage} offersLiked={offersLiked} setOffersLiked={setOffersLiked} newViewedOffers={newViewedOffers}/>}
 
         {page === "settings" && (
           <>

@@ -16,7 +16,7 @@ import Pagination from "../../components/pagination";
 const BASE_URL = "http://localhost:3001";
 const ITEMS_PER_PAGE = 10;
 
-export default function SearchJobs({ onSave }) {
+export default function SearchJobs({ onSave, offersLiked = [], newViewedOffers, refreshAccessToken }) {
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,27 +25,17 @@ export default function SearchJobs({ onSave }) {
   const [sortBy, setSortBy] = useState("relevant");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [likedIds, setLikedIds] = useState(new Set());
   const [filters, setFilters] = useState({
     jobType: "all",
     salaryMax: 150000,
     workTypes: [],
   });
 
-  const fetchLikedOffers = useCallback(async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/users/offersUserLikes`, {
-        credentials: "include",
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setLikedIds(
-        new Set(Array.isArray(data) ? data.map((job) => job.offer_id) : []),
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
+  const likedIds = useMemo(
+    () => new Set(offersLiked.map((job) => job.offer_id)),
+    [offersLiked]
+  );
+
 
   useEffect(() => {
     const load = async () => {
@@ -66,8 +56,7 @@ export default function SearchJobs({ onSave }) {
       }
     };
     load();
-    fetchLikedOffers();
-  }, [fetchLikedOffers]);
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -233,6 +222,8 @@ export default function SearchJobs({ onSave }) {
                       job={job}
                       onSave={onSave}
                       initialLiked={likedIds.has(job.offer_id)}
+                      newViewedOffers={newViewedOffers}
+                      refreshAccessToken={refreshAccessToken}
                     />
                   ))
                 ) : (

@@ -22,7 +22,7 @@ function formatDate(dateStr) {
   });
 }
 
-export default function NewJobCard({ job, onSave, initialLiked = false }) {
+export default function NewJobCard({ job, onSave, initialLiked = false, isView = false,newViewedOffers, refreshAccessToken, offersLiked, setOffersLiked}) {
   const [saved, setSaved] = useState(initialLiked);
   const cardRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
@@ -39,14 +39,23 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
     cardRef.current.style.setProperty("--my", `${y}%`);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (retry=false) => {
     try {
-      await fetch(`${BASE_URL}/api/offers/handleOfferLike/${job.offer_id}`, {
+      const response = await fetch(`${BASE_URL}/api/offers/handleOfferLike/${job.offer_id}`, {
         method: "PUT",
         credentials: "include",
       });
-      setSaved((p) => !p);
-      if (onSave) onSave(job);
+      if (response.ok) {
+        setSaved((p) => !p);
+        if (onSave) onSave(job);
+        return
+      }
+      if (response.status === 401 && !retry) {
+        refreshAccessToken();
+        handleSave(true);
+        return
+      }
+
     } catch (err) {
       console.error(err);
     }
@@ -122,7 +131,7 @@ export default function NewJobCard({ job, onSave, initialLiked = false }) {
       )}
 
       <div className="job-card-actions">
-        <button className="btn-details" onClick={() => setOpenModal(true)}>
+        <button className="btn-details" onClick={() => {setOpenModal(true);newViewedOffers(job);}}>
           View Details
         </button>
 
