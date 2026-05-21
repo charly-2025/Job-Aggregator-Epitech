@@ -5,6 +5,7 @@ import Settings from "./pages/settings/settings";
 import JobsLiked from "./pages/Jobsliked/SavedJobs";
 import SearchJobs from "./pages/SearchJobs/SearchJobs";
 
+
 import "@fontsource/inter/100.css";
 import "@fontsource/inter/200.css";
 import "@fontsource/inter/300.css";
@@ -57,6 +58,9 @@ import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import NewJobCard from "./components/NewJobcard";
 import Sidebar from "./components/sidebar";
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import GradeIcon from '@mui/icons-material/Grade';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const BASE_URL = "http://localhost:3001";
 
@@ -319,7 +323,7 @@ function JobCard({ job, onSave, initialLiked = false }) {
   );
 }
 
-function InfoCard({ title, value, color }) {
+function InfoCard({ title, value, color, icon }) {
   return (
     <Card
       sx={{
@@ -330,17 +334,25 @@ function InfoCard({ title, value, color }) {
         borderRadius: "14px",
         flex: 1,
         height: "200px",
-        sontSize: "45px", fontFamily: "'Inter', sans-serif !important"}}
-     
+        fontFamily: "'Inter', sans-serif !important",
+      }}
     >
       <CardContent sx={{ padding: "25px" }}>
-        <Typography
-          variant="body2"
-          color="gray"
-          sx={{ fontSize: "35px", mb: 1 }}
-        >
-          {title}
-        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <Typography
+            variant="body2"
+            color="gray"
+            sx={{ fontSize: "35px", mb: 1 }}
+          >
+            {title}
+          </Typography>
+
+          {icon && (
+            <Box sx={{ color: "rgba(255,255,255,0.3)" }}>
+              {icon}
+            </Box>
+          )}
+        </Box>
 
         <Typography
           variant="h5"
@@ -433,16 +445,19 @@ function Dashboard({ user, onSave }) {
       title: "New Jobs Today",
       value: jobs.length,
       color: "rgba(139, 92, 246, 0.15)",
+      icon: <WorkHistoryIcon sx={{fontSize:70}}/>,
     },
     {
       title: "Saved Jobs",
       value: likedIds.size,
       color: "rgba(6, 182, 212, 0.15)",
+      icon: <GradeIcon sx={{ fontSize: 60 }} />,
     },
     {
       title: "Offers Viewed",
       value: offersViewed.length,
       color: "rgba(34, 197, 94, 0.15)",
+      icon: <VisibilityIcon sx={{ fontSize: 60 }} />,
     },
   ];
 
@@ -469,14 +484,9 @@ function Dashboard({ user, onSave }) {
         mb={4}
         sx={{ pl: 4, pr: 4, pt: 10, flex: 1 }}
       >
-        {cards.map((c) => (
-          <InfoCard
-            key={c.title}
-            title={c.title}
-            value={c.value}
-            color={c.color}
-          />
-        ))}
+      {cards.map((c) => (
+        <InfoCard key={c.title} title={c.title} value={c.value} color={c.color} icon={c.icon} />
+      ))}
       </Stack>
 
         <Box sx={{ pl: 4, pr: 4, pt: 6, maxWidth: 1100, mb: 4,}}>
