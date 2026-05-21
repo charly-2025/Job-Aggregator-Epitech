@@ -2,6 +2,7 @@ import db from "../config/db.js";
 import {
   getSimilarOffers,
   getPersonalizedRecommendations,
+  getRecommendationsBySkills,
 } from "../services/recommender.js";
 
 /**
@@ -93,6 +94,37 @@ export const personalizedRecommendations = async (req, res) => {
       allOffers,
       topK,
     );
+
+    res.status(200).json(recommendations);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+export const recommendationsBySkills = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const topK = Math.min(parseInt(req.query.top_k) || 6, 20);
+
+    const [userSkillsRows] = await db.query(
+      `SELECT s.name FROM skills s
+       JOIN user_skills us ON us.skill_id = s.skill_id
+       WHERE us.user_id = ?`,
+      [userId]
+    );
+
+    const allOffers = await loadAllOffersWithSkills();
+
+    if (userSkillsRows.length === 0) {
+      return res.status(200).json(
+        allOffers
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, topK)
+          .map(o => ({ ...o, similarity_score: null }))
+      );
+    }
+
+    const userSkills = userSkillsRows.map(s => s.name);
+    const recommendations = getRecommendationsBySkills(userSkills, allOffers, topK);
 
     res.status(200).json(recommendations);
   } catch (err) {
