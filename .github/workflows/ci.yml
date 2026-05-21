@@ -54,7 +54,7 @@ jobs:
 
           MYSQL_ROOT_PASSWORD=test
           MYSQL_PASSWORD=test
-          MYSQL_USER=root
+          MYSQL_USER=docker
           MYSQL_HOST=mysql
           MYSQL_DATABASE=jobagg
 
@@ -74,19 +74,23 @@ jobs:
           MYSQL_USER=root
           MYSQL_HOST=mysql
           MYSQL_DATABASE=jobagg
-          MYSQL_PORT=3307
+          MYSQL_PORT=3306
           EOF
+
+      - name: Clean previous state
+        working-directory: ./app
+        run: docker compose down -v || true
 
       - name: docker compose up
         working-directory: ./app
         run: docker compose up -d --build
 
+      - name: Connect CI container to compose network
+        run: docker network connect app_default $(hostname)
+
       - name: start python script filling database
         working-directory: ./filling_database
         run: ./venv/bin/python run_pipeline.py
-
-      - name: Wait
-        run: sleep 50
 
       - name: Run ESLint
         run: npx eslint app/frontend/src app/backend --max-warnings=0
