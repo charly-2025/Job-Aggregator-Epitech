@@ -77,9 +77,13 @@ jobs:
           MYSQL_PORT=3306
           EOF
 
+      - name: Clean previous state
+        working-directory: ./app
+        run: docker compose down -v || true
+
       - name: docker compose up
         working-directory: ./app
-        run: docker compose up -d --build -V
+        run: docker compose up -d --build
 
       - name: Connect CI container to compose network
         run: docker network connect app_default $(hostname)
