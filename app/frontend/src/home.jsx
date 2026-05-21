@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import SearchJobs from "./pages/SearchJobs/SearchJobs";
+import { useTheme } from "@mui/material/styles";
+
 
 import Settings from "./pages/settings/settings";
 import JobsLiked from "./components/SavedJobs";
+import SearchJobs from "./pages/SearchJobs/SearchJobs";
 
 import "@fontsource/inter/100.css";
 import "@fontsource/inter/200.css";
@@ -39,10 +41,14 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
+  useMediaQuery
 } from "@mui/material";
 
 import "./home.css";
 
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SearchIcon from "@mui/icons-material/Search";
@@ -72,6 +78,8 @@ async function refreshAccessToken() {
 
   if (!res.ok) {
     throw new Error("Session expired");
+  } else {
+    console.log("Token refreshed");
   }
 }
 
@@ -122,110 +130,243 @@ function ErrorMessage({ message }) {
   );
 }
 
+
 function Sidebar({ active, setActive, user }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery("(max-width:700px)");
+
   const nav = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: <DashboardIcon />,
-    },
-    {
-      id: "search",
-      label: "Search Jobs",
-      icon: <SearchIcon />,
-    },
-    {
-      id: "saved",
-      label: "Saved Jobs",
-      icon: <FavoriteIcon />,
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: <SettingsIcon />,
-    },
+    { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
+    { id: "search", label: "Search Jobs", icon: <SearchIcon /> },
+    { id: "saved", label: "Saved Jobs", icon: <FavoriteIcon /> },
+    { id: "settings", label: "Settings", icon: <SettingsIcon /> },
   ];
 
-  return (
-    <Drawer
-      variant="permanent"
+  const drawerContent = (
+    <Box
       sx={{
-        width: 260,
-        flexShrink: 0,
-
-        "& .MuiDrawer-paper": {
-          width: 260,
-          background: "#141414",
-          color: "white",
-          borderRight: "1px solid #3b3c3d",
-          pt: 12,
-          display: "flex",
-          flexDirection: "column",
-          height: "100vh",
-        },
+        padding:0,
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        background: "#141414",
       }}
     >
       <Box
         sx={{
+          padding:"0 20px",
+          paddingLeft: 3.5,
+          margin: 0,
+          height: 60,
           display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid #2a2a2a",
         }}
       >
-        <Box p={3}>
-          <div className="logo-holder">
-            <img src="/logo.png" alt="logo" className="logo" />
-          </div>
-        </Box>
+        <img src="/logo.png" alt="logo" className="navbar-logo" />
 
-        <List sx={{ flexGrow: 1 }}>
-          {nav.map((item) => (
-            <ListItemButton
-              key={item.id}
-              selected={active === item.id}
-              onClick={() => setActive(item.id)}
+        {isMobile && (
+          <IconButton
+            onClick={() => setMobileOpen(false)}
+            sx={{ color: "white",}}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
+      </Box>
+
+      <List
+        sx={{
+          flexGrow: 1,
+          px: 2,
+          py: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5,
+        }}
+      >
+        {nav.map((item) => (
+          <ListItemButton
+            key={item.id}
+            selected={active === item.id}
+            onClick={() => {
+              setActive(item.id);
+
+              if (isMobile) {
+                setMobileOpen(false);
+              }
+            }}
+            sx={{
+              maxHeight: 48,
+              borderRadius: "16px",
+              px: 2,
+              py: 0.25,
+
+              transition: "all 0.2s ease",
+
+              "& .MuiListItemIcon-root": {
+                minWidth: "42px",
+                color: "#bdbdbd",
+              },
+
+              "& .MuiTypography-root": {
+                fontSize: "0.96rem",
+                fontWeight: 500,
+                color: "#d7d7d7",
+              },
+
+              "&.Mui-selected": {
+                background:
+                  "linear-gradient(90deg, rgba(173,70,255,0.18) 0%, rgba(246,51,154,0.18) 50%, rgba(255,105,0,0.18) 100%)",
+
+                border: "1px solid rgba(255,255,255,0.08)",
+
+                "& .MuiListItemIcon-root": {
+                  color: "white",
+                },
+
+                "& .MuiTypography-root": {
+                  color: "white",
+                  fontWeight: 600,
+                },
+              },
+
+              "&:hover": {
+                background:
+                  "linear-gradient(90deg, rgba(173,70,255,0.12) 0%, rgba(246,51,154,0.12) 50%, rgba(255,105,0,0.12) 100%)",
+              },
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+
+            <ListItemText primary={item.label} />
+          </ListItemButton>
+        ))}
+      </List>
+
+      <Box
+        sx={{
+          p: 2.5,
+          borderTop: "1px solid #2a2a2a",
+          background: "#111111",
+        }}
+      >
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Avatar
+            sx={{
+              bgcolor: "#262626",
+              width: 46,
+              height: 46,
+              fontWeight: "bold",
+            }}
+          >
+            {user?.first_name?.[0]}
+          </Avatar>
+
+          <Box
+            sx={{
+              overflow: "hidden",
+            }}
+          >
+            <Typography
               sx={{
-                mx: 2,
-                mb: 1,
-                borderRadius: 3,
-
-                "&.Mui-selected": {
-                  background: "#000000",
-                },
-
-                "&:hover": {
-                  background:
-                    "linear-gradient(90deg, rgba(173,70,255,0.15) 0%, rgba(246,51,154,0.15) 50%, rgba(255,105,0,0.15) 100%)",
-                },
+                fontWeight: 600,
+                color: "white",
+                fontSize: "0.95rem",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              <ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
+              {user?.first_name} {user?.last_name}
+            </Typography>
 
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          ))}
-        </List>
-
-        <Box mt="auto" p={3}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ bgcolor: "#000000" }}>{user?.first_name?.[0]}</Avatar>
-
-            <Box>
-              <Typography fontWeight="bold">
-                {user?.first_name} {user?.last_name}
-              </Typography>
-
-              <Typography variant="body2">{user?.email}</Typography>
-            </Box>
-          </Stack>
-        </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#9e9e9e",
+                fontSize: "0.82rem",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {user?.email}
+            </Typography>
+          </Box>
+        </Stack>
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  return (
+    <>
+      {isMobile && !mobileOpen && (
+        <IconButton
+          onClick={() => setMobileOpen(true)}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            zIndex: 2000,
+            color: "white",
+            fontSize: 28,
+            "&:hover": {
+              background: "#2a2a2a",
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      )}
+
+      {!isMobile && (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: 270,
+            flexShrink: 0,
+
+            "& .MuiDrawer-paper": {
+              width: 270,
+              boxSizing: "border-box",
+              borderRight: "1px solid #2a2a2a",
+              background: "#141414",
+              padding: "0",
+              left: 0,
+            },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+      )}
+
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            "& .MuiDrawer-paper": {
+              width: 270,
+              background: "#141414",
+              borderRight: "1px solid #2a2a2a",
+            },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+      )}
+    </>
   );
 }
-
-
-
 
 
 function JobModal({ job, open, onClose, saved, onSaveToggle }) {
@@ -715,18 +856,12 @@ export default function App() {
             height: 60,
             background: "#000000",
             borderBottom: "1px solid #3a3939",
-            width: "100%",
+            width: {xs: "100%", md: "calc(100% - 270px)"},
+            ml: { md: "270px"},
           }}
         >
-          <Toolbar sx={{ justifyContent: "flex-end" }}>
-            <Box display="flex" gap={2} alignItems="center">
-              <NotificationsNoneOutlinedIcon
-                sx={{
-                  fontSize: 28,
-                  color: "white",
-                }}
-              />
-
+          <Toolbar disableGutters sx={{ px: 2 }}>
+          <Box sx={{ display: "flex", gap: "18px", alignItems: "center", width: "100%",justifyContent:"flex-end"}}>
               <DarkModeOutlinedIcon
                 sx={{
                   fontSize: 28,
