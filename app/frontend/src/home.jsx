@@ -61,6 +61,7 @@ const API = {
   refresh: `${BASE_URL}/api/auth/refresh`,
   logout: `${BASE_URL}/api/auth/logout`,
   UserViews: `${BASE_URL}/api/users/offersUserViews`,
+  recommendations: `${BASE_URL}/api/recommendations/by-skills`,
 };
 
 async function refreshAccessToken() {
@@ -313,9 +314,10 @@ function JobModal({ job, open, onClose, saved, onSaveToggle }) {
   );
 }
 
-function JobCard({ job, onSave, initialLiked = false }) {
+function JobCard({ job, onSave, initialLiked = false, similarityScore }) {
   const [saved, setSaved] = useState(initialLiked);
   const [open, setOpen] = useState(false);
+  const scorePercent = similarityScore ? Math.round(similarityScore * 100) : null;
 
   useEffect(() => {
     setSaved(initialLiked);
@@ -349,6 +351,20 @@ function JobCard({ job, onSave, initialLiked = false }) {
       >
         <CardContent>
           <Stack spacing={1.5}>
+            {scorePercent !== null && (
+              <Chip
+                label={`${scorePercent}% match`}
+                size="small"
+                sx={{
+                  width: "fit-content",
+                  background: scorePercent >= 85
+                    ? "rgba(34,197,94,0.15)"
+                    : "rgba(245,158,11,0.15)",
+                  color: scorePercent >= 85 ? "#22c55e" : "#f59e0b",
+                  border: `1px solid ${scorePercent >= 85 ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.3)"}`,
+                }}
+              />
+            )}
             <Box>
               <Typography variant="subtitle1" fontWeight="bold">
                 {job.title}
@@ -440,7 +456,8 @@ function Dashboard({ user }) {
   const [jobs, setJobs] = useState([]);
   const [likedIds, setLikedIds] = useState(new Set());
   const [offersViewed, setOffersViewed] = useState([]);
-
+  const [recommendations, setRecommendations] = useState([]);
+  const [loadingReco, setLoadingReco] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(null);
@@ -451,7 +468,19 @@ function Dashboard({ user }) {
 
   const limit = 15;
 
-
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        const data = await apiFetch(`${API.recommendations}?top_k=6`);
+        setRecommendations(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Reco error:", err.message);
+      } finally {
+        setLoadingReco(false);
+      }
+    };
+    loadRecommendations();
+  }, []);
 
   useEffect(() => {
     const loadOffers = async () => {
@@ -523,7 +552,37 @@ setOffersViewed(Array.isArray(viewedRes) ? viewedRes : []);
       >
         Welcome back <span style={{ color: "purple" }}>{user?.first_name}</span> 👋
       </Typography>
+        <Box sx={{ pl: 4, pr: 4, pt: 6, maxWidth: 1100 }}>
+        <Typography variant="h5" fontWeight="bold" color="white" mb={1}>
+          Recommended for you
+        </Typography>
+        <Typography variant="body2" color="gray" mb={3}>
+          {user?.skills?.length > 0
+            ? `Based on your skills: ${user.skills.join(", ")}`
+            : "Add skills in Settings to get personalized recommendations"}
+        </Typography>
 
+        {loadingReco ? (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress />
+          </Box>
+        ) : recommendations.length > 0 ? (
+          <Grid container spacing={2}>
+            {recommendations.map((job) => (
+              <Grid item xs={12} md={6} lg={4} key={job.offer_id}>
+                <JobCard
+                  job={job}
+                  onSave={handleSave}
+                  initialLiked={likedIds.has(job.offer_id)}
+                  similarityScore={job.similarity_score}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Typography color="gray">No recommendations yet.</Typography>
+        )}
+      </Box>
       <Typography
         variant="body1"
         color="gray"
