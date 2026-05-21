@@ -53,6 +53,8 @@ jobs:
           REFRESH_SECRET=test
 
           MYSQL_ROOT_PASSWORD=test
+          MYSQL_PASSWORD=test
+          MYSQL_USER=docker
           MYSQL_HOST=mysql
           MYSQL_DATABASE=jobagg
 
