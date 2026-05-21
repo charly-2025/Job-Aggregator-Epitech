@@ -72,9 +72,9 @@ jobs:
           MYSQL_PASSWORD=test
           WLD_API_KEY=${{ secrets.WLD_API_KEY }}
           MYSQL_USER=root
-          MYSQL_HOST=localhost
+          MYSQL_HOST=mysql
           MYSQL_DATABASE=jobagg
-          MYSQL_PORT=3306
+          MYSQL_PORT=3307
           EOF
 
       - name: docker compose up
