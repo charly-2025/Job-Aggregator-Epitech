@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Python + pip
+        working-directory: ./filling_database
         run: |
           apt-get update
           apt-get install -y python3-venv python3-pip
