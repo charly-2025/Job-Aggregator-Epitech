@@ -81,12 +81,12 @@ jobs:
         working-directory: ./app
         run: docker compose up -d --build
 
+      - name: Connect CI container to compose network
+        run: docker network connect app_default $(hostname)
+
       - name: start python script filling database
         working-directory: ./filling_database
         run: ./venv/bin/python run_pipeline.py
-
-      - name: Wait
-        run: sleep 50
 
       - name: Run ESLint
         run: npx eslint app/frontend/src app/backend --max-warnings=0
