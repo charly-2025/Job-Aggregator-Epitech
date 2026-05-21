@@ -46,7 +46,7 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
-      - name: Create .env in backend
+      - name: Create .env at the app root
         run: |
           cat <<EOF > app/.env
           JWT_SECRET=test
