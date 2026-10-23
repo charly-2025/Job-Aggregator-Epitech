@@ -19,13 +19,6 @@ A real product, not just a school demo: a platform that **collects job and inter
 
 `React` · `Node.js` · `Express` · `MySQL` · `Python` · `Docker` · `GitHub Actions`
 
-## Team
-
-- Baptiste Mesnager
-- Charly Richard-Fromont
-- gabriel
-- Noa Loussouarn
-
 ---
 
 ## Technical documentation
